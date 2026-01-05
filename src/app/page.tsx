@@ -4,7 +4,7 @@ export default function Home() {
       <header className="border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-400">사계 길드</h1>
-          <span className="text-zinc-400 text-sm">AION2 루드라 서버</span>
+          <span className="text-zinc-400 text-sm">AION2 지켈 서버</span>
         </div>
       </header>
 
@@ -50,7 +50,7 @@ export default function Home() {
 
       <footer className="border-t border-zinc-800 mt-16">
         <div className="max-w-6xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
-          <p>사계 길드 · AION2 루드라 서버 (마족)</p>
+          <p>사계 길드 · AION2 지켈 서버 (마족)</p>
           <p className="mt-1">Powered by Next.js & Vercel</p>
         </div>
       </footer>
