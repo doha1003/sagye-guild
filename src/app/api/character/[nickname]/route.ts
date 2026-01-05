@@ -11,7 +11,6 @@ export async function GET(
   const race = '마족';
 
   try {
-    // aion2tool 캐릭터 검색 API 호출
     const searchUrl = `${AION2TOOL_BASE_URL}/api/character/search?nickname=${encodeURIComponent(nickname)}&server=${encodeURIComponent(server)}&race=${encodeURIComponent(race)}`;
 
     const response = await fetch(searchUrl, {
@@ -21,7 +20,7 @@ export async function GET(
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Referer': 'https://www.aion2tool.com/',
       },
-      next: { revalidate: 300 }, // 5분 캐시
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {
@@ -31,33 +30,21 @@ export async function GET(
       );
     }
 
-    const data = await response.json();
+    const result = await response.json();
 
-    // 전투력 및 주요 스탯 추출
-    const combatScore = data?.combat_score_power_range?.combat_score ||
-                       data?.data?.combat_stats?.combat_score || 0;
-    const combatPower = data?.combat_score_power_range?.combat_power ||
-                       data?.data?.combat_stats?.combat_power || 0;
-
-    // DPS 관련 스탯 (딜러 평가용)
-    const combatStats = data?.data?.combat_stats || {};
-    const dpsStats = {
-      attackPower: combatStats.attack_power || 0,
-      criticalHit: combatStats.critical_hit || 0,
-      criticalDamage: combatStats.critical_damage_amplification || 0,
-      damageAmplification: combatStats.damage_amplification || 0,
-      skillDamage: combatStats.skill_damage || 0,
-      multiHit: combatStats.multi_hit || 0,
-    };
+    // 실제 데이터 구조: result.data.combat_score, result.data.combat_power
+    const data = result.data || {};
 
     return NextResponse.json({
       nickname,
       server,
       race,
-      combatScore,
-      combatPower,
-      dpsStats,
-      raw: data,
+      combatScore: data.combat_score || 0,
+      combatPower: data.combat_power || 0,
+      combatScoreMax: data.combat_score_max || 0,
+      powerRange: result.combat_score_power_range || data.combat_score_power_range || null,
+      job: data.job || '',
+      level: data.level || 0,
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {
