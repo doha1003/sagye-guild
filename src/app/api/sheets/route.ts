@@ -1,12 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const SHEET_ID = '1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const forceRefresh = request.nextUrl.searchParams.get('refresh') === 'true';
+
   try {
-    const response = await fetch(SHEET_URL, {
-      next: { revalidate: 30 }, // 30초 캐시 (실시간에 가깝게)
+    // 캐시 무효화를 위해 타임스탬프 추가
+    const urlWithTimestamp = forceRefresh
+      ? `${SHEET_URL}&_t=${Date.now()}`
+      : SHEET_URL;
+
+    const response = await fetch(urlWithTimestamp, {
+      cache: forceRefresh ? 'no-store' : 'default',
+      next: forceRefresh ? undefined : { revalidate: 30 },
     });
 
     const text = await response.text();

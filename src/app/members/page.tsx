@@ -25,7 +25,9 @@ interface GuildMember {
   rank: string;
   nickname: string;
   className: string;
+  age: string;
   discord: string;
+  kakao: string;
   combatScore?: number;
   combatPower?: number;
   loading?: boolean;
@@ -40,9 +42,11 @@ export default function MembersPage() {
   const [fetchingStats, setFetchingStats] = useState(false);
 
   // 구글 시트에서 데이터 불러오기
-  const fetchMembers = useCallback(async () => {
+  const fetchMembers = useCallback(async (forceRefresh = false) => {
     try {
-      const res = await fetch('/api/sheets');
+      setLoading(true);
+      const url = forceRefresh ? '/api/sheets?refresh=true' : '/api/sheets';
+      const res = await fetch(url);
       const data = await res.json();
       if (data.members) {
         setMembers(data.members.map((m: GuildMember) => ({
@@ -150,6 +154,13 @@ export default function MembersPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
+              onClick={() => fetchMembers(true)}
+              disabled={loading}
+              className="text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? '로딩...' : '⟳ 시트 새로고침'}
+            </button>
+            <button
               onClick={fetchAllStats}
               disabled={fetchingStats || members.length === 0}
               className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
@@ -224,9 +235,11 @@ export default function MembersPage() {
                     <th className="text-left p-3 font-medium">캐릭터</th>
                     <th className="text-left p-3 font-medium">직업</th>
                     <th className="text-left p-3 font-medium">계급</th>
+                    <th className="text-center p-3 font-medium">년생</th>
                     <th className="text-right p-3 font-medium">전투점수</th>
                     <th className="text-right p-3 font-medium">전투력</th>
-                    <th className="text-center p-3 font-medium">디스코드</th>
+                    <th className="text-center p-3 font-medium">디코</th>
+                    <th className="text-center p-3 font-medium">카톡</th>
                     <th className="text-center p-3 font-medium">아툴</th>
                   </tr>
                 </thead>
@@ -242,6 +255,7 @@ export default function MembersPage() {
                         </span>
                       </td>
                       <td className="p-3 text-zinc-300">{member.rank}</td>
+                      <td className="p-3 text-center text-zinc-300">{member.age || '-'}</td>
                       <td className="p-3 text-right font-mono">
                         {member.loading ? (
                           <span className="text-zinc-500">로딩...</span>
@@ -267,6 +281,13 @@ export default function MembersPage() {
                       <td className="p-3 text-center">
                         {member.discord === 'O' ? (
                           <span className="text-green-400">✓</span>
+                        ) : (
+                          <span className="text-zinc-600">-</span>
+                        )}
+                      </td>
+                      <td className="p-3 text-center">
+                        {member.kakao === 'O' ? (
+                          <span className="text-yellow-400">✓</span>
                         ) : (
                           <span className="text-zinc-600">-</span>
                         )}
