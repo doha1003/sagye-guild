@@ -201,12 +201,12 @@ export default function MembersPage() {
                       </a>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm">{CLASS_ICONS[member.className] || ''} {member.className}</span>
-                      {member.age === 'X' || member.age === 'x' ? (
+                      <span className="text-sm text-zinc-200">{CLASS_ICONS[member.className] || ''} {member.className}</span>
+                      {!member.age || member.age === 'X' || member.age === 'x' || member.age.trim() === '' ? (
                         <span className="text-red-400 text-xs">· 미입력</span>
-                      ) : member.age ? (
+                      ) : (
                         <span className="text-zinc-500 text-xs">· {member.age}</span>
-                      ) : null}
+                      )}
                       <div className="flex gap-1 ml-auto">
                         {member.discord === 'O' ? (
                           <span className="text-green-400 text-xs">디코✓</span>
@@ -274,12 +274,10 @@ export default function MembersPage() {
                         </td>
                         <td className="p-3 text-zinc-300">{member.rank}</td>
                         <td className="p-3 text-center">
-                          {member.age === 'X' || member.age === 'x' ? (
+                          {!member.age || member.age === 'X' || member.age === 'x' || member.age.trim() === '' ? (
                             <span className="text-red-400">미입력</span>
-                          ) : member.age ? (
-                            <span className="text-zinc-300">{member.age}</span>
                           ) : (
-                            <span className="text-zinc-500">-</span>
+                            <span className="text-zinc-300">{member.age}</span>
                           )}
                         </td>
                         <td className="p-3 text-right font-mono">
