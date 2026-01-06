@@ -15,7 +15,7 @@ interface GuildMember {
 const CLASS_INFO: { name: string; icon: string; color: string }[] = [
   { name: '검성', icon: '🗡️', color: 'text-red-400' },
   { name: '수호성', icon: '🛡️', color: 'text-blue-400' },
-  { name: '살성', icon: '🗡️', color: 'text-purple-400' },
+  { name: '살성', icon: '⚔️', color: 'text-purple-400' },
   { name: '궁성', icon: '🏹', color: 'text-green-400' },
   { name: '정령성', icon: '🔮', color: 'text-cyan-400' },
   { name: '마도성', icon: '✨', color: 'text-pink-400' },
@@ -220,7 +220,7 @@ export default function Home() {
                 { href: 'https://aion2.plaync.com/ko-kr/board/update/list', icon: '🔄', label: '업데이트' },
                 { href: 'https://aion2.plaync.com/ko-kr/board/all/list', icon: '👥', label: '커뮤니티' },
                 { href: 'https://aion2.plaync.com/ko-kr/styleshop/popular', icon: '👗', label: '스타일샵' },
-                { href: 'https://aion2.plaync.com/ko-kr/my/guild/board/free/list', icon: '📋', label: '게시판' },
+                { href: 'https://tc-imba.com/?map=World_L_A', icon: '🗺️', label: '히든큐브' },
                 { href: 'https://aion2.inven.co.kr/', icon: '📰', label: '인벤' },
                 { href: 'https://gall.dcinside.com/mgallery/board/lists/?id=aion2', icon: '💬', label: '디시' },
               ].map((item) => (
