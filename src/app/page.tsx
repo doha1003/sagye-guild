@@ -73,12 +73,55 @@ export default function Home() {
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* 타이틀 */}
-        <section className="text-center mb-10">
+        <section className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">
             <span className="text-amber-400">사계</span>{' '}
             <span className="text-white">길드</span>
           </h2>
           <p className="text-zinc-400">지켈 서버 · 마족</p>
+        </section>
+
+        {/* 공지사항 - 강조 */}
+        <Link
+          href="/notice"
+          className="block bg-red-900/30 rounded-xl border-2 border-red-500/50 p-4 mb-6 hover:bg-red-900/50 hover:border-red-500 transition-all animate-pulse-slow"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">📢</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-white text-lg">공지사항</span>
+                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">필독</span>
+                </div>
+                <span className="text-zinc-300 text-sm">길드 규칙 · 루드라 파티 규칙</span>
+              </div>
+            </div>
+            <span className="text-red-400 text-xl">→</span>
+          </div>
+        </Link>
+
+        {/* 참여 링크 */}
+        <section className="grid grid-cols-2 gap-4 mb-8">
+          <a
+            href="https://discord.gg/DgwjWYMu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-4 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💬</div>
+            <div className="font-semibold text-white">디스코드 참여</div>
+          </a>
+          <a
+            href="https://open.kakao.com/o/gr52NRmg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-yellow-500 hover:bg-yellow-400 rounded-xl p-4 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💛</div>
+            <div className="font-semibold text-zinc-900">카카오톡 참여</div>
+            <div className="text-xs text-zinc-700 mt-1">참여코드: Aion222</div>
+          </a>
         </section>
 
         {/* 메뉴 버튼 */}
@@ -94,7 +137,7 @@ export default function Home() {
         </div>
 
         {/* 길드 통계 */}
-        <section className="bg-zinc-800 rounded-xl p-6 border border-zinc-700 mb-8">
+        <section className="bg-zinc-800 rounded-xl p-6 border border-zinc-700">
           {loading ? (
             <p className="text-center text-zinc-400 py-4">로딩 중...</p>
           ) : (
@@ -145,46 +188,6 @@ export default function Home() {
               </div>
             </>
           )}
-        </section>
-
-        {/* 공지사항 */}
-        <Link
-          href="/notice"
-          className="block bg-zinc-800 rounded-xl border border-zinc-700 p-4 mb-8 hover:border-amber-500/50 hover:bg-zinc-750 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📢</span>
-              <div>
-                <span className="font-semibold text-white">공지사항</span>
-                <span className="text-zinc-400 text-sm ml-2">길드 규칙 · 루드라 파티 규칙</span>
-              </div>
-            </div>
-            <span className="text-zinc-400">→</span>
-          </div>
-        </Link>
-
-        {/* 참여 링크 */}
-        <section className="grid grid-cols-2 gap-4">
-          <a
-            href="https://discord.gg/DgwjWYMu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-4 text-center transition-colors"
-          >
-            <div className="text-2xl mb-1">💬</div>
-            <div className="font-semibold text-white">디스코드 참여</div>
-          </a>
-          <a
-            href="https://open.kakao.com/o/gr52NRmg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-yellow-500 hover:bg-yellow-400 rounded-xl p-4 text-center transition-colors"
-          >
-            <div className="text-2xl mb-1">💛</div>
-            <div className="font-semibold text-zinc-900">카카오톡 참여</div>
-            <div className="text-xs text-zinc-700 mt-1">참여코드: Aion222</div>
-          </a>
         </section>
       </main>
 
