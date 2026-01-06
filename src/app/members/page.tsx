@@ -30,7 +30,6 @@ interface GuildMember {
   kakao: string;
   combatScore?: number;
   combatPower?: number;
-  loading?: boolean;
 }
 
 export default function MembersPage() {
@@ -39,7 +38,6 @@ export default function MembersPage() {
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('전체');
   const [searchQuery, setSearchQuery] = useState('');
-  const [fetchingStats, setFetchingStats] = useState(false);
 
   // 구글 시트에서 데이터 불러오기
   const fetchMembers = useCallback(async (forceRefresh = false) => {
@@ -49,10 +47,7 @@ export default function MembersPage() {
       const res = await fetch(url);
       const data = await res.json();
       if (data.members) {
-        setMembers(data.members.map((m: GuildMember) => ({
-          ...m,
-          loading: false,
-        })));
+        setMembers(data.members);
         setLastUpdated(data.lastUpdated);
       }
     } catch (error) {
@@ -61,74 +56,6 @@ export default function MembersPage() {
       setLoading(false);
     }
   }, []);
-
-  // 단일 캐릭터 실시간 데이터 가져오기 (클라이언트에서 직접 아툴 호출)
-  const fetchCharacterStats = async (nickname: string) => {
-    try {
-      // 클라이언트에서 직접 aion2tool API 호출 시도
-      const url = `https://www.aion2tool.com/api/character/search?nickname=${encodeURIComponent(nickname)}&server=지켈&race=마족`;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (data && data.data) {
-        return {
-          combatScore: data.data.combat_score,
-          combatPower: data.data.combat_power,
-        };
-      }
-      return null;
-    } catch (e) {
-      console.log('Direct fetch failed, trying proxy...', e);
-      // 실패하면 기존 프록시 방식 시도
-      try {
-        const res = await fetch(`/api/character/${encodeURIComponent(nickname)}`);
-        if (!res.ok) return null;
-        return await res.json();
-      } catch {
-        return null;
-      }
-    }
-  };
-
-  // 모든 멤버의 실시간 데이터 갱신
-  const fetchAllStats = async () => {
-    setFetchingStats(true);
-
-    for (let i = 0; i < members.length; i++) {
-      const member = members[i];
-      setMembers(prev => prev.map(m =>
-        m.id === member.id ? { ...m, loading: true } : m
-      ));
-
-      const stats = await fetchCharacterStats(member.nickname);
-      if (stats && !stats.error) {
-        setMembers(prev => prev.map(m =>
-          m.id === member.id ? {
-            ...m,
-            combatScore: stats.combatScore,
-            combatPower: stats.combatPower,
-            loading: false,
-          } : m
-        ));
-      } else {
-        setMembers(prev => prev.map(m =>
-          m.id === member.id ? { ...m, loading: false } : m
-        ));
-      }
-
-      // Rate limiting (300ms)
-      if (i < members.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
-    }
-
-    setFetchingStats(false);
-  };
 
   useEffect(() => {
     fetchMembers();
@@ -181,13 +108,6 @@ export default function MembersPage() {
               className="text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? '로딩...' : '⟳ 시트 새로고침'}
-            </button>
-            <button
-              onClick={fetchAllStats}
-              disabled={fetchingStats || members.length === 0}
-              className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {fetchingStats ? '갱신 중...' : '⟳ 아툴 데이터 갱신'}
             </button>
             <a
               href="https://docs.google.com/spreadsheets/d/1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo/edit"
@@ -279,22 +199,18 @@ export default function MembersPage() {
                       <td className="p-3 text-zinc-300">{member.rank}</td>
                       <td className="p-3 text-center text-zinc-300">{member.age || '-'}</td>
                       <td className="p-3 text-right font-mono">
-                        {member.loading ? (
-                          <span className="text-zinc-500">로딩...</span>
-                        ) : member.combatScore ? (
+                        {member.combatScore ? (
                           <span className="text-amber-400 font-semibold">
-                            {member.combatScore.toLocaleString()}
+                            {Number(member.combatScore).toLocaleString()}
                           </span>
                         ) : (
                           <span className="text-zinc-500">-</span>
                         )}
                       </td>
                       <td className="p-3 text-right font-mono">
-                        {member.loading ? (
-                          <span className="text-zinc-500">...</span>
-                        ) : member.combatPower ? (
+                        {member.combatPower ? (
                           <span className="text-zinc-200">
-                            {member.combatPower.toLocaleString()}
+                            {Number(member.combatPower).toLocaleString()}
                           </span>
                         ) : (
                           <span className="text-zinc-500">-</span>

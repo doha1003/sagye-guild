@@ -49,17 +49,14 @@ export async function GET(request: NextRequest) {
 
       return {
         id: `member-${index}`,
-        rank: cells[0] || '',           // 계급
-        nickname: cells[1] || '',       // 캐릭터명
-        className: cells[2] || '',      // 직업
-        age: cleanAge(cells[3]),        // 나이 (정리됨)
-        discord: cells[4] || '',        // 디스코드
-        kakao: cells[5] || '',          // 카카오톡
-        athul: cells[6] || '',          // 아툴
-        combatPower: cells[7] || 0,     // 전투력
-        playTime: cells[8] || '',       // 루드라 참여시간
-        wed10: cells[9] || '',          // 수요일 10시 1트
-        wed11: cells[10] || '',         // 수요일 11시 2트
+        rank: cells[0] || '',           // A: 계급
+        nickname: cells[1] || '',       // B: 캐릭터명
+        className: cells[2] || '',      // C: 직업
+        age: cleanAge(cells[3]),        // D: 나이 (정리됨)
+        discord: cells[4] || '',        // E: 디스코드
+        kakao: cells[5] || '',          // F: 카카오톡
+        combatScore: cells[6] || 0,     // G: 전투점수
+        combatPower: cells[7] || 0,     // H: 전투력
       };
     }).filter((m: { nickname: string }) => m.nickname); // 빈 행 제거
 
