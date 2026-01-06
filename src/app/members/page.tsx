@@ -90,12 +90,18 @@ export default function MembersPage() {
           <nav className="flex gap-4 text-sm">
             <Link href="/members" className="text-amber-400">길드원</Link>
             <Link href="/schedule" className="text-zinc-400 hover:text-white">일정</Link>
-            <Link href="/party" className="text-zinc-400 hover:text-white">파티</Link>
           </nav>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* 안내 문구 */}
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-6 text-sm">
+          <p className="text-amber-200">
+            <span className="font-bold">📌 안내:</span> 전투력/전투점수는 텐겐이 직접 엑셀에 작성하여 오류가 있을 수 있습니다. 정확한 점수는 우측 <span className="text-blue-400">아툴 링크</span>를 통해 확인해주세요.
+          </p>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-white">길드원 관리</h1>

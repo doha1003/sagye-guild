@@ -1,15 +1,15 @@
 /**
  * 사계 길드 - 아툴 데이터 자동 수집
  *
- * 결과: results.txt 파일로 저장 + 화면에 출력
+ * 결과: 구글 시트에 자동 업데이트
  */
 
 const { chromium } = require('playwright');
-const fs = require('fs');
 
 const CONFIG = {
   SERVER_ID: 2002,
   SHEET_ID: '1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzfog5o5XS2CIYehbSdHrfAjgMerheTBDP6_ItxQGmQkdL4WeJaRUpXMwfXlnkd25fo8Q/exec',
 };
 
 async function main() {
@@ -103,16 +103,34 @@ async function main() {
 
   await browser.close();
 
-  // 3. 결과 저장 및 출력
-  console.log('\n[3/3] 결과 저장 중...\n');
+  // 3. 구글 시트에 자동 업데이트
+  console.log('\n[3/3] 구글 시트에 업데이트 중...\n');
 
-  // 결과 파일 저장
-  const output = results.map(r => `${r.combatScore}\t${r.combatPower}`).join('\n');
-  fs.writeFileSync('results.txt', output, 'utf8');
+  if (results.length === 0) {
+    console.log('업데이트할 데이터가 없습니다.');
+    return;
+  }
 
-  console.log('==========================================');
-  console.log('   완료!');
-  console.log('==========================================\n');
+  try {
+    const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(results),
+      redirect: 'follow',
+    });
+
+    if (response.ok) {
+      console.log('==========================================');
+      console.log('   구글 시트 업데이트 완료!');
+      console.log('==========================================\n');
+    } else {
+      console.log('구글 시트 업데이트 실패:', response.status);
+    }
+  } catch (e) {
+    console.log('구글 시트 업데이트 에러:', e.message);
+  }
 
   console.log(`수집 결과: ${results.length}명\n`);
   console.log('닉네임           | 전투점수  | 전투력');
@@ -120,13 +138,6 @@ async function main() {
   results.forEach(r => {
     console.log(`${r.nickname.padEnd(15)} | ${r.combatScore.padStart(8)} | ${r.combatPower.padStart(6)}`);
   });
-
-  console.log('\n------------------------------------------');
-  console.log('\n[결과 파일] results.txt 저장됨');
-  console.log('\n사용법:');
-  console.log('1. results.txt 파일 열기');
-  console.log('2. 전체 선택 (Ctrl+A) -> 복사 (Ctrl+C)');
-  console.log('3. 구글 시트 G2 셀 클릭 -> 붙여넣기 (Ctrl+V)');
   console.log('');
 }
 

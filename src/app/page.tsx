@@ -7,6 +7,8 @@ interface GuildMember {
   className: string;
   discord: string;
   kakao: string;
+  combatScore?: number;
+  combatPower?: number;
 }
 
 const CLASS_INFO: { name: string; icon: string; color: string }[] = [
@@ -39,6 +41,11 @@ export default function Home() {
   const getClassCount = (className: string) =>
     members.filter(m => m.className === className).length;
 
+  // 전투력 계산
+  const membersWithPower = members.filter(m => m.combatPower && Number(m.combatPower) > 0);
+  const totalPower = membersWithPower.reduce((sum, m) => sum + Number(m.combatPower || 0), 0);
+  const avgPower = membersWithPower.length > 0 ? Math.round(totalPower / membersWithPower.length) : 0;
+
   const stats = {
     total: members.length,
     discord: members.filter(m => m.discord === 'O').length,
@@ -48,79 +55,142 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-950">
       <header className="border-b border-zinc-800">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-400">사계 길드</h1>
-          <span className="text-zinc-300 text-sm">AION2 지켈 서버</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://discord.gg/DgwjWYMu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
+            >
+              Discord
+            </a>
+            <span className="text-zinc-500 text-sm">AION2 지켈</span>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
-        <section className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* 타이틀 */}
+        <section className="text-center mb-10">
+          <h2 className="text-3xl font-bold mb-2">
             <span className="text-amber-400">사계</span>{' '}
-            <span className="text-white">길드 관리</span>
+            <span className="text-white">길드</span>
           </h2>
-          <p className="text-zinc-300 text-lg">
-            길드원 정보 조회 · 일정 관리 · 파티 매칭
-          </p>
+          <p className="text-zinc-400">지켈 서버 · 마족</p>
         </section>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          <Link href="/members" className="block bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-800 transition-all group">
-            <div className="text-4xl mb-4">👥</div>
-            <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-amber-400 transition-colors">길드원 관리</h3>
-            <p className="text-zinc-300 text-sm">길드원 정보를 자동으로 업데이트하고 역할별로 분류합니다.</p>
+        {/* 메뉴 버튼 */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <Link href="/members" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-3xl mb-2">👥</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400">길드원</h3>
           </Link>
-          <Link href="/schedule" className="block bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-800 transition-all group">
-            <div className="text-4xl mb-4">📅</div>
-            <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-amber-400 transition-colors">일정표</h3>
-            <p className="text-zinc-300 text-sm">필드보스, 던전, 레이드 일정을 관리하고 참여 신청을 받습니다.</p>
-          </Link>
-          <Link href="/party" className="block bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-800 transition-all group">
-            <div className="text-4xl mb-4">⚔️</div>
-            <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-amber-400 transition-colors">파티 매칭</h3>
-            <p className="text-zinc-300 text-sm">전투력과 역할에 맞는 파티를 구성합니다.</p>
+          <Link href="/schedule" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-3xl mb-2">📅</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400">일정표</h3>
           </Link>
         </div>
 
-        <section className="bg-zinc-800/50 rounded-xl p-8 border border-zinc-700">
-          <h3 className="text-xl font-semibold mb-6 text-center text-white">길드 현황</h3>
+        {/* 길드 통계 */}
+        <section className="bg-zinc-800 rounded-xl p-6 border border-zinc-700 mb-8">
           {loading ? (
-            <p className="text-center text-zinc-400">로딩 중...</p>
+            <p className="text-center text-zinc-400 py-4">로딩 중...</p>
           ) : (
             <>
-              <div className="text-center mb-6">
-                <div className="text-4xl font-bold text-amber-400">{stats.total}</div>
-                <div className="text-zinc-300 text-sm mt-1">총 길드원</div>
+              {/* 주요 통계 */}
+              <div className="grid grid-cols-3 gap-4 mb-6 text-center">
+                <div className="bg-zinc-900 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-amber-400">{stats.total}</div>
+                  <div className="text-zinc-400 text-sm mt-1">길드원</div>
+                </div>
+                <div className="bg-zinc-900 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-cyan-400">{avgPower.toLocaleString()}</div>
+                  <div className="text-zinc-400 text-sm mt-1">평균 전투력</div>
+                </div>
+                <div className="bg-zinc-900 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-green-400">{totalPower.toLocaleString()}</div>
+                  <div className="text-zinc-400 text-sm mt-1">총 전투력</div>
+                </div>
               </div>
-              <div className="grid grid-cols-4 md:grid-cols-8 gap-4 text-center mb-6">
+
+              {/* 직업별 분포 */}
+              <div className="grid grid-cols-4 md:grid-cols-8 gap-3 mb-6">
                 {CLASS_INFO.map((cls) => (
-                  <div key={cls.name}>
-                    <div className="text-2xl mb-1">{cls.icon}</div>
-                    <div className={`text-xl font-bold ${cls.color}`}>{getClassCount(cls.name)}</div>
-                    <div className="text-zinc-400 text-xs mt-1">{cls.name}</div>
+                  <div key={cls.name} className="text-center">
+                    <div className="text-xl">{cls.icon}</div>
+                    <div className={`text-lg font-bold ${cls.color}`}>{getClassCount(cls.name)}</div>
+                    <div className="text-zinc-500 text-xs">{cls.name}</div>
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-2 gap-6 text-center border-t border-zinc-700 pt-6">
-                <div>
-                  <div className="text-2xl font-bold text-indigo-400">{stats.discord}</div>
-                  <div className="text-zinc-300 text-sm mt-1">디스코드 참여</div>
+
+              {/* 소통 현황 */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-700">
+                <div className="flex items-center justify-center gap-3 bg-zinc-900 rounded-lg p-3">
+                  <span className="text-indigo-400 text-xl">💬</span>
+                  <div>
+                    <span className="text-white font-bold">{stats.discord}</span>
+                    <span className="text-zinc-400 text-sm ml-1">디스코드</span>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-400">{stats.kakao}</div>
-                  <div className="text-zinc-300 text-sm mt-1">카카오톡 참여</div>
+                <div className="flex items-center justify-center gap-3 bg-zinc-900 rounded-lg p-3">
+                  <span className="text-yellow-400 text-xl">💛</span>
+                  <div>
+                    <span className="text-white font-bold">{stats.kakao}</span>
+                    <span className="text-zinc-400 text-sm ml-1">카카오톡</span>
+                  </div>
                 </div>
               </div>
             </>
           )}
         </section>
+
+        {/* 공지사항 */}
+        <Link
+          href="/notice"
+          className="block bg-zinc-800 rounded-xl border border-zinc-700 p-4 mb-8 hover:border-amber-500/50 hover:bg-zinc-750 transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📢</span>
+              <div>
+                <span className="font-semibold text-white">공지사항</span>
+                <span className="text-zinc-400 text-sm ml-2">길드 규칙 · 루드라 파티 규칙</span>
+              </div>
+            </div>
+            <span className="text-zinc-400">→</span>
+          </div>
+        </Link>
+
+        {/* 참여 링크 */}
+        <section className="grid grid-cols-2 gap-4">
+          <a
+            href="https://discord.gg/DgwjWYMu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-4 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💬</div>
+            <div className="font-semibold text-white">디스코드 참여</div>
+          </a>
+          <a
+            href="https://open.kakao.com/o/gr52NRmg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-yellow-500 hover:bg-yellow-400 rounded-xl p-4 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💛</div>
+            <div className="font-semibold text-zinc-900">카카오톡 참여</div>
+            <div className="text-xs text-zinc-700 mt-1">참여코드: Aion222</div>
+          </a>
+        </section>
       </main>
 
-      <footer className="border-t border-zinc-800 mt-16">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-zinc-400 text-sm">
+      <footer className="border-t border-zinc-800 mt-12">
+        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
           <p>사계 길드 · AION2 지켈 서버 (마족)</p>
-          <p className="mt-1">Powered by Next.js & Vercel</p>
         </div>
       </footer>
     </div>
