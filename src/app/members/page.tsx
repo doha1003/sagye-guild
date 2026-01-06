@@ -7,7 +7,7 @@ import Link from 'next/link';
 const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성'] as const;
 
 const CLASS_ICONS: Record<string, string> = {
-  '검성': '⚔️',
+  '검성': '🗡️',
   '수호성': '🛡️',
   '살성': '🗡️',
   '궁성': '🏹',

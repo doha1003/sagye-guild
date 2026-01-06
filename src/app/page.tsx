@@ -13,7 +13,7 @@ interface GuildMember {
 }
 
 const CLASS_INFO: { name: string; icon: string; color: string }[] = [
-  { name: '검성', icon: '⚔️', color: 'text-red-400' },
+  { name: '검성', icon: '🗡️', color: 'text-red-400' },
   { name: '수호성', icon: '🛡️', color: 'text-blue-400' },
   { name: '살성', icon: '🗡️', color: 'text-purple-400' },
   { name: '궁성', icon: '🏹', color: 'text-green-400' },
