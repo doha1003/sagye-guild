@@ -9,16 +9,16 @@ interface GuildMember {
   kakao: string;
 }
 
-const ROLES: Record<string, string> = {
-  '수호성': 'tank',
-  '검성': 'dps',
-  '살성': 'dps',
-  '궁성': 'dps',
-  '정령성': 'dps',
-  '마도성': 'dps',
-  '치유성': 'healer',
-  '호법성': 'support',
-};
+const CLASS_INFO: { name: string; icon: string; color: string }[] = [
+  { name: '검성', icon: '⚔️', color: 'text-red-400' },
+  { name: '수호성', icon: '🛡️', color: 'text-blue-400' },
+  { name: '살성', icon: '🗡️', color: 'text-purple-400' },
+  { name: '궁성', icon: '🏹', color: 'text-green-400' },
+  { name: '정령성', icon: '🔮', color: 'text-cyan-400' },
+  { name: '마도성', icon: '✨', color: 'text-pink-400' },
+  { name: '치유성', icon: '💚', color: 'text-emerald-400' },
+  { name: '호법성', icon: '📿', color: 'text-yellow-400' },
+];
 
 export default function Home() {
   const [members, setMembers] = useState<GuildMember[]>([]);
@@ -36,12 +36,11 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
+  const getClassCount = (className: string) =>
+    members.filter(m => m.className === className).length;
+
   const stats = {
     total: members.length,
-    tank: members.filter(m => ROLES[m.className] === 'tank').length,
-    dps: members.filter(m => ROLES[m.className] === 'dps').length,
-    healer: members.filter(m => ROLES[m.className] === 'healer').length,
-    support: members.filter(m => ROLES[m.className] === 'support').length,
     discord: members.filter(m => m.discord === 'O').length,
     kakao: members.filter(m => m.kakao === 'O').length,
   };
@@ -90,23 +89,18 @@ export default function Home() {
             <p className="text-center text-zinc-400">로딩 중...</p>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-6">
-                <div>
-                  <div className="text-3xl font-bold text-amber-400">{stats.total}</div>
-                  <div className="text-zinc-300 text-sm mt-1">총 길드원</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-400">{stats.tank}</div>
-                  <div className="text-zinc-300 text-sm mt-1">탱커</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-red-400">{stats.dps}</div>
-                  <div className="text-zinc-300 text-sm mt-1">딜러</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-green-400">{stats.healer + stats.support}</div>
-                  <div className="text-zinc-300 text-sm mt-1">힐러/서폿</div>
-                </div>
+              <div className="text-center mb-6">
+                <div className="text-4xl font-bold text-amber-400">{stats.total}</div>
+                <div className="text-zinc-300 text-sm mt-1">총 길드원</div>
+              </div>
+              <div className="grid grid-cols-4 md:grid-cols-8 gap-4 text-center mb-6">
+                {CLASS_INFO.map((cls) => (
+                  <div key={cls.name}>
+                    <div className="text-2xl mb-1">{cls.icon}</div>
+                    <div className={`text-xl font-bold ${cls.color}`}>{getClassCount(cls.name)}</div>
+                    <div className="text-zinc-400 text-xs mt-1">{cls.name}</div>
+                  </div>
+                ))}
               </div>
               <div className="grid grid-cols-2 gap-6 text-center border-t border-zinc-700 pt-6">
                 <div>
