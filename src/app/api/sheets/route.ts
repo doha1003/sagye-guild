@@ -32,6 +32,17 @@ export async function GET(request: NextRequest) {
     // 컬럼 헤더 추출
     const headers = table.cols.map((col: { label: string }) => col.label);
 
+    // 년생 정리 함수 (앞의 따옴표 제거, 숫자만 추출)
+    const cleanAge = (value: string | number | null): string => {
+      if (!value) return '';
+      const str = String(value).replace(/^['']/, '').trim(); // 앞의 따옴표 제거
+      // 2자리 숫자면 년생으로 표시
+      if (/^\d{2}$/.test(str)) {
+        return `${str}년생`;
+      }
+      return str;
+    };
+
     // 행 데이터 변환
     const members = table.rows.map((row: { c: Array<{ v: string | number | null }> }, index: number) => {
       const cells = row.c.map((cell: { v: string | number | null } | null) => cell?.v ?? '');
@@ -41,7 +52,7 @@ export async function GET(request: NextRequest) {
         rank: cells[0] || '',           // 계급
         nickname: cells[1] || '',       // 캐릭터명
         className: cells[2] || '',      // 직업
-        age: cells[3] || '',            // 나이
+        age: cleanAge(cells[3]),        // 나이 (정리됨)
         discord: cells[4] || '',        // 디스코드
         kakao: cells[5] || '',          // 카카오톡
         athul: cells[6] || '',          // 아툴
