@@ -74,8 +74,9 @@ async function main() {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.waitForTimeout(2500);
 
-      let combatPower = null;
-      let combatScore = null;
+      let combatPower = null;      // 현재 전투력
+      let combatScore = null;      // 현재 전투점수
+      let maxCombatScore = null;   // 최고 전투점수
 
       try {
         combatPower = await page.$eval('#result-combat-power', el => el.textContent.trim());
@@ -85,14 +86,34 @@ async function main() {
         combatScore = await page.$eval('#dps-score-value', el => el.textContent.trim());
       } catch {}
 
-      if (combatPower || combatScore) {
+      // 최고 전투점수 찾기 (여러 선택자 시도)
+      try {
+        maxCombatScore = await page.$eval('#max-dps-score-value', el => el.textContent.trim());
+      } catch {}
+      if (!maxCombatScore) {
+        try {
+          maxCombatScore = await page.$eval('.max-combat-score', el => el.textContent.trim());
+        } catch {}
+      }
+      if (!maxCombatScore) {
+        try {
+          maxCombatScore = await page.$eval('[data-max-score]', el => el.textContent.trim());
+        } catch {}
+      }
+      // 최고 점수를 못 찾으면 현재 점수로 대체
+      if (!maxCombatScore && combatScore) {
+        maxCombatScore = combatScore;
+      }
+
+      if (combatPower || combatScore || maxCombatScore) {
         results.push({
           row: member.row,
           nickname: member.nickname,
+          maxCombatScore: maxCombatScore ? maxCombatScore.replace(/,/g, '') : '',
           combatScore: combatScore ? combatScore.replace(/,/g, '') : '',
           combatPower: combatPower ? combatPower.replace(/,/g, '') : '',
         });
-        console.log(`=> ${combatScore || '-'} / ${combatPower || '-'}`);
+        console.log(`=> 최고:${maxCombatScore || '-'} / 현재:${combatScore || '-'} / 전투력:${combatPower || '-'}`);
       } else {
         console.log(`=> 데이터 없음`);
       }
@@ -111,13 +132,20 @@ async function main() {
     return;
   }
 
+  // 수집 시간 기록
+  const now = new Date();
+  const collectTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
   try {
     const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(results),
+      body: JSON.stringify({
+        results: results,
+        collectTime: collectTime,
+      }),
       redirect: 'follow',
     });
 
@@ -133,10 +161,10 @@ async function main() {
   }
 
   console.log(`수집 결과: ${results.length}명\n`);
-  console.log('닉네임           | 전투점수  | 전투력');
-  console.log('------------------------------------------');
+  console.log('닉네임           | 최고점수  | 현재점수  | 전투력');
+  console.log('----------------------------------------------------');
   results.forEach(r => {
-    console.log(`${r.nickname.padEnd(15)} | ${r.combatScore.padStart(8)} | ${r.combatPower.padStart(6)}`);
+    console.log(`${r.nickname.padEnd(15)} | ${r.maxCombatScore.padStart(8)} | ${r.combatScore.padStart(8)} | ${r.combatPower.padStart(6)}`);
   });
   console.log('');
 }

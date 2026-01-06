@@ -28,6 +28,7 @@ interface GuildMember {
   age: string;
   discord: string;
   kakao: string;
+  maxCombatScore?: number;
   combatScore?: number;
   combatPower?: number;
 }
@@ -36,6 +37,7 @@ export default function MembersPage() {
   const [members, setMembers] = useState<GuildMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [collectTime, setCollectTime] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('전체');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -49,6 +51,9 @@ export default function MembersPage() {
       if (data.members) {
         setMembers(data.members);
         setLastUpdated(data.lastUpdated);
+        if (data.collectTime) {
+          setCollectTime(data.collectTime);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch members:', error);
@@ -75,9 +80,9 @@ export default function MembersPage() {
     count: members.filter(m => m.className === cls).length,
   }));
 
-  // 전투점수 순 정렬
+  // 최고 전투점수 순 정렬
   const sortedMembers = [...filteredMembers].sort((a, b) =>
-    (b.combatScore || 0) - (a.combatScore || 0)
+    (Number(b.maxCombatScore) || 0) - (Number(a.maxCombatScore) || 0)
   );
 
   return (
@@ -184,7 +189,8 @@ export default function MembersPage() {
                     <th className="text-left p-3 font-medium">직업</th>
                     <th className="text-left p-3 font-medium">계급</th>
                     <th className="text-center p-3 font-medium">년생</th>
-                    <th className="text-right p-3 font-medium">전투점수</th>
+                    <th className="text-right p-3 font-medium">최고점수</th>
+                    <th className="text-right p-3 font-medium">현재점수</th>
                     <th className="text-right p-3 font-medium">전투력</th>
                     <th className="text-center p-3 font-medium">디코</th>
                     <th className="text-center p-3 font-medium">카톡</th>
@@ -205,8 +211,17 @@ export default function MembersPage() {
                       <td className="p-3 text-zinc-300">{member.rank}</td>
                       <td className="p-3 text-center text-zinc-300">{member.age || '-'}</td>
                       <td className="p-3 text-right font-mono">
-                        {member.combatScore ? (
+                        {member.maxCombatScore ? (
                           <span className="text-amber-400 font-semibold">
+                            {Number(member.maxCombatScore).toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-zinc-500">-</span>
+                        )}
+                      </td>
+                      <td className="p-3 text-right font-mono">
+                        {member.combatScore ? (
+                          <span className="text-cyan-400">
                             {Number(member.combatScore).toLocaleString()}
                           </span>
                         ) : (
@@ -254,10 +269,14 @@ export default function MembersPage() {
           )}
         </section>
 
-        <p className="mt-4 text-sm text-zinc-500 text-center">
-          구글 시트 연동 · aion2tool.com 실시간 데이터
-          {lastUpdated && ` · ${new Date(lastUpdated).toLocaleTimeString('ko-KR')} 갱신`}
-        </p>
+        <div className="mt-4 text-sm text-zinc-500 text-center">
+          {collectTime && (
+            <p className="text-amber-400 mb-1">
+              📊 전투 정보 수집 시간: {collectTime}
+            </p>
+          )}
+          <p>구글 시트 연동 · aion2tool.com 데이터</p>
+        </div>
       </main>
     </div>
   );

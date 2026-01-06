@@ -56,14 +56,24 @@ export async function GET(request: NextRequest) {
         age: cleanAge(cells[3]),        // D: 나이 (정리됨)
         discord: cells[4] || '',        // E: 디스코드
         kakao: cells[5] || '',          // F: 카카오톡
-        combatScore: cells[6] || 0,     // G: 전투점수
-        combatPower: cells[7] || 0,     // H: 전투력
+        maxCombatScore: cells[6] || 0,  // G: 최고 전투점수
+        combatScore: cells[7] || 0,     // H: 현재 전투점수
+        combatPower: cells[8] || 0,     // I: 전투력
       };
     }).filter((m: { nickname: string }) => m.nickname); // 빈 행 제거
+
+    // J1 셀에서 수집 시간 가져오기 (있으면)
+    let collectTime = '';
+    try {
+      if (table.cols.length >= 10 && table.rows[0]?.c[9]?.v) {
+        collectTime = String(table.rows[0].c[9].v);
+      }
+    } catch {}
 
     return NextResponse.json({
       headers,
       members,
+      collectTime,
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {

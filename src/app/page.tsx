@@ -7,6 +7,7 @@ interface GuildMember {
   className: string;
   discord: string;
   kakao: string;
+  maxCombatScore?: number;
   combatScore?: number;
   combatPower?: number;
 }
