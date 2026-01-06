@@ -32,13 +32,14 @@ export async function GET(request: NextRequest) {
     // 컬럼 헤더 추출
     const headers = table.cols.map((col: { label: string }) => col.label);
 
-    // 년생 정리 함수 (앞의 따옴표 제거, 숫자만 추출)
+    // 년생 정리 함수 (앞의 따옴표 제거, 숫자 처리)
     const cleanAge = (value: string | number | null): string => {
-      if (!value) return '';
+      if (value === null || value === undefined || value === '') return '';
       const str = String(value).replace(/^['']/, '').trim(); // 앞의 따옴표 제거
-      // 2자리 숫자면 년생으로 표시
-      if (/^\d{2}$/.test(str)) {
-        return `${str}년생`;
+      // 숫자면 년생으로 표시 (0~9는 00~09로 패딩)
+      if (/^\d{1,2}$/.test(str)) {
+        const padded = str.padStart(2, '0');
+        return `${padded}년생`;
       }
       return str;
     };
