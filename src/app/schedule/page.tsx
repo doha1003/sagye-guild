@@ -3,83 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-// 요일
-const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
-
-// 컨텐츠 타입별 색상
-const CONTENT_COLORS: Record<string, string> = {
-  '루드라': 'bg-purple-600',
-  '던전': 'bg-blue-600',
-  '필보': 'bg-red-600',
-  '쟁': 'bg-orange-600',
-  '레이드': 'bg-green-600',
-  '기타': 'bg-zinc-600',
-};
-
-// 고정 일정 (매주 반복)
-const WEEKLY_SCHEDULE = [
-  // 월요일
-  { day: 1, time: '21:00', title: '루드라 트라이', type: '루드라', duration: 120 },
-  // 화요일
-  { day: 2, time: '21:00', title: '던전 파밍', type: '던전', duration: 90 },
-  // 수요일
-  { day: 3, time: '21:00', title: '루드라 트라이', type: '루드라', duration: 120 },
-  // 목요일
-  { day: 4, time: '21:00', title: '던전 파밍', type: '던전', duration: 90 },
-  // 금요일
-  { day: 5, time: '21:00', title: '자유 컨텐츠', type: '기타', duration: 120 },
-  // 토요일
-  { day: 6, time: '16:00', title: '루드라 트라이 (4트)', type: '루드라', duration: 240 },
-  { day: 6, time: '21:00', title: '쟁/PVP', type: '쟁', duration: 120 },
-  // 일요일
-  { day: 0, time: '16:00', title: '레이드', type: '레이드', duration: 180 },
-  { day: 0, time: '21:00', title: '쟁/PVP', type: '쟁', duration: 120 },
-];
-
-// 필드보스 시간표
-const FIELD_BOSS_TIMES = [
-  { time: '12:00', boss: '필드보스' },
-  { time: '19:00', boss: '필드보스' },
-  { time: '22:00', boss: '필드보스' },
-];
-
 export default function SchedulePage() {
-  const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
-
-  // 현재 주의 시작일 (일요일 기준)
-  const getWeekStart = (offset: number) => {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const diff = today.getDate() - dayOfWeek + (offset * 7);
-    const weekStart = new Date(today.setDate(diff));
-    weekStart.setHours(0, 0, 0, 0);
-    return weekStart;
-  };
-
-  const weekStart = getWeekStart(currentWeekOffset);
-
-  // 주간 날짜 배열 생성
-  const weekDates = DAYS.map((_, index) => {
-    const date = new Date(weekStart);
-    date.setDate(weekStart.getDate() + index);
-    return date;
-  });
-
-  // 오늘 날짜 확인
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  // 해당 요일의 일정 가져오기
-  const getScheduleForDay = (dayIndex: number) => {
-    return WEEKLY_SCHEDULE.filter(s => s.day === dayIndex);
-  };
+  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'boss'>('daily');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-950">
       <header className="border-b border-zinc-800">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
             사계 길드
           </Link>
@@ -90,123 +20,295 @@ export default function SchedulePage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-white">일정표</h1>
-            <p className="text-zinc-400 mt-1">주간 레기온 일정</p>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white">일정표</h1>
+          <p className="text-zinc-400 mt-1">아이온2 컨텐츠 스케줄</p>
+        </div>
+
+        {/* 초기화 시간 안내 */}
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">⏰</span>
+            <span className="font-bold text-amber-400">초기화 시간</span>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentWeekOffset(currentWeekOffset - 1)}
-              className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-lg"
-            >
-              ◀ 이전주
-            </button>
-            <button
-              onClick={() => setCurrentWeekOffset(0)}
-              className="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg font-medium"
-            >
-              이번주
-            </button>
-            <button
-              onClick={() => setCurrentWeekOffset(currentWeekOffset + 1)}
-              className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-lg"
-            >
-              다음주 ▶
-            </button>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-zinc-400">일일 초기화:</span>
+              <span className="text-white ml-2 font-bold">매일 05:00</span>
+            </div>
+            <div>
+              <span className="text-zinc-400">주간 초기화:</span>
+              <span className="text-white ml-2 font-bold">수요일 05:00</span>
+            </div>
           </div>
         </div>
 
-        {/* 안내 */}
-        <div className="bg-zinc-800 rounded-lg p-4 mb-6 text-sm text-zinc-300">
-          <p>📌 일정은 변동될 수 있으며, 정확한 일정은 <span className="text-indigo-400">디스코드</span>에서 확인해주세요.</p>
-          <p className="mt-1">📌 루드라 파티 모집은 디스코드 채널에서 진행됩니다.</p>
+        {/* 탭 */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setActiveTab('daily')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === 'daily'
+                ? 'bg-amber-500 text-black'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            일일 컨텐츠
+          </button>
+          <button
+            onClick={() => setActiveTab('weekly')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === 'weekly'
+                ? 'bg-amber-500 text-black'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            주간 컨텐츠
+          </button>
+          <button
+            onClick={() => setActiveTab('boss')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === 'boss'
+                ? 'bg-amber-500 text-black'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            필드보스
+          </button>
         </div>
 
-        {/* 주간 달력 */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden mb-8">
-          {/* 요일 헤더 */}
-          <div className="grid grid-cols-7 border-b border-zinc-700">
-            {weekDates.map((date, index) => (
-              <div
-                key={index}
-                className={`p-3 text-center border-r border-zinc-700 last:border-r-0 ${
-                  isToday(date) ? 'bg-amber-500/20' : ''
-                } ${index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-zinc-300'}`}
-              >
-                <div className="font-medium">{DAYS[index]}</div>
-                <div className={`text-2xl font-bold ${isToday(date) ? 'text-amber-400' : ''}`}>
-                  {date.getDate()}
-                </div>
-                {isToday(date) && (
-                  <div className="text-xs text-amber-400 mt-1">오늘</div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 일정 내용 */}
-          <div className="grid grid-cols-7 min-h-[300px]">
-            {weekDates.map((date, dayIndex) => (
-              <div
-                key={dayIndex}
-                className={`p-2 border-r border-zinc-700 last:border-r-0 ${
-                  isToday(date) ? 'bg-amber-500/5' : ''
-                }`}
-              >
-                {getScheduleForDay(dayIndex).map((schedule, idx) => (
-                  <div
-                    key={idx}
-                    className={`${CONTENT_COLORS[schedule.type]} rounded-lg p-2 mb-2 text-xs`}
-                  >
-                    <div className="font-bold text-white">{schedule.time}</div>
-                    <div className="text-white/90 mt-1">{schedule.title}</div>
-                    <div className="text-white/60 text-[10px] mt-1">
-                      {Math.floor(schedule.duration / 60)}시간 {schedule.duration % 60 > 0 ? `${schedule.duration % 60}분` : ''}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+        {/* 컨텐츠 */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
+          {activeTab === 'daily' && <DailyContent />}
+          {activeTab === 'weekly' && <WeeklyContent />}
+          {activeTab === 'boss' && <FieldBossContent />}
         </div>
 
-        {/* 필드보스 시간표 */}
-        <section className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 mb-8">
+        {/* 시간별 컨텐츠 */}
+        <section className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 mt-6">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <span>🐉</span> 필드보스 시간표
+            <span>🕐</span> 시간별 컨텐츠
           </h2>
-          <div className="grid grid-cols-3 gap-4">
-            {FIELD_BOSS_TIMES.map((fb, idx) => (
-              <div key={idx} className="bg-red-600/20 border border-red-600/30 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-red-400">{fb.time}</div>
-                <div className="text-zinc-300 text-sm mt-1">{fb.boss}</div>
+          <div className="space-y-3">
+            <div className="bg-zinc-900 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-cyan-400 font-bold">슈고 페스타</span>
+                  <span className="text-zinc-400 text-sm ml-2">미니게임</span>
+                </div>
+                <span className="text-white font-mono">매시 15분, 45분</span>
               </div>
-            ))}
+              <p className="text-zinc-500 text-sm mt-1">참여만 해도 어비스 포인트 160+ 획득</p>
+            </div>
+            <div className="bg-zinc-900 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-purple-400 font-bold">원정 보상 충전</span>
+                  <span className="text-zinc-400 text-sm ml-2">정복 난이도</span>
+                </div>
+                <span className="text-white font-mono">05:00 / 13:00 / 21:00</span>
+              </div>
+              <p className="text-zinc-500 text-sm mt-1">하루 3회 보상 획득 가능</p>
+            </div>
+            <div className="bg-zinc-900 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-red-400 font-bold">차원 침공</span>
+                  <span className="text-zinc-400 text-sm ml-2">PvE 이벤트</span>
+                </div>
+                <span className="text-white font-mono">특정 시간 정각</span>
+              </div>
+              <p className="text-zinc-500 text-sm mt-1">맵에 알림 확인</p>
+            </div>
           </div>
-          <p className="text-zinc-500 text-xs mt-4 text-center">* 필드보스 시간은 서버 상황에 따라 변동될 수 있습니다</p>
         </section>
 
-        {/* 컨텐츠 범례 */}
-        <section className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
-          <h2 className="text-lg font-bold text-white mb-4">컨텐츠 분류</h2>
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(CONTENT_COLORS).map(([type, color]) => (
-              <div key={type} className="flex items-center gap-2">
-                <div className={`w-4 h-4 rounded ${color}`}></div>
-                <span className="text-zinc-300 text-sm">{type}</span>
+        {/* 성역 루드라 */}
+        <section className="bg-gradient-to-r from-purple-900/30 to-zinc-800 rounded-xl border border-purple-500/30 p-6 mt-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span>⚔️</span> 성역: 루드라
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-zinc-400">주간 입장 횟수</span>
+                <span className="text-white font-bold">4회</span>
               </div>
-            ))}
+              <div className="flex justify-between">
+                <span className="text-zinc-400">제한 시간</span>
+                <span className="text-white font-bold">1시간 / 회</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-400">최소 아이템 레벨</span>
+                <span className="text-white font-bold">2,700</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-400">권장 아이템 레벨</span>
+                <span className="text-amber-400 font-bold">3,200+</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-zinc-400">인원</span>
+                <span className="text-white font-bold">8인 (2파티)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-400">막보 큐브</span>
+                <span className="text-white font-bold">주 2회</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-400">네임드 보상</span>
+                <span className="text-green-400 font-bold">매 처치시</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-400">초기화</span>
+                <span className="text-white font-bold">수요일 05:00</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-purple-500/20">
+            <p className="text-sm text-zinc-400">
+              <span className="text-purple-400">📌</span> 1페 라후 → 2페 케투 → 3페 루드라 (총 3보스)
+            </p>
           </div>
         </section>
       </main>
 
       <footer className="border-t border-zinc-800 mt-12">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
+        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
           <p>사계 길드 · AION2 지켈 서버 (마족)</p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function DailyContent() {
+  const dailyContents = [
+    { name: '사명 임무', count: '5회', reward: '유일 장비 확률', color: 'text-green-400' },
+    { name: '악몽 던전', count: '2회', reward: '몽환의 파편', color: 'text-purple-400' },
+    { name: '초월 던전', count: '2회', reward: '돌파석 조각, 아르카나', color: 'text-cyan-400' },
+    { name: '원정 (정복)', count: '3회', reward: '05/13/21시 충전', color: 'text-blue-400' },
+    { name: '긴급 어비스 보급', count: '1회', reward: '어비스 포인트', color: 'text-red-400' },
+    { name: '검은 구름 무역단', count: '시간별', reward: '골드, 재화', color: 'text-yellow-400' },
+  ];
+
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-white mb-4">일일 컨텐츠 (매일 05:00 초기화)</h3>
+      <div className="space-y-3">
+        {dailyContents.map((content, idx) => (
+          <div key={idx} className="bg-zinc-900 rounded-lg p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className={`font-bold ${content.color}`}>{content.name}</span>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold">{content.count}</div>
+              <div className="text-zinc-500 text-xs">{content.reward}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WeeklyContent() {
+  const weeklyContents = [
+    { name: '성역 (루드라)', count: '4회', reward: '최상급 장비', color: 'text-purple-400' },
+    { name: '일일 던전 (미지의 틈새)', count: '7회', reward: '달성도 보상', color: 'text-blue-400' },
+    { name: '각성전', count: '3회', reward: '실렌티움, 데비니온', color: 'text-cyan-400' },
+    { name: '토벌전', count: '3회', reward: '마석/영석 상자', color: 'text-green-400' },
+    { name: '어비스 시간', count: '7시간', reward: '멤버십 14시간', color: 'text-red-400' },
+    { name: '시즌 주간 보상', count: '-', reward: '랭킹 보상', color: 'text-amber-400' },
+  ];
+
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-white mb-4">주간 컨텐츠 (수요일 05:00 초기화)</h3>
+      <div className="space-y-3">
+        {weeklyContents.map((content, idx) => (
+          <div key={idx} className="bg-zinc-900 rounded-lg p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className={`font-bold ${content.color}`}>{content.name}</span>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold">{content.count}</div>
+              <div className="text-zinc-500 text-xs">{content.reward}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+        <p className="text-amber-300 text-sm">
+          ⚠️ 산들바람 상회 특수 물품은 <span className="font-bold">일요일 자정</span>에 초기화
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function FieldBossContent() {
+  const bosses = [
+    {
+      faction: '마족',
+      bosses: [
+        { name: '녹아내린 다나르', location: '드레드기온 추락지', respawn: '1시간' },
+        { name: '어둠의 타크라', location: '이름없는 묘지', respawn: '1시간' },
+        { name: '절망의 에탄', location: '고대 연구 단지', respawn: '1시간' },
+        { name: '군단장 라그타', location: '불멸의 요새', respawn: '24시간' },
+        { name: '불멸의 가르투아', location: '불멸의 섬', respawn: '24시간' },
+      ]
+    },
+    {
+      faction: '어비스',
+      bosses: [
+        { name: '감시자 카이라', location: '에레슈란타 하층', respawn: '1시간' },
+        { name: '정령왕 아그로', location: '시엘의 날개 군도', respawn: '12시간' },
+        { name: '수호신장 나흐마', location: '어비스', respawn: '주말' },
+      ]
+    },
+  ];
+
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-white mb-4">필드보스 리젠 시간</h3>
+
+      {bosses.map((group, idx) => (
+        <div key={idx} className="mb-6 last:mb-0">
+          <h4 className={`font-bold mb-3 ${
+            group.faction === '마족' ? 'text-red-400' : 'text-purple-400'
+          }`}>
+            {group.faction} 진영
+          </h4>
+          <div className="space-y-2">
+            {group.bosses.map((boss, bIdx) => (
+              <div key={bIdx} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                <div>
+                  <div className="text-white font-medium">{boss.name}</div>
+                  <div className="text-zinc-500 text-xs">{boss.location}</div>
+                </div>
+                <div className={`font-bold ${
+                  boss.respawn === '1시간' ? 'text-green-400' :
+                  boss.respawn === '12시간' ? 'text-yellow-400' : 'text-red-400'
+                }`}>
+                  {boss.respawn}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="mt-4 p-3 bg-zinc-900 rounded-lg">
+        <p className="text-zinc-400 text-sm">
+          📌 리젠 시간은 처치 후 기준이며, 실제 스폰은 ±10분 오차 있음
+        </p>
+        <p className="text-zinc-400 text-sm mt-1">
+          📌 보스 스폰 시 맵에 아이콘 표시됨
+        </p>
+      </div>
     </div>
   );
 }
