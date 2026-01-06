@@ -90,10 +90,10 @@ export default function MembersPage() {
       <header className="border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            사계 길드
+            사계 레기온
           </Link>
           <nav className="flex gap-4 text-sm">
-            <Link href="/members" className="text-amber-400">길드원</Link>
+            <Link href="/members" className="text-amber-400">레기온원</Link>
             <Link href="/schedule" className="text-zinc-400 hover:text-white">일정</Link>
           </nav>
         </div>
@@ -107,26 +107,26 @@ export default function MembersPage() {
           </p>
         </div>
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white">길드원 관리</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">레기온원 관리</h1>
             <p className="text-zinc-400 mt-1">지켈 서버 · 마족 · {members.length}명</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => fetchMembers(true)}
               disabled={loading}
-              className="text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-3 sm:px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '로딩...' : '⟳ 시트 새로고침'}
+              {loading ? '로딩...' : '⟳ 새로고침'}
             </button>
             <a
               href="https://docs.google.com/spreadsheets/d/1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo/edit"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg"
+              className="text-xs sm:text-sm bg-zinc-700 hover:bg-zinc-600 text-white px-3 sm:px-4 py-2 rounded-lg"
             >
-              📝 시트 편집
+              📝 시트
             </a>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function MembersPage() {
         </div>
 
         {/* 직업별 필터 */}
-        <section className="flex flex-wrap gap-2 mb-6">
+        <section className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
           {CLASSES.map((cls) => {
             const count = cls === '전체'
               ? members.length
@@ -152,13 +152,13 @@ export default function MembersPage() {
               <button
                 key={cls}
                 onClick={() => setActiveFilter(cls)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   activeFilter === cls
-                    ? 'bg-amber-500 text-black'
+                    ? 'bg-amber-500 text-zinc-900'
                     : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white'
                 }`}
               >
-                {cls !== '전체' && CLASS_ICONS[cls]} {cls} ({count})
+                {cls !== '전체' && <span className="hidden sm:inline">{CLASS_ICONS[cls]} </span>}{cls} ({count})
               </button>
             );
           })}
@@ -178,94 +178,167 @@ export default function MembersPage() {
             </div>
           ) : sortedMembers.length === 0 ? (
             <div className="p-8 text-center text-zinc-400">
-              {members.length === 0 ? '등록된 길드원이 없습니다.' : '검색 결과가 없습니다.'}
+              {members.length === 0 ? '등록된 레기온원이 없습니다.' : '검색 결과가 없습니다.'}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-zinc-900">
-                  <tr className="text-zinc-400">
-                    <th className="text-left p-3 font-medium">캐릭터</th>
-                    <th className="text-left p-3 font-medium">직업</th>
-                    <th className="text-left p-3 font-medium">계급</th>
-                    <th className="text-center p-3 font-medium">년생</th>
-                    <th className="text-right p-3 font-medium">최고점수</th>
-                    <th className="text-right p-3 font-medium">현재점수</th>
-                    <th className="text-right p-3 font-medium">전투력</th>
-                    <th className="text-center p-3 font-medium">디코</th>
-                    <th className="text-center p-3 font-medium">카톡</th>
-                    <th className="text-center p-3 font-medium">아툴</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-700">
-                  {sortedMembers.map((member) => (
-                    <tr key={member.id} className="hover:bg-zinc-700/50">
-                      <td className="p-3">
-                        <span className="font-medium text-white">{member.nickname}</span>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-zinc-200">
-                          {CLASS_ICONS[member.className] || ''} {member.className}
-                        </span>
-                      </td>
-                      <td className="p-3 text-zinc-300">{member.rank}</td>
-                      <td className="p-3 text-center text-zinc-300">{member.age || '-'}</td>
-                      <td className="p-3 text-right font-mono">
-                        {member.maxCombatScore ? (
-                          <span className="text-amber-400 font-semibold">
-                            {Number(member.maxCombatScore).toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-zinc-500">-</span>
-                        )}
-                      </td>
-                      <td className="p-3 text-right font-mono">
-                        {member.combatScore ? (
-                          <span className="text-cyan-400">
-                            {Number(member.combatScore).toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-zinc-500">-</span>
-                        )}
-                      </td>
-                      <td className="p-3 text-right font-mono">
-                        {member.combatPower ? (
-                          <span className="text-zinc-200">
-                            {Number(member.combatPower).toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-zinc-500">-</span>
-                        )}
-                      </td>
-                      <td className="p-3 text-center">
+            <>
+              {/* 모바일: 카드 형태 */}
+              <div className="md:hidden divide-y divide-zinc-700">
+                {sortedMembers.map((member) => (
+                  <div key={member.id} className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-base">{member.nickname}</span>
+                        <span className="text-zinc-400 text-xs">{member.rank}</span>
+                      </div>
+                      <a
+                        href={`https://www.aion2tool.com/char/serverid=${ZIKEL_SERVER_ID}/${encodeURIComponent(member.nickname)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 text-xs hover:underline"
+                      >
+                        아툴 →
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm">{CLASS_ICONS[member.className] || ''} {member.className}</span>
+                      {member.age === 'X' || member.age === 'x' ? (
+                        <span className="text-red-400 text-xs">· 미입력</span>
+                      ) : member.age ? (
+                        <span className="text-zinc-500 text-xs">· {member.age}</span>
+                      ) : null}
+                      <div className="flex gap-1 ml-auto">
                         {member.discord === 'O' ? (
-                          <span className="text-green-400">✓</span>
+                          <span className="text-green-400 text-xs">디코✓</span>
                         ) : (
-                          <span className="text-zinc-600">-</span>
+                          <span className="text-red-400 text-xs">디코✗</span>
                         )}
-                      </td>
-                      <td className="p-3 text-center">
                         {member.kakao === 'O' ? (
-                          <span className="text-yellow-400">✓</span>
+                          <span className="text-yellow-400 text-xs">카톡✓</span>
                         ) : (
-                          <span className="text-zinc-600">-</span>
+                          <span className="text-red-400 text-xs">카톡✗</span>
                         )}
-                      </td>
-                      <td className="p-3 text-center">
-                        <a
-                          href={`https://www.aion2tool.com/char/serverid=${ZIKEL_SERVER_ID}/${encodeURIComponent(member.nickname)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:text-blue-300 hover:underline"
-                        >
-                          상세
-                        </a>
-                      </td>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center bg-zinc-900 rounded-lg p-2">
+                      <div>
+                        <div className="text-amber-400 font-bold text-sm">
+                          {member.maxCombatScore ? Number(member.maxCombatScore).toLocaleString() : '-'}
+                        </div>
+                        <div className="text-zinc-500 text-xs">최고점수</div>
+                      </div>
+                      <div>
+                        <div className="text-cyan-400 font-bold text-sm">
+                          {member.combatScore ? Number(member.combatScore).toLocaleString() : '-'}
+                        </div>
+                        <div className="text-zinc-500 text-xs">현재점수</div>
+                      </div>
+                      <div>
+                        <div className="text-zinc-200 font-bold text-sm">
+                          {member.combatPower ? Number(member.combatPower).toLocaleString() : '-'}
+                        </div>
+                        <div className="text-zinc-500 text-xs">전투력</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 데스크탑: 테이블 형태 */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-zinc-900">
+                    <tr className="text-zinc-400">
+                      <th className="text-left p-3 font-medium">캐릭터</th>
+                      <th className="text-left p-3 font-medium">직업</th>
+                      <th className="text-left p-3 font-medium">계급</th>
+                      <th className="text-center p-3 font-medium">년생</th>
+                      <th className="text-right p-3 font-medium">최고점수</th>
+                      <th className="text-right p-3 font-medium">현재점수</th>
+                      <th className="text-right p-3 font-medium">전투력</th>
+                      <th className="text-center p-3 font-medium">디코</th>
+                      <th className="text-center p-3 font-medium">카톡</th>
+                      <th className="text-center p-3 font-medium">아툴</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-700">
+                    {sortedMembers.map((member) => (
+                      <tr key={member.id} className="hover:bg-zinc-700/50">
+                        <td className="p-3">
+                          <span className="font-medium text-white">{member.nickname}</span>
+                        </td>
+                        <td className="p-3">
+                          <span className="text-zinc-200">
+                            {CLASS_ICONS[member.className] || ''} {member.className}
+                          </span>
+                        </td>
+                        <td className="p-3 text-zinc-300">{member.rank}</td>
+                        <td className="p-3 text-center">
+                          {member.age === 'X' || member.age === 'x' ? (
+                            <span className="text-red-400">미입력</span>
+                          ) : member.age ? (
+                            <span className="text-zinc-300">{member.age}</span>
+                          ) : (
+                            <span className="text-zinc-500">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-mono">
+                          {member.maxCombatScore ? (
+                            <span className="text-amber-400 font-semibold">
+                              {Number(member.maxCombatScore).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-zinc-500">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-mono">
+                          {member.combatScore ? (
+                            <span className="text-cyan-400">
+                              {Number(member.combatScore).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-zinc-500">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-mono">
+                          {member.combatPower ? (
+                            <span className="text-zinc-200">
+                              {Number(member.combatPower).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-zinc-500">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center">
+                          {member.discord === 'O' ? (
+                            <span className="text-green-400">✓</span>
+                          ) : (
+                            <span className="text-red-400">✗</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center">
+                          {member.kakao === 'O' ? (
+                            <span className="text-yellow-400">✓</span>
+                          ) : (
+                            <span className="text-red-400">✗</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center">
+                          <a
+                            href={`https://www.aion2tool.com/char/serverid=${ZIKEL_SERVER_ID}/${encodeURIComponent(member.nickname)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300 hover:underline"
+                          >
+                            상세
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
 

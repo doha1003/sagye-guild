@@ -1,5 +1,5 @@
 /**
- * 사계 길드 - 아툴 데이터 자동 수집
+ * 사계 레기온 - 아툴 데이터 자동 수집
  *
  * 결과: 구글 시트에 자동 업데이트
  */
@@ -15,12 +15,12 @@ const CONFIG = {
 async function main() {
   console.log('');
   console.log('==========================================');
-  console.log('   사계 길드 전투력 자동 수집');
+  console.log('   사계 레기온 전투력 자동 수집');
   console.log('==========================================');
   console.log('');
 
   // 1. 구글 시트에서 길드원 목록 가져오기
-  console.log('[1/3] 구글 시트에서 길드원 목록 가져오는 중...');
+  console.log('[1/3] 구글 시트에서 레기온원 목록 가져오는 중...');
 
   const sheetUrl = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json`;
 
@@ -86,20 +86,10 @@ async function main() {
         combatScore = await page.$eval('#dps-score-value', el => el.textContent.trim());
       } catch {}
 
-      // 최고 전투점수 찾기 (여러 선택자 시도)
+      // 최고 전투점수 찾기 (#combat-score-max-info 내의 strong 태그)
       try {
-        maxCombatScore = await page.$eval('#max-dps-score-value', el => el.textContent.trim());
+        maxCombatScore = await page.$eval('#combat-score-max-info strong', el => el.textContent.trim());
       } catch {}
-      if (!maxCombatScore) {
-        try {
-          maxCombatScore = await page.$eval('.max-combat-score', el => el.textContent.trim());
-        } catch {}
-      }
-      if (!maxCombatScore) {
-        try {
-          maxCombatScore = await page.$eval('[data-max-score]', el => el.textContent.trim());
-        } catch {}
-      }
       // 최고 점수를 못 찾으면 현재 점수로 대체
       if (!maxCombatScore && combatScore) {
         maxCombatScore = combatScore;
@@ -149,9 +139,16 @@ async function main() {
       redirect: 'follow',
     });
 
-    if (response.ok) {
+    const responseText = await response.text();
+    console.log('Apps Script 응답:', responseText);
+
+    if (response.ok && responseText === 'OK') {
       console.log('==========================================');
       console.log('   구글 시트 업데이트 완료!');
+      console.log('==========================================\n');
+    } else if (response.ok) {
+      console.log('==========================================');
+      console.log('   Apps Script 응답 받음 (확인 필요)');
       console.log('==========================================\n');
     } else {
       console.log('구글 시트 업데이트 실패:', response.status);

@@ -62,11 +62,23 @@ export async function GET(request: NextRequest) {
       };
     }).filter((m: { nickname: string }) => m.nickname); // 빈 행 제거
 
-    // J1 셀에서 수집 시간 가져오기 (있으면)
+    // J열에서 수집 시간 가져오기
     let collectTime = '';
     try {
       if (table.cols.length >= 10 && table.rows[0]?.c[9]?.v) {
-        collectTime = String(table.rows[0].c[9].v);
+        const rawValue = String(table.rows[0].c[9].v);
+        // Google Sheets Date 형식 파싱: Date(year,month,day,hour,min,sec)
+        const dateMatch = rawValue.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);
+        if (dateMatch) {
+          const [, year, month, day, hour, min] = dateMatch;
+          const m = String(Number(month) + 1).padStart(2, '0'); // month는 0부터 시작
+          const d = String(day).padStart(2, '0');
+          const h = String(hour).padStart(2, '0');
+          const mi = String(min).padStart(2, '0');
+          collectTime = `${year}-${m}-${d} ${h}:${mi}`;
+        } else {
+          collectTime = rawValue;
+        }
       }
     } catch {}
 

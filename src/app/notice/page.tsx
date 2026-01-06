@@ -13,46 +13,46 @@ export default function NoticePage() {
       <header className="border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            사계 길드
+            사계 레기온
           </Link>
           <nav className="flex gap-4 text-sm">
-            <Link href="/members" className="text-zinc-400 hover:text-white">길드원</Link>
+            <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
             <Link href="/schedule" className="text-zinc-400 hover:text-white">일정</Link>
           </nav>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+      <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
           <span>📢</span> 공지사항
         </h1>
 
         {/* 탭 버튼 */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-1.5 sm:gap-2 mb-4 sm:mb-6">
           <button
             onClick={() => setActiveTab('guild')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
               activeTab === 'guild'
-                ? 'bg-amber-500 text-black'
+                ? 'bg-amber-500 text-zinc-900'
                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
             }`}
           >
-            길드 규칙
+            레기온 규칙
           </button>
           <button
             onClick={() => setActiveTab('ludra')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
               activeTab === 'ludra'
-                ? 'bg-amber-500 text-black'
+                ? 'bg-amber-500 text-zinc-900'
                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
             }`}
           >
-            루드라 파티 규칙
+            파티 규칙
           </button>
         </div>
 
         {/* 공지 내용 */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4 sm:p-6">
           {activeTab === 'guild' ? (
             <GuildRules />
           ) : (

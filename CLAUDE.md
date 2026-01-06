@@ -3,8 +3,8 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 프로젝트 개요
-- **목적**: 아이온2 지켈 서버 사계 길드 관리 사이트
-- **기능**: 길드원 관리, 일정표, 파티 매칭
+- **목적**: 아이온2 지켈 서버 사계 레기온 관리 사이트
+- **기능**: 레기온원 관리, 일정표, 파티 매칭
 - **서버**: 지켈 (마족)
 
 ## 기술 스택
@@ -35,7 +35,7 @@ src/app/
 │   ├── aion2tool/[...path]/ # aion2tool API 프록시
 │   ├── sheets/             # 구글 시트 연동
 │   └── character/[nickname]/ # 캐릭터 실시간 데이터
-├── members/                # 길드원 관리 페이지
+├── members/                # 레기온원 관리 페이지
 ├── schedule/               # 일정표 (예정)
 ├── party/                  # 파티 매칭 (예정)
 ├── types.ts               # 공통 타입
@@ -57,7 +57,7 @@ src/app/
 
 ## 외부 연동
 
-### 구글 시트 (길드원 데이터)
+### 구글 시트 (레기온원 데이터)
 - Sheet ID: `1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo`
 - 컬럼: 계급, 캐릭터명, 직업, 나이, 디스코드, 카카오톡, 아툴, 전투력
 - 30초마다 자동 갱신

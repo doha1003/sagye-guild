@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "사계 길드 - AION2 루드라",
-  description: "아이온2 루드라 서버 사계 길드 관리 사이트",
+  title: "사계 레기온 - AION2 지켈",
+  description: "아이온2 지켈 서버 사계 레기온 관리 사이트",
 };
 
 export default function RootLayout({
