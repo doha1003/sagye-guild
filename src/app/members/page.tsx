@@ -62,14 +62,36 @@ export default function MembersPage() {
     }
   }, []);
 
-  // 단일 캐릭터 실시간 데이터 가져오기
+  // 단일 캐릭터 실시간 데이터 가져오기 (클라이언트에서 직접 아툴 호출)
   const fetchCharacterStats = async (nickname: string) => {
     try {
-      const res = await fetch(`/api/character/${encodeURIComponent(nickname)}`);
+      // 클라이언트에서 직접 aion2tool API 호출 시도
+      const url = `https://www.aion2tool.com/api/character/search?nickname=${encodeURIComponent(nickname)}&server=지켈&race=마족`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       if (!res.ok) return null;
-      return await res.json();
-    } catch {
+      const data = await res.json();
+      if (data && data.data) {
+        return {
+          combatScore: data.data.combat_score,
+          combatPower: data.data.combat_power,
+        };
+      }
       return null;
+    } catch (e) {
+      console.log('Direct fetch failed, trying proxy...', e);
+      // 실패하면 기존 프록시 방식 시도
+      try {
+        const res = await fetch(`/api/character/${encodeURIComponent(nickname)}`);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
     }
   };
 
