@@ -54,7 +54,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-950">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-950 flex flex-col">
       <header className="border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-400">사계 레기온</h1>
@@ -72,7 +72,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 flex-1">
         {/* 타이틀 */}
         <section className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">
@@ -82,7 +82,7 @@ export default function Home() {
           <p className="text-zinc-400">지켈 서버 · 마족</p>
         </section>
 
-        {/* 공지사항 - 강조 */}
+        {/* 1. 공지사항 - 강조 */}
         <Link
           href="/notice"
           className="block bg-red-900/30 rounded-xl border-2 border-red-500/50 p-4 mb-6 hover:bg-red-900/50 hover:border-red-500 transition-all animate-pulse-slow"
@@ -102,8 +102,8 @@ export default function Home() {
           </div>
         </Link>
 
-        {/* 참여 링크 */}
-        <section className="grid grid-cols-2 gap-4 mb-8">
+        {/* 2. 참여 링크 */}
+        <section className="grid grid-cols-2 gap-4 mb-6">
           <a
             href="https://discord.gg/DgwjWYMu"
             target="_blank"
@@ -125,90 +125,8 @@ export default function Home() {
           </a>
         </section>
 
-        {/* 메뉴 버튼 */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Link href="/members" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
-            <div className="text-3xl mb-2">👥</div>
-            <h3 className="font-semibold text-white group-hover:text-amber-400">레기온원</h3>
-          </Link>
-          <Link href="/schedule" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
-            <div className="text-3xl mb-2">📅</div>
-            <h3 className="font-semibold text-white group-hover:text-amber-400">일정표</h3>
-          </Link>
-        </div>
-
-        {/* AION2 바로가기 */}
-        <section className="mb-8">
-          <h3 className="text-sm font-medium text-zinc-400 mb-3">AION2 바로가기</h3>
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-            <a
-              href="https://www.youtube.com/@AION2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-red-600/20 hover:bg-red-600/30 border border-red-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">▶️</div>
-              <div className="text-xs text-red-400 group-hover:text-red-300 font-medium">유튜브</div>
-            </a>
-            <a
-              href="https://aion2.plaync.com/ko-kr/board/notice/list"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">📢</div>
-              <div className="text-xs text-blue-400 group-hover:text-blue-300 font-medium">공지</div>
-            </a>
-            <a
-              href="https://aion2.plaync.com/ko-kr/board/update/list"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">🔄</div>
-              <div className="text-xs text-green-400 group-hover:text-green-300 font-medium">업데이트</div>
-            </a>
-            <a
-              href="https://aion2.plaync.com/ko-kr/styleshop/popular"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-pink-600/20 hover:bg-pink-600/30 border border-pink-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">👗</div>
-              <div className="text-xs text-pink-400 group-hover:text-pink-300 font-medium">스타일샵</div>
-            </a>
-            <a
-              href="https://aion2.plaync.com/ko-kr/my/guild/board/free/list"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">📋</div>
-              <div className="text-xs text-amber-400 group-hover:text-amber-300 font-medium">게시판</div>
-            </a>
-            <a
-              href="https://aion2.inven.co.kr/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-orange-600/20 hover:bg-orange-600/30 border border-orange-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">📰</div>
-              <div className="text-xs text-orange-400 group-hover:text-orange-300 font-medium">인벤</div>
-            </a>
-            <a
-              href="https://gall.dcinside.com/mgallery/board/lists/?id=aion2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-sky-600/20 hover:bg-sky-600/30 border border-sky-600/30 rounded-lg p-3 text-center transition-all group"
-            >
-              <div className="text-xl mb-1">💬</div>
-              <div className="text-xs text-sky-400 group-hover:text-sky-300 font-medium">디시</div>
-            </a>
-          </div>
-        </section>
-
-        {/* 길드 통계 */}
-        <section className="bg-zinc-800 rounded-xl p-6 border border-zinc-700">
+        {/* 3. 레기온 통계 */}
+        <section className="bg-zinc-800 rounded-xl p-6 border border-zinc-700 mb-6">
           {loading ? (
             <p className="text-center text-zinc-400 py-4">로딩 중...</p>
           ) : (
@@ -263,11 +181,115 @@ export default function Home() {
             </>
           )}
         </section>
+
+        {/* 4. 메뉴 버튼 */}
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <Link href="/members" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-3xl mb-2">👥</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400">레기온원</h3>
+          </Link>
+          <Link href="/schedule" className="bg-zinc-800 rounded-xl p-5 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-3xl mb-2">📅</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400">일정표</h3>
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/tips/appearance" className="bg-zinc-800 rounded-xl p-4 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-2xl mb-1">👗</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">외형 정보</h3>
+          </Link>
+          <Link href="/tips/pets" className="bg-zinc-800 rounded-xl p-4 border border-zinc-700 hover:border-amber-500/50 hover:bg-zinc-750 transition-all group text-center">
+            <div className="text-2xl mb-1">🐾</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">펫 DB</h3>
+          </Link>
+        </div>
       </main>
 
-      <footer className="border-t border-zinc-800 mt-12">
-        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
-          <p>사계 레기온 · AION2 지켈 서버 (마족)</p>
+      {/* 푸터 with AION2 바로가기 */}
+      <footer className="border-t border-zinc-800 mt-auto">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          {/* AION2 바로가기 */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-zinc-500 mb-3 text-center">AION2 바로가기</h3>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+              <a
+                href="https://www.youtube.com/@AION2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">▶️</div>
+                <div className="text-xs text-zinc-400 group-hover:text-red-400">유튜브</div>
+              </a>
+              <a
+                href="https://aion2.plaync.com/ko-kr/board/notice/list"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">📢</div>
+                <div className="text-xs text-zinc-400 group-hover:text-blue-400">공지</div>
+              </a>
+              <a
+                href="https://aion2.plaync.com/ko-kr/board/update/list"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">🔄</div>
+                <div className="text-xs text-zinc-400 group-hover:text-green-400">업데이트</div>
+              </a>
+              <a
+                href="https://aion2.plaync.com/ko-kr/board/all/list"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">👥</div>
+                <div className="text-xs text-zinc-400 group-hover:text-cyan-400">커뮤니티</div>
+              </a>
+              <a
+                href="https://aion2.plaync.com/ko-kr/styleshop/popular"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">👗</div>
+                <div className="text-xs text-zinc-400 group-hover:text-pink-400">스타일샵</div>
+              </a>
+              <a
+                href="https://aion2.plaync.com/ko-kr/my/guild/board/free/list"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">📋</div>
+                <div className="text-xs text-zinc-400 group-hover:text-amber-400">게시판</div>
+              </a>
+              <a
+                href="https://aion2.inven.co.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">📰</div>
+                <div className="text-xs text-zinc-400 group-hover:text-orange-400">인벤</div>
+              </a>
+              <a
+                href="https://gall.dcinside.com/mgallery/board/lists/?id=aion2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2 text-center transition-all group"
+              >
+                <div className="text-lg">💬</div>
+                <div className="text-xs text-zinc-400 group-hover:text-sky-400">디시</div>
+              </a>
+            </div>
+          </div>
+
+          <div className="text-center text-zinc-500 text-sm">
+            <p>사계 레기온 · AION2 지켈 서버 (마족)</p>
+          </div>
         </div>
       </footer>
     </div>
