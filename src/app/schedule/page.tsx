@@ -250,8 +250,8 @@ function FieldBossContent() {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({});
 
-  // 이미지 프록시 URL 생성
-  const getProxyImageUrl = (url: string) => `/api/image-proxy?url=${encodeURIComponent(url)}`;
+  // 이미지 프록시 URL 생성 (size: 썸네일 크기)
+  const getProxyImageUrl = (url: string, size = 300) => `/api/image-proxy?url=${encodeURIComponent(url)}&size=${size}`;
 
   // 지도 토글
   const toggleMap = (faction: string) => {
