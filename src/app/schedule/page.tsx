@@ -186,9 +186,82 @@ function WeeklyContent() {
             </div>
           ))}
         </div>
-        <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-          <p className="text-amber-300 text-xs sm:text-sm">
-            ⚠️ 산들바람 상회 특수 물품은 <span className="font-bold">일요일 자정</span>에 초기화
+      </div>
+
+      {/* 물질변환 */}
+      <div className="pt-4 border-t border-zinc-700">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span>🔮</span> 물질변환 (수요일 05:00 초기화)
+        </h3>
+        <div className="bg-zinc-900 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-cyan-400 font-bold">오드 에너지</span>
+            <span className="text-white font-bold">주 7회</span>
+          </div>
+          <div className="text-xs text-zinc-400 space-y-1">
+            <p>📍 물질변환 → 특수 → 소모품</p>
+            <p>📦 재료: 오드 25개 + 순도 높은 오드 5개 + 순수한 오드 1개</p>
+            <p>💰 비용: 50,000 키나</p>
+            <p>⚡ 획득: 40 에너지 × 7 = <span className="text-cyan-400 font-bold">280 에너지</span></p>
+          </div>
+        </div>
+      </div>
+
+      {/* 산들바람 상회 */}
+      <div className="pt-4 border-t border-zinc-700">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span>🏪</span> 산들바람 상회 특수
+        </h3>
+        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
+          <p className="text-red-300 text-xs sm:text-sm font-bold">
+            ⚠️ 일요일 자정 초기화 (수요일 아님!)
+          </p>
+        </div>
+        <div className="space-y-2">
+          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+            <div>
+              <span className="text-cyan-400 font-bold text-sm">오드 에너지</span>
+              <p className="text-zinc-500 text-xs">40 에너지 × 7개 = 280</p>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold text-sm">7개</div>
+              <div className="text-zinc-500 text-xs">70만 키나/개</div>
+            </div>
+          </div>
+          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+            <div>
+              <span className="text-green-400 font-bold text-sm">부활의 정령석</span>
+              <p className="text-zinc-500 text-xs">던전 부활용</p>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold text-sm">7개</div>
+              <div className="text-zinc-500 text-xs">키나 구매</div>
+            </div>
+          </div>
+          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+            <div>
+              <span className="text-blue-400 font-bold text-sm">일일 던전 입장권</span>
+              <p className="text-zinc-500 text-xs">생체 연구기지 도전권</p>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold text-sm">7개</div>
+              <div className="text-zinc-500 text-xs">키나 구매</div>
+            </div>
+          </div>
+          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+            <div>
+              <span className="text-purple-400 font-bold text-sm">어비스 균열석</span>
+              <p className="text-zinc-500 text-xs">어비스 입장</p>
+            </div>
+            <div className="text-right">
+              <div className="text-white font-bold text-sm">구매</div>
+              <div className="text-zinc-500 text-xs">키나</div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+          <p className="text-cyan-300 text-xs">
+            💡 주간 오드 에너지 총합: 기본 840 + 물질변환 280 + 상회 280 = <span className="font-bold">1,400</span>
           </p>
         </div>
       </div>
