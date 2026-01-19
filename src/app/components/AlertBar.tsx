@@ -283,33 +283,10 @@ export default function AlertBar() {
   // 알림 없을 때
   if (alerts.length === 0) {
     return (
-      <div className="bg-zinc-800/50 border-b border-zinc-700">
-        <div className="max-w-4xl mx-auto px-4 py-1.5 flex items-center justify-center gap-2 text-xs text-zinc-500">
-          <span>⏰</span>
-          <span>임박한 이벤트 없음</span>
-          <span className="text-zinc-600">·</span>
-          <button
-            onClick={toggleSound}
-            className={`px-1.5 py-0.5 rounded text-xs transition-colors ${
-              settings.soundEnabled
-                ? 'text-green-400 hover:text-green-300'
-                : 'text-zinc-500 hover:text-zinc-400'
-            }`}
-          >
-            {settings.soundEnabled ? '🔊' : '🔇'}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={`${alerts.some(a => a.urgent) ? 'bg-red-900/50' : 'bg-zinc-800/80'} border-b border-zinc-700`}>
-      <div className="flex items-center">
-        {/* 소리 토글 버튼 */}
+      <div className="bg-zinc-800/50 border-b border-zinc-700 relative">
         <button
           onClick={toggleSound}
-          className={`px-2 py-1 text-sm flex-shrink-0 transition-colors ${
+          className={`absolute left-0 top-0 bottom-0 px-3 text-xl flex items-center transition-colors z-10 ${
             settings.soundEnabled
               ? 'text-green-400 hover:text-green-300'
               : 'text-zinc-500 hover:text-zinc-400'
@@ -318,28 +295,67 @@ export default function AlertBar() {
         >
           {settings.soundEnabled ? '🔊' : '🔇'}
         </button>
+        <div className="py-2.5 pl-12 flex items-center justify-center gap-2 text-sm text-zinc-500">
+          <span>⏰</span>
+          <span>임박한 이벤트 없음</span>
+        </div>
+      </div>
+    );
+  }
 
-        {/* 스크롤 알림 */}
-        <div className="overflow-hidden flex-1">
-          <div className="py-1 whitespace-nowrap animate-marquee">
-            <div className="inline-flex items-center gap-6 px-2">
-              {[...alerts, ...alerts].map((alert, idx) => (
-                <span key={idx} className="inline-flex items-center gap-1.5">
-                  <span>{alert.icon}</span>
-                  <span className={`font-medium ${alert.color}`}>{alert.text}</span>
-                </span>
-              ))}
-            </div>
+  return (
+    <div className={`${alerts.some(a => a.urgent) ? 'bg-red-900/50' : 'bg-zinc-800/80'} border-b border-zinc-700 relative`}>
+      {/* 소리 토글 버튼 - 왼쪽 고정 */}
+      <button
+        onClick={toggleSound}
+        className={`absolute left-0 top-0 bottom-0 px-3 text-xl flex items-center transition-colors z-10 bg-inherit ${
+          settings.soundEnabled
+            ? 'text-green-400 hover:text-green-300'
+            : 'text-zinc-500 hover:text-zinc-400'
+        }`}
+        title={settings.soundEnabled ? '알림음 끄기' : '알림음 켜기'}
+      >
+        {settings.soundEnabled ? '🔊' : '🔇'}
+      </button>
+
+      {/* 스크롤 알림 - 무한 루프 마퀴 */}
+      <div className="overflow-hidden py-2.5 pl-12">
+        <div className="marquee-track">
+          <div className="marquee-content">
+            {alerts.map((alert, idx) => (
+              <span key={idx} className="inline-flex items-center gap-2 mx-8 text-sm">
+                <span className="text-base">{alert.icon}</span>
+                <span className={`font-medium ${alert.color}`}>{alert.text}</span>
+              </span>
+            ))}
+          </div>
+          <div className="marquee-content">
+            {alerts.map((alert, idx) => (
+              <span key={`dup-${idx}`} className="inline-flex items-center gap-2 mx-8 text-sm">
+                <span className="text-base">{alert.icon}</span>
+                <span className={`font-medium ${alert.color}`}>{alert.text}</span>
+              </span>
+            ))}
           </div>
         </div>
       </div>
       <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+        .marquee-track {
+          display: flex;
+          width: max-content;
+          animation: marquee-scroll 15s linear infinite;
         }
-        .animate-marquee {
-          animation: marquee 15s linear infinite;
+        .marquee-content {
+          display: flex;
+          flex-shrink: 0;
+        }
+        @keyframes marquee-scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
       `}</style>
     </div>
