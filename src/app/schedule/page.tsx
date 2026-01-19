@@ -369,7 +369,7 @@ function FieldBossContent() {
       bosses: [
         { name: '감시자 카이라', location: '에레슈란타 하층', respawn: '1시간', minutes: 60 },
         { name: '정령왕 아그로', location: '시엘의 날개 군도', respawn: '12시간', minutes: 720 },
-        { name: '수호신장 나흐마', location: '에레슈란타의 뿌리', respawn: '토/일요일', minutes: 0 },
+        { name: '수호신장 나흐마', location: '에레슈란타의 뿌리', respawn: '토/일 20:00', minutes: 0 },
       ]
     },
   ];
