@@ -258,8 +258,8 @@ function FieldBossContent() {
     setExpandedMaps(prev => ({ ...prev, [faction]: !prev[faction] }));
   };
 
-  // 지도 이미지 (인벤 출처)
-  const factionMaps: Record<string, { name: string; url: string }[]> = {
+  // 지도 이미지 (인벤 출처 + 로컬)
+  const factionMaps: Record<string, { name: string; url: string; isLocal?: boolean }[]> = {
     마족: [
       { name: '전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1112262490.jpg' },
       { name: '드레드기온 추락지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1478740011.jpg' },
@@ -276,6 +276,9 @@ function FieldBossContent() {
       { name: '아르타미아 고원', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1901406732.jpg' },
       { name: '붉은 숲 · 드라나 재배지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1244544949.jpg' },
       { name: '영원의 섬', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1838498016.jpg' },
+    ],
+    어비스: [
+      { name: '어비스 보스 지도', url: '/abyss-map.png', isLocal: true },
     ],
   };
 
@@ -590,7 +593,7 @@ function FieldBossContent() {
                     className="group relative aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-cyan-500 transition-colors"
                   >
                     <img
-                      src={getProxyImageUrl(map.url)}
+                      src={map.isLocal ? map.url : getProxyImageUrl(map.url)}
                       alt={map.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       loading="lazy"
@@ -606,19 +609,6 @@ function FieldBossContent() {
             </div>
           )}
 
-          {/* 어비스 외부 링크 */}
-          {group.faction === '어비스' && (
-            <div className="mb-3 p-2 bg-zinc-900/50 rounded-lg border border-purple-500/30">
-              <a
-                href="https://d4gg.gg/aion2/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1"
-              >
-                🗺️ 어비스 지도는 d4gg.gg에서 확인 →
-              </a>
-            </div>
-          )}
 
           {/* 보스 리스트 */}
           <div className="space-y-2">
