@@ -248,13 +248,20 @@ function FieldBossContent() {
   const [timers, setTimers] = useState<BossTimer[]>([]);
   const [now, setNow] = useState(Date.now());
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
-  const [showMaps, setShowMaps] = useState(false);
-  const [selectedMap, setSelectedMap] = useState<'asmodian' | 'elyos'>('asmodian');
+  const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({});
+
+  // 이미지 프록시 URL 생성
+  const getProxyImageUrl = (url: string) => `/api/image-proxy?url=${encodeURIComponent(url)}`;
+
+  // 지도 토글
+  const toggleMap = (faction: string) => {
+    setExpandedMaps(prev => ({ ...prev, [faction]: !prev[faction] }));
+  };
 
   // 지도 이미지 (인벤 출처)
-  const maps = {
-    asmodian: [
-      { name: '마족 전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1112262490.jpg' },
+  const factionMaps: Record<string, { name: string; url: string }[]> = {
+    마족: [
+      { name: '전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1112262490.jpg' },
       { name: '드레드기온 추락지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1478740011.jpg' },
       { name: '모슬란 숲', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1537219396.jpg' },
       { name: '정화의 숲', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1696484231.jpg' },
@@ -262,8 +269,8 @@ function FieldBossContent() {
       { name: '임페투시움 광장', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1572168382.jpg' },
       { name: '불멸의 섬', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1485154320.jpg' },
     ],
-    elyos: [
-      { name: '천족 전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1839745143.jpg' },
+    천족: [
+      { name: '전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1839745143.jpg' },
       { name: '칸타스 계곡 · 엘룬강', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1346889650.jpg' },
       { name: '톨바스 숲 · 아울라우', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1493088239.jpg' },
       { name: '아르타미아 고원', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1901406732.jpg' },
@@ -492,82 +499,19 @@ function FieldBossContent() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base sm:text-lg font-bold text-white">필드보스 리젠 타이머</h3>
-        <div className="flex items-center gap-2">
+        {notificationPermission !== 'granted' && (
           <button
-            onClick={() => setShowMaps(!showMaps)}
-            className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${
-              showMaps
-                ? 'bg-cyan-500 text-zinc-900'
-                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-            }`}
+            onClick={requestNotificationPermission}
+            className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
           >
-            🗺️ 지도
+            🔔 알림 허용
           </button>
-          {notificationPermission !== 'granted' && (
-            <button
-              onClick={requestNotificationPermission}
-              className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
-            >
-              🔔 알림 허용
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
-      {/* 지도 섹션 */}
-      {showMaps && (
-        <div className="bg-zinc-900/80 rounded-xl p-4 border border-cyan-500/30">
-          <div className="flex items-center gap-2 mb-4">
-            <button
-              onClick={() => setSelectedMap('asmodian')}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                selectedMap === 'asmodian'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-              }`}
-            >
-              😈 마족
-            </button>
-            <button
-              onClick={() => setSelectedMap('elyos')}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                selectedMap === 'elyos'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-              }`}
-            >
-              😇 천족
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {maps[selectedMap].map((map, idx) => (
-              <a
-                key={idx}
-                href={map.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-cyan-500 transition-colors"
-              >
-                <img
-                  src={map.url + '?MW=400'}
-                  alt={map.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <span className="text-white text-xs font-medium">{map.name}</span>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          <p className="text-zinc-500 text-xs mt-3 text-center">
-            출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">아이온2 인벤</a> · 클릭하면 원본 이미지
-          </p>
-        </div>
-      )}
+      <p className="text-xs text-zinc-500 -mt-4">
+        12/17 이후 리젠 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
+      </p>
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
@@ -613,10 +557,70 @@ function FieldBossContent() {
       {/* 보스 목록 */}
       {bosses.map((group, idx) => (
         <div key={idx} className={`${group.bgColor} rounded-xl p-4`}>
-          <h4 className={`font-bold mb-3 text-sm flex items-center gap-2 ${group.color}`}>
-            <span>{group.faction === '마족' ? '😈' : group.faction === '천족' ? '😇' : '🌀'}</span>
-            {group.faction} 진영
-          </h4>
+          {/* 진영 헤더 + 지도 버튼 */}
+          <div className="flex items-center justify-between mb-3">
+            <h4 className={`font-bold text-sm flex items-center gap-2 ${group.color}`}>
+              <span>{group.faction === '마족' ? '😈' : group.faction === '천족' ? '😇' : '🌀'}</span>
+              {group.faction} 진영
+            </h4>
+            {factionMaps[group.faction] && (
+              <button
+                onClick={() => toggleMap(group.faction)}
+                className={`text-xs font-medium px-2 py-1 rounded transition-colors ${
+                  expandedMaps[group.faction]
+                    ? 'bg-cyan-500 text-zinc-900'
+                    : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                }`}
+              >
+                🗺️ 지도 {expandedMaps[group.faction] ? '▲' : '▼'}
+              </button>
+            )}
+          </div>
+
+          {/* 지도 이미지 */}
+          {expandedMaps[group.faction] && factionMaps[group.faction] && (
+            <div className="mb-4 p-3 bg-zinc-900/50 rounded-lg border border-zinc-700">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {factionMaps[group.faction].map((map, mIdx) => (
+                  <a
+                    key={mIdx}
+                    href={map.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-cyan-500 transition-colors"
+                  >
+                    <img
+                      src={getProxyImageUrl(map.url)}
+                      alt={map.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5">
+                      <span className="text-white text-xs font-medium">{map.name}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+              <p className="text-zinc-600 text-xs mt-2 text-center">클릭하면 원본 이미지 열기</p>
+            </div>
+          )}
+
+          {/* 어비스 외부 링크 */}
+          {group.faction === '어비스' && (
+            <div className="mb-3 p-2 bg-zinc-900/50 rounded-lg border border-purple-500/30">
+              <a
+                href="https://d4gg.gg/aion2/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1"
+              >
+                🗺️ 어비스 지도는 d4gg.gg에서 확인 →
+              </a>
+            </div>
+          )}
+
+          {/* 보스 리스트 */}
           <div className="space-y-2">
             {group.bosses.map((boss, bIdx) => {
               const activeTimer = getTimer(boss.name);
