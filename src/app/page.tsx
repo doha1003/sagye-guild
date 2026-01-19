@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import AlertBar from './components/AlertBar';
 
 interface GuildMember {
   className: string;
@@ -95,6 +96,7 @@ export default function Home() {
           </div>
         </div>
       </header>
+      <AlertBar />
 
       {/* 메인 */}
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import AlertBar from '../components/AlertBar';
 
 // 직업 정보 (8개 직업)
 const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성'] as const;
@@ -100,6 +101,7 @@ export default function MembersPage() {
           </nav>
         </div>
       </header>
+      <AlertBar />
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* 안내 문구 */}

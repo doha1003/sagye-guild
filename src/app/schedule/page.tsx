@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import AlertBar from '../components/AlertBar';
 
 interface BossTimer {
   bossName: string;
@@ -25,6 +26,7 @@ export default function SchedulePage() {
           </nav>
         </div>
       </header>
+      <AlertBar />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">

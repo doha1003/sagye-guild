@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import AlertBar from '../components/AlertBar';
 
 const DUNGEON_TYPES = [
   {
@@ -157,6 +158,7 @@ const ARCANA_SETS = [
 export default function Season2Page() {
   return (
     <div className="min-h-screen bg-zinc-950">
+      <AlertBar />
       {/* 히어로 섹션 - 더 화려하게 */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <div className="absolute inset-0">

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import AlertBar from '../components/AlertBar';
 
 type NoticeType = 'guild' | 'subguild' | 'ludra';
 
@@ -21,6 +22,7 @@ export default function NoticePage() {
           </nav>
         </div>
       </header>
+      <AlertBar />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-white mb-6">공지사항</h1>
