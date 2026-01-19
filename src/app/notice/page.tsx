@@ -503,7 +503,8 @@ function Season2Preview() {
             <ul className="text-zinc-300 text-sm space-y-1 ml-4">
               <li>• <strong className="text-white">신규 원정:</strong> 죽은 드라마타의 둥지</li>
               <li>• <strong className="text-white">토벌전:</strong> 죽은 오르쿠스의 심장, 파프나이트 제련소</li>
-              <li>• <strong className="text-white">각성전:</strong> 궤적 보관소, 폭군의 은신처</li>
+              <li>• <strong className="text-white">각성전:</strong> 봉인된 재앙 클라우디아, 타락한 폭군 메녹수스</li>
+              <li>• <strong className="text-white">악몽:</strong> 신규 보스 7종 추가</li>
               <li>• <strong className="text-white">어비스:</strong> 중층 추가 (아이템 레벨 제한)</li>
             </ul>
           </div>
@@ -525,6 +526,13 @@ function Season2Preview() {
 
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-3 mb-2">
+              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/11</span>
+              <span className="text-white font-medium">어비스 균열 지대 (PvPvE)</span>
+            </div>
+          </div>
+
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
               <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/18</span>
               <span className="text-white font-medium">어려움 난이도 추가</span>
             </div>
@@ -541,10 +549,33 @@ function Season2Preview() {
       </section>
 
       <section className="mb-8">
+        <h3 className="text-lg font-semibold text-amber-400 mb-4">⚜️ 아르카나 신규 추가</h3>
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+          <div className="mb-3">
+            <span className="text-amber-300 font-medium">신규 부위:</span>
+            <span className="text-white ml-2">천칭 (Libra)</span>
+          </div>
+          <div>
+            <span className="text-amber-300 font-medium">신규 세트:</span>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">죽음</span>
+              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">전쟁</span>
+              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">신비</span>
+              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">자유</span>
+              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">일격</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-8">
         <h3 className="text-lg font-semibold text-white mb-4">⚔️ 어비스 개편</h3>
         <ul className="space-y-2 text-zinc-300">
           <li className="pl-4 border-l-2 border-cyan-500/50">
-            <strong className="text-white">어비스 중층</strong> 추가 (아이템 레벨 제한)
+            <strong className="text-white">어비스 중층</strong> 추가 (1/21, 아이템 레벨 제한)
+          </li>
+          <li className="pl-4 border-l-2 border-cyan-500/50">
+            <strong className="text-white">어비스 균열 지대</strong> PvPvE 콘텐츠 (2/11)
           </li>
           <li className="pl-4 border-l-2 border-zinc-700">
             하층 3:0 패배 시 마을 → 회랑 바로 입장 가능
@@ -562,7 +593,7 @@ function Season2Preview() {
         <h3 className="text-lg font-semibold text-white mb-4">🛠️ 시즌2 편의성 업데이트</h3>
         <ul className="space-y-2 text-zinc-300">
           <li className="pl-4 border-l-2 border-zinc-700">원정 및 초월 티켓 차감 시스템 변경</li>
-          <li className="pl-4 border-l-2 border-zinc-700">아르카나 신규 슬롯 추가</li>
+          <li className="pl-4 border-l-2 border-zinc-700">아르카나 신규 슬롯 추가 (천칭)</li>
           <li className="pl-4 border-l-2 border-zinc-700">각성전/일일던전 클래스별 랭킹 시스템 도입</li>
           <li className="pl-4 border-l-2 border-zinc-700">방어구 조율 옵션 추가</li>
           <li className="pl-4 border-l-2 border-zinc-700">근거리 대상 보스 패턴 완화</li>
