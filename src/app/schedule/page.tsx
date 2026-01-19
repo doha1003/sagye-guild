@@ -102,13 +102,115 @@ export default function SchedulePage() {
 }
 
 function DailyContent() {
+  const [personalSettings, setPersonalSettings] = useState({
+    shugoFesta: false,
+    dimensionInvasion: false,
+    blackCloudTrade: false,
+    nahmaAlert: false,
+  });
+  const [now, setNow] = useState(new Date());
+
+  // 설정 로드
+  useEffect(() => {
+    const saved = localStorage.getItem('personalAlertSettings');
+    if (saved) {
+      try {
+        setPersonalSettings(prev => ({ ...prev, ...JSON.parse(saved) }));
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
+  // 1초마다 시간 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 설정 토글
+  const toggleSetting = (key: keyof typeof personalSettings) => {
+    setPersonalSettings(prev => {
+      const updated = { ...prev, [key]: !prev[key] };
+      localStorage.setItem('personalAlertSettings', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // 다음 시간까지 남은 시간 계산
+  const getTimeUntilNext = (targetMinutes: number[]) => {
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+
+    // 다음 목표 시간 찾기
+    let nextTarget = targetMinutes.find(m => m > currentMinute);
+    if (nextTarget === undefined) {
+      nextTarget = targetMinutes[0] + 60; // 다음 시간
+    }
+
+    const diffMinutes = nextTarget - currentMinute - 1;
+    const diffSeconds = 60 - currentSecond;
+
+    if (diffSeconds === 60) {
+      return `${diffMinutes + 1}:00`;
+    }
+    return `${diffMinutes}:${diffSeconds.toString().padStart(2, '0')}`;
+  };
+
+  // 다음 정각까지 남은 시간
+  const getTimeUntilNextHour = () => {
+    const mins = 59 - now.getMinutes();
+    const secs = 60 - now.getSeconds();
+    if (secs === 60) {
+      return `${mins + 1}:00`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // 다음 나흐마까지 남은 시간
+  const getTimeUntilNahma = () => {
+    const day = now.getDay();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+
+    // 토요일(6) 또는 일요일(0)
+    let daysUntil = 0;
+    if (day === 6) { // 토요일
+      if (hour < 20 || (hour === 20 && minute === 0)) {
+        daysUntil = 0; // 오늘
+      } else {
+        daysUntil = 1; // 내일 (일요일)
+      }
+    } else if (day === 0) { // 일요일
+      if (hour < 20 || (hour === 20 && minute === 0)) {
+        daysUntil = 0; // 오늘
+      } else {
+        daysUntil = 6; // 다음 토요일
+      }
+    } else {
+      // 월~금
+      daysUntil = 6 - day; // 토요일까지
+    }
+
+    if (daysUntil === 0) {
+      const hoursUntil = 19 - hour;
+      const minsUntil = 60 - minute;
+      if (hoursUntil < 0) return '종료';
+      if (hoursUntil === 0 && minsUntil <= 60) {
+        return `${minsUntil}분`;
+      }
+      return `${hoursUntil}시간 ${minsUntil}분`;
+    }
+
+    return `${daysUntil}일 후`;
+  };
+
   const dailyContents = [
     { name: '사명 임무', count: '5회', reward: '유일 장비 확률', color: 'text-green-400' },
     { name: '악몽 던전', count: '2회', reward: '몽환의 파편', color: 'text-purple-400' },
     { name: '초월 던전', count: '2회', reward: '돌파석 조각, 아르카나', color: 'text-cyan-400' },
     { name: '원정 (정복)', count: '3회', reward: '05/13/21시 충전', color: 'text-blue-400' },
     { name: '긴급 어비스 보급', count: '1회', reward: '어비스 포인트', color: 'text-red-400' },
-    { name: '검은 구름 무역단', count: '시간별', reward: '골드, 재화', color: 'text-yellow-400' },
   ];
 
   return (
@@ -128,19 +230,97 @@ function DailyContent() {
         </div>
       </div>
 
+      {/* 개인 알림 설정 */}
+      <div className="pt-4 border-t border-zinc-700">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <span>🔔</span> 개인 알림 설정
+        </h3>
+        <p className="text-zinc-500 text-xs mb-4">알림을 켜면 해당 시간에 브라우저 알림을 받습니다 (브라우저 열어둬야 함)</p>
+
+        <div className="space-y-2">
+          {/* 슈고 페스타 */}
+          <div className="bg-zinc-900 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-orange-400 font-bold text-sm">🦊 슈고 페스타</span>
+                  <span className="text-zinc-500 text-xs">매시 15분, 45분</span>
+                </div>
+                <div className="text-xs text-zinc-400 mt-1">
+                  다음: <span className="text-orange-400 font-mono">{getTimeUntilNext([15, 45])}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('shugoFesta')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.shugoFesta
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.shugoFesta ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+
+          {/* 검은 구름 무역단 */}
+          <div className="bg-zinc-900 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-yellow-400 font-bold text-sm">🌑 검은 구름 무역단</span>
+                  <span className="text-zinc-500 text-xs">매시 정각 초기화</span>
+                </div>
+                <div className="text-xs text-zinc-400 mt-1">
+                  다음 초기화: <span className="text-yellow-400 font-mono">{getTimeUntilNextHour()}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('blackCloudTrade')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.blackCloudTrade
+                    ? 'bg-yellow-500 text-zinc-900'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.blackCloudTrade ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+
+          {/* 나흐마 */}
+          <div className="bg-zinc-900 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-purple-400 font-bold text-sm">👑 수호신장 나흐마</span>
+                  <span className="text-zinc-500 text-xs">토/일 20:00</span>
+                </div>
+                <div className="text-xs text-zinc-400 mt-1">
+                  다음: <span className="text-purple-400 font-mono">{getTimeUntilNahma()}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('nahmaAlert')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.nahmaAlert
+                    ? 'bg-purple-500 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.nahmaAlert ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 시간별 컨텐츠 */}
       <div className="pt-4 border-t border-zinc-700">
         <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
           <span>🕐</span> 시간별 컨텐츠
         </h3>
         <div className="space-y-2">
-          <div className="bg-zinc-900 rounded-lg p-3">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-              <span className="text-cyan-400 font-bold text-sm">슈고 페스타</span>
-              <span className="text-white font-mono text-xs">매시 15분, 45분</span>
-            </div>
-            <p className="text-zinc-500 text-xs mt-1">참여만 해도 어비스 포인트 160+ 획득</p>
-          </div>
           <div className="bg-zinc-900 rounded-lg p-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
               <span className="text-purple-400 font-bold text-sm">원정 보상 충전</span>

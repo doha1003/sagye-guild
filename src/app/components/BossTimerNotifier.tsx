@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 
 interface BossTimer {
@@ -13,26 +13,56 @@ interface CompletedAlert {
   id: string;
   bossName: string;
   timestamp: number;
+  type?: 'boss' | 'shugo' | 'invasion' | 'trade' | 'nahma';
 }
+
+interface PersonalSettings {
+  shugoFesta: boolean;      // 슈고 페스타 (매시 15분, 45분)
+  dimensionInvasion: boolean; // 차원 침공
+  blackCloudTrade: boolean;  // 검은 구름 무역단 (매시 정각)
+  nahmaAlert: boolean;       // 나흐마 (토/일 20:00)
+}
+
+const DEFAULT_SETTINGS: PersonalSettings = {
+  shugoFesta: false,
+  dimensionInvasion: false,
+  blackCloudTrade: false,
+  nahmaAlert: false,
+};
 
 export default function BossTimerNotifier() {
   const [alerts, setAlerts] = useState<CompletedAlert[]>([]);
   const [activeTimers, setActiveTimers] = useState<BossTimer[]>([]);
+  const [settings, setSettings] = useState<PersonalSettings>(DEFAULT_SETTINGS);
+  const lastNotifiedRef = useRef<Record<string, number>>({});
+
+  // 설정 로드
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const saved = localStorage.getItem('personalAlertSettings');
+    if (saved) {
+      try {
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
+      } catch {
+        setSettings(DEFAULT_SETTINGS);
+      }
+    }
+  }, []);
 
   // 알림 표시
-  const showNotification = useCallback((bossName: string) => {
+  const showNotification = useCallback((title: string, body: string, type: CompletedAlert['type'] = 'boss') => {
     // 브라우저 알림
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      new Notification('🔥 보스 리젠!', {
-        body: `${bossName} 리젠 시간입니다!`,
+      new Notification(title, {
+        body,
         icon: '/favicon.ico',
-        tag: bossName,
+        tag: `${type}-${Date.now()}`,
       });
     }
 
     // 인앱 팝업
-    const alertId = `${bossName}-${Date.now()}`;
-    setAlerts(prev => [...prev, { id: alertId, bossName, timestamp: Date.now() }]);
+    const alertId = `${type}-${Date.now()}`;
+    setAlerts(prev => [...prev, { id: alertId, bossName: body, timestamp: Date.now(), type }]);
 
     // 10초 후 자동 닫기
     setTimeout(() => {
@@ -45,11 +75,46 @@ export default function BossTimerNotifier() {
     setAlerts(prev => prev.filter(a => a.id !== alertId));
   };
 
-  // 1초마다 타이머 체크
+  // 1초마다 타이머 체크 + 개인 알림 체크
   useEffect(() => {
     const checkTimers = () => {
       if (typeof window === 'undefined') return;
 
+      const now = new Date();
+      const currentMinute = now.getMinutes();
+      const currentHour = now.getHours();
+      const currentDay = now.getDay(); // 0=일, 6=토
+      const currentSecond = now.getSeconds();
+      const timeKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${currentHour}-${currentMinute}`;
+
+      // 슈고 페스타 알림 (매시 15분, 45분 - 1분 전 알림)
+      if (settings.shugoFesta) {
+        const shugoKey = `shugo-${timeKey}`;
+        if ((currentMinute === 14 || currentMinute === 44) && currentSecond === 0 && !lastNotifiedRef.current[shugoKey]) {
+          showNotification('🦊 슈고 페스타!', '1분 후 슈고 페스타 시작!', 'shugo');
+          lastNotifiedRef.current[shugoKey] = Date.now();
+        }
+      }
+
+      // 검은 구름 무역단 알림 (매시 정각 - 1분 전 알림)
+      if (settings.blackCloudTrade) {
+        const tradeKey = `trade-${timeKey}`;
+        if (currentMinute === 59 && currentSecond === 0 && !lastNotifiedRef.current[tradeKey]) {
+          showNotification('🌑 검은 구름 무역단!', '1분 후 상점 초기화!', 'trade');
+          lastNotifiedRef.current[tradeKey] = Date.now();
+        }
+      }
+
+      // 나흐마 알림 (토/일 19:55)
+      if (settings.nahmaAlert) {
+        const nahmaKey = `nahma-${timeKey}`;
+        if ((currentDay === 0 || currentDay === 6) && currentHour === 19 && currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[nahmaKey]) {
+          showNotification('👑 수호신장 나흐마!', '5분 후 나흐마 출현! (20:00)', 'nahma');
+          lastNotifiedRef.current[nahmaKey] = Date.now();
+        }
+      }
+
+      // 보스 타이머 체크
       const saved = localStorage.getItem('bossTimers');
       if (!saved) {
         setActiveTimers([]);
@@ -58,16 +123,16 @@ export default function BossTimerNotifier() {
 
       try {
         const timers = JSON.parse(saved) as BossTimer[];
-        const now = Date.now();
+        const nowMs = Date.now();
 
         // 완료된 타이머 찾기
-        const completed = timers.filter(t => t.endTime <= now);
-        const remaining = timers.filter(t => t.endTime > now);
+        const completed = timers.filter(t => t.endTime <= nowMs);
+        const remaining = timers.filter(t => t.endTime > nowMs);
 
         // 완료된 타이머에 대해 알림
         if (completed.length > 0) {
           completed.forEach(timer => {
-            showNotification(timer.bossName);
+            showNotification('🔥 보스 리젠!', `${timer.bossName} 리젠 시간입니다!`, 'boss');
           });
 
           // 남은 타이머만 저장
@@ -87,7 +152,21 @@ export default function BossTimerNotifier() {
     const interval = setInterval(checkTimers, 1000);
 
     return () => clearInterval(interval);
-  }, [showNotification]);
+  }, [showNotification, settings]);
+
+  // 오래된 알림 기록 정리 (1시간 이상 지난 것)
+  useEffect(() => {
+    const cleanup = setInterval(() => {
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
+      Object.keys(lastNotifiedRef.current).forEach(key => {
+        if (now - lastNotifiedRef.current[key] > oneHour) {
+          delete lastNotifiedRef.current[key];
+        }
+      });
+    }, 60000);
+    return () => clearInterval(cleanup);
+  }, []);
 
   // 남은 시간 포맷
   const formatRemaining = (endTime: number) => {
@@ -104,6 +183,41 @@ export default function BossTimerNotifier() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const getAlertStyle = (type?: CompletedAlert['type']) => {
+    switch (type) {
+      case 'shugo':
+        return 'from-orange-500 to-yellow-500';
+      case 'trade':
+        return 'from-zinc-700 to-zinc-600';
+      case 'nahma':
+        return 'from-purple-600 to-pink-600';
+      case 'invasion':
+        return 'from-blue-600 to-cyan-500';
+      default:
+        return 'from-red-600 to-amber-600';
+    }
+  };
+
+  const getAlertIcon = (type?: CompletedAlert['type']) => {
+    switch (type) {
+      case 'shugo': return '🦊';
+      case 'trade': return '🌑';
+      case 'nahma': return '👑';
+      case 'invasion': return '🌀';
+      default: return '🔥';
+    }
+  };
+
+  const getAlertTitle = (type?: CompletedAlert['type']) => {
+    switch (type) {
+      case 'shugo': return '슈고 페스타!';
+      case 'trade': return '무역단 초기화!';
+      case 'nahma': return '나흐마 출현!';
+      case 'invasion': return '차원 침공!';
+      default: return '보스 리젠!';
+    }
+  };
+
   // 아무것도 없으면 렌더링하지 않음
   if (alerts.length === 0 && activeTimers.length === 0) {
     return null;
@@ -117,13 +231,13 @@ export default function BossTimerNotifier() {
           {alerts.map(alert => (
             <div
               key={alert.id}
-              className="bg-gradient-to-r from-red-600 to-amber-600 text-white rounded-xl p-4 shadow-2xl animate-bounce"
+              className={`bg-gradient-to-r ${getAlertStyle(alert.type)} text-white rounded-xl p-4 shadow-2xl animate-bounce`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl">🔥</span>
+                  <span className="text-3xl">{getAlertIcon(alert.type)}</span>
                   <div>
-                    <div className="font-bold text-lg">보스 리젠!</div>
+                    <div className="font-bold text-lg">{getAlertTitle(alert.type)}</div>
                     <div className="text-sm opacity-90">{alert.bossName}</div>
                   </div>
                 </div>
