@@ -100,7 +100,7 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
         {/* 시즌2 배너 */}
         <Link
-          href="/notice"
+          href="/season2"
           className="block bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 border border-cyan-500/30 rounded-xl p-4 mb-6 hover:from-cyan-600/30 hover:to-indigo-600/30 transition-all group"
         >
           <div className="flex items-center justify-between">

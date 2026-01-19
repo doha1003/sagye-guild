@@ -72,7 +72,7 @@ async function main() {
 
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-      await page.waitForTimeout(2500);
+      await page.waitForTimeout(4000);
 
       let combatPower = null;      // 현재 전투력
       let combatScore = null;      // 현재 전투점수

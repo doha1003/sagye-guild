@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-type NoticeType = 'guild' | 'subguild' | 'ludra' | 'season2';
+type NoticeType = 'guild' | 'subguild' | 'ludra';
 
 export default function NoticePage() {
   const [activeTab, setActiveTab] = useState<NoticeType>('guild');
@@ -57,16 +57,6 @@ export default function NoticePage() {
           >
             파티 규칙
           </button>
-          <button
-            onClick={() => setActiveTab('season2')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'season2'
-                ? 'text-cyan-400 border-cyan-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            🔥 시즌2
-          </button>
         </div>
 
         {/* 공지 내용 */}
@@ -74,7 +64,6 @@ export default function NoticePage() {
           {activeTab === 'guild' && <GuildRules />}
           {activeTab === 'subguild' && <SubGuildRules />}
           {activeTab === 'ludra' && <LudraRules />}
-          {activeTab === 'season2' && <Season2Preview />}
         </div>
 
         {/* 참여 링크 */}
@@ -440,183 +429,6 @@ function LudraRules() {
           인원이 찼으면 추가 이모지 체크는 하지 말아주시고, 다음 모집글을 새로 작성해 주세요. (출발 인원 혼선 방지)
         </p>
       </section>
-    </article>
-  );
-}
-
-function Season2Preview() {
-  return (
-    <article className="text-zinc-200 leading-relaxed tracking-wide">
-      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
-        아이온2 시즌2 안내
-      </h2>
-
-      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4 mb-8 text-center">
-        <p className="text-cyan-300 font-medium text-lg mb-1">
-          🎮 시즌2 시작: 2026년 1월 21일 (수)
-        </p>
-        <p className="text-zinc-400 text-sm">
-          서버 매칭 확정 · 랭킹 초기화
-        </p>
-      </div>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">✅ 적용 완료된 업데이트</h3>
-        <div className="space-y-3">
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-green-600 text-white px-2 py-1 rounded text-sm font-medium">1/7 적용</span>
-              <span className="text-green-300 font-medium">펫 시스템 개선</span>
-            </div>
-            <ul className="text-zinc-400 text-sm space-y-1 ml-4">
-              <li>• 종족 이해도 & 펫 보유 → 서버 내 캐릭터 공유</li>
-              <li>• 모든 캐릭터 펫 레벨 합산</li>
-              <li>• 필요 영혼 수량 50% 하향</li>
-            </ul>
-          </div>
-
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-green-600 text-white px-2 py-1 rounded text-sm font-medium">1/14 적용</span>
-              <span className="text-green-300 font-medium">펫 스탯 밸런스 조정</span>
-            </div>
-            <ul className="text-zinc-400 text-sm space-y-1 ml-4">
-              <li>• 펫 레벨 달성 스탯 약 50% 하향</li>
-              <li>• 야성: 명중 325↓, 민첩 65↓, 지식 65↓ (65마리 기준)</li>
-              <li>• 변형: 회피 230↓, 체력 46↓, 의지 46↓ (46마리 기준)</li>
-              <li>• 지성: 치명타 205↓, 위력 41↓, 지식 41↓ (41마리 기준)</li>
-              <li>• 자연: 치명타 저항 240↓, 정확 48↓, 의지 48↓ (48마리 기준)</li>
-              <li>• 통합 프리셋 확장 (타이틀, 아르카나 포함)</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">📅 시즌2 업데이트 일정</h3>
-        <div className="space-y-3">
-          <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-cyan-600 text-white px-2 py-1 rounded text-sm font-medium">1/21</span>
-              <span className="text-cyan-300 font-medium">🔥 시즌2 시작</span>
-            </div>
-            <ul className="text-zinc-300 text-sm space-y-1 ml-4">
-              <li>• <strong className="text-white">신규 원정:</strong> 죽은 드라마타의 둥지</li>
-              <li>• <strong className="text-white">토벌전:</strong> 죽은 오르쿠스의 심장, 파프나이트 제련소</li>
-              <li>• <strong className="text-white">각성전:</strong> 봉인된 재앙 클라우디아, 타락한 폭군 메녹수스</li>
-              <li>• <strong className="text-white">악몽:</strong> 신규 보스 7종 추가</li>
-              <li>• <strong className="text-white">어비스:</strong> 중층 추가 (아이템 레벨 제한)</li>
-            </ul>
-          </div>
-
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">1/28</span>
-              <span className="text-white font-medium">신규 원정: 무의 요람</span>
-            </div>
-          </div>
-
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/4</span>
-              <span className="text-white font-medium">초월 던전: 가라앉은 생명의 신전</span>
-            </div>
-            <p className="text-zinc-400 text-sm ml-4">• 1~10단계 난이도</p>
-          </div>
-
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/11</span>
-              <span className="text-white font-medium">어비스 균열 지대 (PvPvE)</span>
-            </div>
-          </div>
-
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/18</span>
-              <span className="text-white font-medium">어려움 난이도 추가</span>
-            </div>
-            <p className="text-zinc-400 text-sm ml-4">• 죽은 드라마타의 둥지, 무의 요람</p>
-          </div>
-
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/25</span>
-              <span className="text-white font-medium">성역: 침식의 정화소</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-amber-400 mb-4">⚜️ 아르카나 신규 추가</h3>
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
-          <div className="mb-3">
-            <span className="text-amber-300 font-medium">신규 부위:</span>
-            <span className="text-white ml-2">천칭 (Libra)</span>
-          </div>
-          <div>
-            <span className="text-amber-300 font-medium">신규 세트:</span>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">죽음</span>
-              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">전쟁</span>
-              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">신비</span>
-              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">자유</span>
-              <span className="bg-zinc-700 text-zinc-200 px-2 py-1 rounded text-sm">일격</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">⚔️ 어비스 개편</h3>
-        <ul className="space-y-2 text-zinc-300">
-          <li className="pl-4 border-l-2 border-cyan-500/50">
-            <strong className="text-white">어비스 중층</strong> 추가 (1/21, 아이템 레벨 제한)
-          </li>
-          <li className="pl-4 border-l-2 border-cyan-500/50">
-            <strong className="text-white">어비스 균열 지대</strong> PvPvE 콘텐츠 (2/11)
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            하층 3:0 패배 시 마을 → 회랑 바로 입장 가능
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            어비스 포인트: 주간 제한 → <strong className="text-white">시즌 총량 방식</strong>으로 변경
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            공명전 편의성 개선
-          </li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">🛠️ 시즌2 편의성 업데이트</h3>
-        <ul className="space-y-2 text-zinc-300">
-          <li className="pl-4 border-l-2 border-zinc-700">원정 및 초월 티켓 차감 시스템 변경</li>
-          <li className="pl-4 border-l-2 border-zinc-700">아르카나 신규 슬롯 추가 (천칭)</li>
-          <li className="pl-4 border-l-2 border-zinc-700">각성전/일일던전 클래스별 랭킹 시스템 도입</li>
-          <li className="pl-4 border-l-2 border-zinc-700">방어구 조율 옵션 추가</li>
-          <li className="pl-4 border-l-2 border-zinc-700">근거리 대상 보스 패턴 완화</li>
-          <li className="pl-4 border-l-2 border-zinc-700">장비 영혼 각인 옵션 계승 시스템 (추후 예정)</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">🔮 2026년 향후 계획</h3>
-        <div className="bg-zinc-800 rounded-lg p-4">
-          <ul className="space-y-2 text-zinc-300">
-            <li>• <strong className="text-white">신규 클래스</strong> 개발중 (새로운 전투 메커니즘, 호쾌한 스타일)</li>
-            <li>• <strong className="text-white">새로운 영지</strong> 준비중</li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="bg-zinc-800 rounded-lg p-6 text-center mt-10">
-        <p className="text-zinc-300 leading-relaxed">
-          시즌2에서는 랭킹이 초기화됩니다.<br />
-          <strong className="text-white">새로운 시작, 함께 도전해요!</strong>
-        </p>
-      </div>
     </article>
   );
 }

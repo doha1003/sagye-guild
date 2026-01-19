@@ -80,10 +80,12 @@ export default function MembersPage() {
     count: members.filter(m => m.className === cls).length,
   }));
 
-  // 최고 전투점수 순 정렬
-  const sortedMembers = [...filteredMembers].sort((a, b) =>
-    (Number(b.maxCombatScore) || 0) - (Number(a.maxCombatScore) || 0)
-  );
+  // 최고 전투점수 순 정렬 (현재 점수가 더 높으면 현재 점수 기준)
+  const sortedMembers = [...filteredMembers].sort((a, b) => {
+    const aScore = Math.max(Number(a.maxCombatScore) || 0, Number(a.combatScore) || 0);
+    const bScore = Math.max(Number(b.maxCombatScore) || 0, Number(b.combatScore) || 0);
+    return bScore - aScore;
+  });
 
   return (
     <div className="min-h-screen bg-zinc-900">
