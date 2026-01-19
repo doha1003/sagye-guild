@@ -167,9 +167,9 @@ function DailyContent() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 다음 시공의 균열까지 남은 시간 (3시간 간격: 1,4,7,10,13,16,19,22시)
+  // 다음 시공의 균열까지 남은 시간 (3시간 간격: 2,5,8,11,14,17,20,23시)
   const getTimeUntilRift = () => {
-    const riftHours = [1, 4, 7, 10, 13, 16, 19, 22];
+    const riftHours = [2, 5, 8, 11, 14, 17, 20, 23];
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
     const currentSecond = now.getSeconds();
@@ -304,7 +304,7 @@ function DailyContent() {
                 </div>
                 <div className="text-xs text-zinc-400 mt-1">
                   다음: <span className="text-cyan-400 font-mono">{getTimeUntilRift()}</span>
-                  <span className="text-zinc-600 ml-2">(1,4,7,10,13,16,19,22시)</span>
+                  <span className="text-zinc-600 ml-2">(2,5,8,11,14,17,20,23시)</span>
                 </div>
               </div>
               <button

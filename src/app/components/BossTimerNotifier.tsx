@@ -105,9 +105,9 @@ export default function BossTimerNotifier() {
         }
       }
 
-      // 시공의 균열 알림 (3시간 간격: 1,4,7,10,13,16,19,22시 - 5분 전 알림)
+      // 시공의 균열 알림 (3시간 간격: 2,5,8,11,14,17,20,23시 - 5분 전 알림)
       if (settings.riftPortal) {
-        const riftHours = [1, 4, 7, 10, 13, 16, 19, 22];
+        const riftHours = [2, 5, 8, 11, 14, 17, 20, 23];
         const riftKey = `rift-${timeKey}`;
         if (riftHours.includes(currentHour) && currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[riftKey]) {
           showNotification('🌀 시공의 균열!', '5분 후 시공 포탈 오픈!', 'rift');
