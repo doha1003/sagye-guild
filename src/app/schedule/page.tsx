@@ -105,7 +105,6 @@ function DailyContent() {
   const [personalSettings, setPersonalSettings] = useState({
     shugoFesta: false,
     riftPortal: false,
-    dimensionInvasion: false,
     blackCloudTrade: false,
     nahmaAlert: false,
   });
@@ -197,16 +196,6 @@ function DailyContent() {
     }
 
     return `${hoursUntil}:${minsUntil.toString().padStart(2, '0')}:${secsUntil.toString().padStart(2, '0')}`;
-  };
-
-  // 다음 차원 침공까지 남은 시간 (매시 정각)
-  const getTimeUntilInvasion = () => {
-    const mins = 59 - now.getMinutes();
-    const secs = 60 - now.getSeconds();
-    if (secs === 60) {
-      return `${mins + 1}:00`;
-    }
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   // 다음 나흐마까지 남은 시간
@@ -327,31 +316,6 @@ function DailyContent() {
                 }`}
               >
                 {personalSettings.riftPortal ? '알림 ON' : '알림 OFF'}
-              </button>
-            </div>
-          </div>
-
-          {/* 차원 침공 */}
-          <div className="bg-zinc-900 rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-red-400 font-bold text-sm">⚔️ 차원 침공</span>
-                  <span className="text-zinc-500 text-xs">매시 정각</span>
-                </div>
-                <div className="text-xs text-zinc-400 mt-1">
-                  다음: <span className="text-red-400 font-mono">{getTimeUntilInvasion()}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => toggleSetting('dimensionInvasion')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                  personalSettings.dimensionInvasion
-                    ? 'bg-red-500 text-white'
-                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
-                }`}
-              >
-                {personalSettings.dimensionInvasion ? '알림 ON' : '알림 OFF'}
               </button>
             </div>
           </div>

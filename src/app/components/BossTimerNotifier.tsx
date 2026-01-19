@@ -19,7 +19,6 @@ interface CompletedAlert {
 interface PersonalSettings {
   shugoFesta: boolean;       // 슈고 페스타 (매시 15분, 45분)
   riftPortal: boolean;       // 시공의 균열 (3시간 간격)
-  dimensionInvasion: boolean; // 차원 침공 (매시 정각)
   blackCloudTrade: boolean;  // 검은 구름 무역단 (매시 정각)
   nahmaAlert: boolean;       // 나흐마 (토/일 20:00)
 }
@@ -27,7 +26,6 @@ interface PersonalSettings {
 const DEFAULT_SETTINGS: PersonalSettings = {
   shugoFesta: false,
   riftPortal: false,
-  dimensionInvasion: false,
   blackCloudTrade: false,
   nahmaAlert: false,
 };
@@ -114,15 +112,6 @@ export default function BossTimerNotifier() {
         if (riftHours.includes(currentHour) && currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[riftKey]) {
           showNotification('🌀 시공의 균열!', '5분 후 시공 포탈 오픈!', 'rift');
           lastNotifiedRef.current[riftKey] = Date.now();
-        }
-      }
-
-      // 차원 침공 알림 (매시 정각 - 5분 전 알림)
-      if (settings.dimensionInvasion) {
-        const invasionKey = `invasion-${timeKey}`;
-        if (currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[invasionKey]) {
-          showNotification('⚔️ 차원 침공!', '5분 후 차원 침공 시작!', 'invasion');
-          lastNotifiedRef.current[invasionKey] = Date.now();
         }
       }
 
