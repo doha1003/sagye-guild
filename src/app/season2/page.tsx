@@ -2,140 +2,426 @@
 
 import Link from 'next/link';
 
+const DUNGEON_TYPES = [
+  {
+    name: '원정',
+    icon: '🏰',
+    color: 'amber',
+    desc: '4인 파티 던전',
+    details: [
+      '탐험(쉬움) / 정복(어려움) 난이도',
+      '티켓 소모, 회차 제한 있음',
+      '장비 및 재화 획득 메인 콘텐츠',
+    ],
+  },
+  {
+    name: '토벌전',
+    icon: '⚔️',
+    color: 'red',
+    desc: '4인 보스 레이드',
+    details: [
+      '제한된 부활 횟수 내 클리어',
+      '고정 보스 패턴 학습 필요',
+      '고급 장비 및 재화 보상',
+    ],
+  },
+  {
+    name: '각성전',
+    icon: '💀',
+    color: 'purple',
+    desc: '제한 시간 보스전',
+    details: [
+      '주간 로테이션 보스',
+      '제한 시간 내 처치 필요',
+      '각성 재료 및 고급 보상',
+    ],
+  },
+  {
+    name: '초월',
+    icon: '🔥',
+    color: 'orange',
+    desc: '랭킹 경쟁 던전',
+    details: [
+      '1~10단계 난이도 선택',
+      '일일 2회 입장 제한',
+      '클래스별 랭킹 시스템',
+    ],
+  },
+  {
+    name: '성역',
+    icon: '👑',
+    color: 'yellow',
+    desc: '8인 엔드게임 레이드',
+    details: [
+      '최상위 난이도 콘텐츠',
+      '8인 협동 플레이 필수',
+      '최고급 장비 드롭',
+    ],
+  },
+  {
+    name: '악몽',
+    icon: '😈',
+    color: 'pink',
+    desc: '보스 러쉬',
+    details: [
+      '연속 보스 처치',
+      '일일 2회 무료 입장',
+      '보스별 순차 도전',
+    ],
+  },
+];
+
+const NEW_DUNGEONS = [
+  {
+    date: '1/21',
+    type: '원정',
+    name: '죽은 드라마타의 둥지',
+    difficulty: '탐험 (어려움 2/18)',
+    boss: '드라마타',
+    desc: '고대 용의 둥지에서 벌어지는 사투',
+    color: 'cyan',
+  },
+  {
+    date: '1/21',
+    type: '토벌전',
+    name: '죽은 오르쿠스의 심장',
+    difficulty: '일반',
+    boss: '오르쿠스',
+    desc: '거대한 심장부에서의 전투',
+    color: 'red',
+  },
+  {
+    date: '1/21',
+    type: '토벌전',
+    name: '파프나이트 제련소',
+    difficulty: '일반',
+    boss: '파프나이트',
+    desc: '용암 제련소에서의 결전',
+    color: 'red',
+  },
+  {
+    date: '1/21',
+    type: '각성전',
+    name: '봉인된 재앙 클라우디아',
+    difficulty: '주간 로테이션',
+    boss: '클라우디아',
+    desc: '봉인에서 풀려난 재앙의 화신',
+    color: 'purple',
+  },
+  {
+    date: '1/21',
+    type: '각성전',
+    name: '타락한 폭군 메녹수스',
+    difficulty: '주간 로테이션',
+    boss: '메녹수스',
+    desc: '타락으로 인해 광기에 빠진 폭군',
+    color: 'purple',
+  },
+  {
+    date: '1/28',
+    type: '원정',
+    name: '무의 요람',
+    difficulty: '탐험 (어려움 2/18)',
+    boss: '???',
+    desc: '허무의 근원지에서의 탐험',
+    color: 'cyan',
+  },
+  {
+    date: '2/4',
+    type: '초월',
+    name: '가라앉은 생명의 신전',
+    difficulty: '1~10단계',
+    boss: '신전 수호자',
+    desc: '수몰된 고대 신전의 비밀',
+    color: 'orange',
+  },
+  {
+    date: '2/25',
+    type: '성역',
+    name: '침식의 정화소',
+    difficulty: '8인 레이드',
+    boss: '???',
+    desc: '최상위 엔드게임 레이드',
+    color: 'yellow',
+  },
+];
+
+const ARCANA_SETS = [
+  { name: '죽음', icon: '💀', effect: '피해 증가 · 생존력 감소', color: 'text-gray-300' },
+  { name: '전쟁', icon: '⚔️', effect: '공격 특화 · 전투 지속력', color: 'text-red-400' },
+  { name: '신비', icon: '✨', effect: '마법 강화 · 정신력 증가', color: 'text-purple-400' },
+  { name: '자유', icon: '🕊️', effect: '이동 속도 · 회피 특화', color: 'text-cyan-400' },
+  { name: '일격', icon: '⚡', effect: '치명타 특화 · 폭딜', color: 'text-yellow-400' },
+];
+
 export default function Season2Page() {
   return (
     <div className="min-h-screen bg-zinc-950">
-      {/* 히어로 섹션 */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/30 via-indigo-900/20 to-zinc-950" />
-        <div className="absolute inset-0 bg-[url('/season2-bg.jpg')] bg-cover bg-center opacity-20" />
-        <div className="relative max-w-5xl mx-auto px-4 py-16 text-center">
-          <Link href="/" className="inline-block text-amber-400 hover:text-amber-300 mb-8">
-            ← 사계 레기온
+      {/* 히어로 섹션 - 더 화려하게 */}
+      <section className="relative overflow-hidden min-h-[60vh] flex items-center">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/40 via-indigo-900/30 to-zinc-950" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[120px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-4 py-16 w-full">
+          <Link href="/" className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 group">
+            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span>사계 레기온</span>
           </Link>
-          <div className="mb-4">
-            <span className="bg-cyan-500 text-white text-sm font-bold px-4 py-1 rounded-full">
-              2026.01.21 START
-            </span>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            AION2 <span className="text-cyan-400">SEASON 2</span>
-          </h1>
-          <p className="text-xl text-zinc-300 mb-8">
-            새로운 던전, 새로운 도전, 새로운 시작
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <div className="bg-zinc-800/80 backdrop-blur px-4 py-2 rounded-lg">
-              <span className="text-zinc-400">신규 원정</span>
-              <span className="text-white font-bold ml-2">2종</span>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white text-sm font-bold px-4 py-1.5 rounded-full animate-pulse">
+                  2026.01.21 START
+                </span>
+                <span className="bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded border border-red-500/30">
+                  D-2
+                </span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight">
+                AION2
+                <br />
+                <span className="bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+                  SEASON 2
+                </span>
+              </h1>
+
+              <p className="text-xl text-zinc-300 mb-8 leading-relaxed">
+                새로운 던전, 새로운 아르카나, 새로운 도전
+                <br />
+                <span className="text-zinc-500">모든 랭킹이 초기화되고 새 시즌이 시작됩니다</span>
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="https://aion2.plaync.com/ko-kr/conts/260116_update"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl transition-all hover:scale-105"
+                >
+                  공식 안내 보기 →
+                </a>
+              </div>
             </div>
-            <div className="bg-zinc-800/80 backdrop-blur px-4 py-2 rounded-lg">
-              <span className="text-zinc-400">신규 토벌전</span>
-              <span className="text-white font-bold ml-2">2종</span>
-            </div>
-            <div className="bg-zinc-800/80 backdrop-blur px-4 py-2 rounded-lg">
-              <span className="text-zinc-400">신규 각성전</span>
-              <span className="text-white font-bold ml-2">2종</span>
-            </div>
-            <div className="bg-zinc-800/80 backdrop-blur px-4 py-2 rounded-lg">
-              <span className="text-zinc-400">신규 아르카나</span>
-              <span className="text-cyan-400 font-bold ml-2">천칭</span>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: '신규 원정', value: '2종', icon: '🏰', color: 'from-amber-500/20 to-amber-600/10' },
+                { label: '신규 토벌전', value: '2종', icon: '⚔️', color: 'from-red-500/20 to-red-600/10' },
+                { label: '신규 각성전', value: '2종', icon: '💀', color: 'from-purple-500/20 to-purple-600/10' },
+                { label: '신규 아르카나', value: '천칭', icon: '⚜️', color: 'from-cyan-500/20 to-cyan-600/10' },
+                { label: '신규 초월', value: '1종', icon: '🔥', color: 'from-orange-500/20 to-orange-600/10' },
+                { label: '신규 성역', value: '1종', icon: '👑', color: 'from-yellow-500/20 to-yellow-600/10' },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className={`bg-gradient-to-br ${stat.color} backdrop-blur border border-zinc-700/50 rounded-xl p-4 hover:border-zinc-600 transition-colors`}
+                >
+                  <div className="text-2xl mb-2">{stat.icon}</div>
+                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                  <div className="text-zinc-400 text-sm">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
+      {/* 던전 유형 가이드 */}
+      <section className="bg-gradient-to-b from-zinc-900 to-zinc-950 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              ⚔️ 던전 유형 가이드
+            </h2>
+            <p className="text-zinc-400">각 던전 유형의 특성과 플레이 방식</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {DUNGEON_TYPES.map((dungeon, i) => (
+              <div
+                key={i}
+                className={`bg-zinc-800/50 border border-zinc-700 rounded-xl p-5 hover:border-${dungeon.color}-500/50 transition-all group`}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">{dungeon.icon}</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">
+                      {dungeon.name}
+                    </h3>
+                    <p className="text-zinc-500 text-sm">{dungeon.desc}</p>
+                  </div>
+                </div>
+                <ul className="space-y-2">
+                  {dungeon.details.map((detail, j) => (
+                    <li key={j} className="text-zinc-400 text-sm flex items-start gap-2">
+                      <span className="text-zinc-600 mt-1">•</span>
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 신규 던전 상세 */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              🆕 시즌2 신규 던전
+            </h2>
+            <p className="text-zinc-400">새롭게 추가되는 던전과 보스 정보</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {NEW_DUNGEONS.map((dungeon, i) => (
+              <div
+                key={i}
+                className={`bg-gradient-to-br from-${dungeon.color}-900/20 to-zinc-900/50 border border-${dungeon.color}-500/30 rounded-xl p-5 hover:border-${dungeon.color}-500/50 transition-all`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`bg-${dungeon.color}-600/30 text-${dungeon.color}-400 text-xs font-bold px-2 py-1 rounded`}>
+                      {dungeon.type}
+                    </span>
+                    <span className="bg-zinc-700 text-zinc-300 text-xs font-bold px-2 py-1 rounded">
+                      {dungeon.date}
+                    </span>
+                  </div>
+                  <span className="text-zinc-500 text-xs">{dungeon.difficulty}</span>
+                </div>
+
+                <h3 className="text-xl font-bold text-white mb-2">{dungeon.name}</h3>
+                <p className="text-zinc-400 text-sm mb-3">{dungeon.desc}</p>
+
+                <div className="flex items-center gap-2 pt-3 border-t border-zinc-700/50">
+                  <span className="text-zinc-500 text-xs">보스</span>
+                  <span className="text-amber-400 font-medium text-sm">{dungeon.boss}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 업데이트 타임라인 */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold text-white mb-8 text-center">
-          📅 업데이트 로드맵
-        </h2>
-
-        <div className="space-y-4">
-          {/* 1/21 */}
-          <div className="bg-gradient-to-r from-cyan-600/20 to-transparent border-l-4 border-cyan-500 rounded-r-lg p-6">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="bg-cyan-600 text-white font-bold px-4 py-2 rounded-lg text-lg">1/21</span>
-              <div>
-                <h3 className="text-xl font-bold text-cyan-300">시즌2 시작</h3>
-                <p className="text-zinc-400 text-sm">랭킹 초기화 · 서버 매칭</p>
-              </div>
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-zinc-800/50 rounded-lg p-4">
-                <h4 className="text-amber-400 font-semibold mb-2">🏰 신규 원정</h4>
-                <p className="text-white font-medium">죽은 드라마타의 둥지</p>
-              </div>
-              <div className="bg-zinc-800/50 rounded-lg p-4">
-                <h4 className="text-red-400 font-semibold mb-2">⚔️ 토벌전 2종</h4>
-                <ul className="text-zinc-300 text-sm space-y-1">
-                  <li>• 죽은 오르쿠스의 심장</li>
-                  <li>• 파프나이트 제련소</li>
-                </ul>
-              </div>
-              <div className="bg-zinc-800/50 rounded-lg p-4">
-                <h4 className="text-purple-400 font-semibold mb-2">💀 각성전 2종</h4>
-                <ul className="text-zinc-300 text-sm space-y-1">
-                  <li>• 봉인된 재앙 클라우디아</li>
-                  <li>• 타락한 폭군 메녹수스</li>
-                </ul>
-              </div>
-              <div className="bg-zinc-800/50 rounded-lg p-4">
-                <h4 className="text-indigo-400 font-semibold mb-2">🌀 어비스</h4>
-                <p className="text-zinc-300 text-sm">어비스 중층 오픈 (아이템 레벨 제한)</p>
-              </div>
-            </div>
+      <section className="bg-zinc-900/50 py-16">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              📅 업데이트 로드맵
+            </h2>
+            <p className="text-zinc-400">시즌2 컨텐츠 순차 오픈 일정</p>
           </div>
 
-          {/* 1/28 */}
-          <div className="bg-zinc-800/30 border-l-4 border-zinc-600 rounded-r-lg p-6">
-            <div className="flex items-center gap-4">
-              <span className="bg-zinc-700 text-white font-bold px-4 py-2 rounded-lg">1/28</span>
-              <div>
-                <h3 className="text-lg font-bold text-white">신규 원정: 무의 요람</h3>
-              </div>
-            </div>
-          </div>
+          <div className="relative">
+            {/* 타임라인 라인 */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-indigo-500 to-purple-500" />
 
-          {/* 2/4 */}
-          <div className="bg-zinc-800/30 border-l-4 border-zinc-600 rounded-r-lg p-6">
-            <div className="flex items-center gap-4">
-              <span className="bg-zinc-700 text-white font-bold px-4 py-2 rounded-lg">2/4</span>
-              <div>
-                <h3 className="text-lg font-bold text-white">초월 던전: 가라앉은 생명의 신전</h3>
-                <p className="text-zinc-400 text-sm">1~10단계 난이도</p>
+            <div className="space-y-8">
+              {/* 1/21 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8">
+                  <div className="bg-gradient-to-r from-cyan-600/20 to-cyan-600/5 rounded-xl p-4 inline-block text-left">
+                    <div className="text-cyan-400 font-bold mb-2">시즌2 시작</div>
+                    <ul className="text-zinc-400 text-sm space-y-1">
+                      <li>• 랭킹 전체 초기화</li>
+                      <li>• 서버 매칭 시스템</li>
+                      <li>• 어비스 중층 오픈</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-xs font-bold text-white">21</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <span className="text-cyan-400 font-bold text-lg">1월</span>
+                  <div className="md:hidden bg-cyan-600/20 rounded-lg p-3 mt-2">
+                    <div className="text-cyan-300 font-medium text-sm">시즌2 시작 · 신규 원정/토벌전/각성전</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* 2/11 */}
-          <div className="bg-zinc-800/30 border-l-4 border-zinc-600 rounded-r-lg p-6">
-            <div className="flex items-center gap-4">
-              <span className="bg-zinc-700 text-white font-bold px-4 py-2 rounded-lg">2/11</span>
-              <div>
-                <h3 className="text-lg font-bold text-white">어비스 균열 지대</h3>
-                <p className="text-zinc-400 text-sm">신규 PvPvE 콘텐츠</p>
+              {/* 1/28 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8" />
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-zinc-600 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">28</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <span className="text-zinc-300 font-medium text-sm">신규 원정: 무의 요람</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* 2/18 */}
-          <div className="bg-zinc-800/30 border-l-4 border-zinc-600 rounded-r-lg p-6">
-            <div className="flex items-center gap-4">
-              <span className="bg-zinc-700 text-white font-bold px-4 py-2 rounded-lg">2/18</span>
-              <div>
-                <h3 className="text-lg font-bold text-white">어려움 난이도 추가</h3>
-                <p className="text-zinc-400 text-sm">죽은 드라마타의 둥지, 무의 요람</p>
+              {/* 2/4 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8">
+                  <div className="bg-orange-600/20 rounded-lg p-3">
+                    <span className="text-orange-300 font-medium text-sm">초월: 가라앉은 생명의 신전 (1~10단계)</span>
+                  </div>
+                </div>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">04</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <span className="text-orange-400 font-bold text-lg">2월</span>
+                  <div className="md:hidden bg-orange-600/20 rounded-lg p-3 mt-2">
+                    <span className="text-orange-300 font-medium text-sm">초월 던전 오픈</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* 2/25 */}
-          <div className="bg-zinc-800/30 border-l-4 border-zinc-600 rounded-r-lg p-6">
-            <div className="flex items-center gap-4">
-              <span className="bg-zinc-700 text-white font-bold px-4 py-2 rounded-lg">2/25</span>
-              <div>
-                <h3 className="text-lg font-bold text-white">성역: 침식의 정화소</h3>
+              {/* 2/11 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8" />
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">11</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <div className="bg-purple-600/20 rounded-lg p-3">
+                    <span className="text-purple-300 font-medium text-sm">어비스 균열 지대 (신규 PvPvE)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2/18 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8">
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <span className="text-zinc-300 font-medium text-sm">원정 어려움 난이도 추가</span>
+                  </div>
+                </div>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-zinc-600 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">18</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8 md:hidden">
+                  <div className="bg-zinc-800/50 rounded-lg p-3">
+                    <span className="text-zinc-300 font-medium text-sm">원정 어려움 난이도</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2/25 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8" />
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">25</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <div className="bg-yellow-600/20 rounded-lg p-3">
+                    <span className="text-yellow-300 font-medium text-sm">성역: 침식의 정화소 (8인 레이드)</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -143,38 +429,73 @@ export default function Season2Page() {
       </section>
 
       {/* 아르카나 섹션 */}
-      <section className="bg-gradient-to-b from-amber-900/10 to-transparent py-12">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            ⚜️ 신규 아르카나
-          </h2>
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              ⚜️ 신규 아르카나: 천칭
+            </h2>
+            <p className="text-zinc-400">새로운 아르카나 슬롯과 5종의 세트 추가</p>
+          </div>
 
-          <div className="bg-zinc-800/50 backdrop-blur rounded-2xl p-8 border border-amber-500/20">
-            <div className="text-center mb-8">
-              <div className="inline-block bg-amber-500/20 border border-amber-500/30 rounded-full px-6 py-2 mb-4">
-                <span className="text-amber-400 font-bold text-lg">신규 부위: 천칭 (Libra)</span>
+          <div className="bg-gradient-to-br from-amber-900/20 via-zinc-900 to-indigo-900/20 rounded-2xl p-8 border border-amber-500/20">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* 천칭 설명 */}
+              <div className="space-y-6">
+                <div className="bg-zinc-800/50 rounded-xl p-6 border border-amber-500/30">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl flex items-center justify-center text-3xl">
+                      ⚖️
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-amber-400">천칭 (Libra)</h3>
+                      <p className="text-zinc-400">신규 아르카나 슬롯</p>
+                    </div>
+                  </div>
+                  <p className="text-zinc-300 leading-relaxed">
+                    기존 아르카나 시스템에 새로운 <span className="text-amber-400 font-medium">천칭 슬롯</span>이 추가됩니다.
+                    5종의 신규 아르카나 세트를 수집하고 조합하여 더욱 강력한 캐릭터를 만들어보세요.
+                  </p>
+                </div>
+
+                <div className="bg-zinc-800/30 rounded-xl p-4 border border-zinc-700">
+                  <h4 className="text-white font-semibold mb-3">획득 방법</h4>
+                  <ul className="text-zinc-400 text-sm space-y-2">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
+                      시즌2 신규 던전 드롭
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
+                      어비스 중층 보상
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
+                      시즌 업적 보상
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <p className="text-zinc-400">아르카나 신규 슬롯이 추가됩니다</p>
-            </div>
 
-            <div>
-              <h4 className="text-white font-semibold mb-4 text-center">신규 아르카나 세트</h4>
-              <div className="flex flex-wrap justify-center gap-3">
-                <span className="bg-zinc-900 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-lg font-medium">
-                  💀 죽음
-                </span>
-                <span className="bg-zinc-900 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-lg font-medium">
-                  ⚔️ 전쟁
-                </span>
-                <span className="bg-zinc-900 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-lg font-medium">
-                  ✨ 신비
-                </span>
-                <span className="bg-zinc-900 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-lg font-medium">
-                  🕊️ 자유
-                </span>
-                <span className="bg-zinc-900 border border-zinc-700 text-zinc-200 px-6 py-3 rounded-lg font-medium">
-                  ⚡ 일격
-                </span>
+              {/* 세트 목록 */}
+              <div>
+                <h4 className="text-white font-semibold mb-4">신규 아르카나 세트 (5종)</h4>
+                <div className="space-y-3">
+                  {ARCANA_SETS.map((set, i) => (
+                    <div
+                      key={i}
+                      className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 transition-colors flex items-center gap-4"
+                    >
+                      <div className="w-12 h-12 bg-zinc-900 rounded-lg flex items-center justify-center text-2xl">
+                        {set.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h5 className={`font-bold ${set.color}`}>{set.name}</h5>
+                        <p className="text-zinc-500 text-sm">{set.effect}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -182,76 +503,108 @@ export default function Season2Page() {
       </section>
 
       {/* 어비스 개편 */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold text-white mb-8 text-center">
-          ⚔️ 어비스 개편
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-indigo-600/10 border border-indigo-500/30 rounded-xl p-6">
-            <h3 className="text-indigo-400 font-bold text-lg mb-3">어비스 중층</h3>
-            <p className="text-zinc-300 mb-2">1월 21일 오픈</p>
-            <ul className="text-zinc-400 text-sm space-y-1">
-              <li>• 아이템 레벨 입장 제한</li>
-              <li>• 상위 유저 경쟁 콘텐츠</li>
-            </ul>
+      <section className="bg-gradient-to-b from-indigo-950/30 to-zinc-950 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              ⚔️ 어비스 대규모 개편
+            </h2>
+            <p className="text-zinc-400">PvP 콘텐츠의 새로운 시작</p>
           </div>
 
-          <div className="bg-purple-600/10 border border-purple-500/30 rounded-xl p-6">
-            <h3 className="text-purple-400 font-bold text-lg mb-3">어비스 균열 지대</h3>
-            <p className="text-zinc-300 mb-2">2월 11일 오픈</p>
-            <ul className="text-zinc-400 text-sm space-y-1">
-              <li>• 신규 PvPvE 콘텐츠</li>
-              <li>• 새로운 전장 경험</li>
-            </ul>
-          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-indigo-600/20 to-zinc-900 border border-indigo-500/30 rounded-xl p-6">
+              <div className="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                🏔️
+              </div>
+              <h3 className="text-indigo-400 font-bold text-xl mb-2">어비스 중층</h3>
+              <p className="text-zinc-300 text-sm mb-4">1월 21일 오픈</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 아이템 레벨 입장 제한</li>
+                <li>• 고급 장비 유저 경쟁전</li>
+                <li>• 새로운 어비스 보상</li>
+              </ul>
+            </div>
 
-          <div className="bg-zinc-800/50 rounded-xl p-6">
-            <h3 className="text-white font-bold text-lg mb-3">어비스 포인트 개편</h3>
-            <ul className="text-zinc-400 text-sm space-y-1">
-              <li>• 주간 제한 → 시즌 총량 방식으로 변경</li>
-              <li>• 하층 3:0 패배 시 회랑 바로 입장 가능</li>
-            </ul>
-          </div>
+            <div className="bg-gradient-to-br from-purple-600/20 to-zinc-900 border border-purple-500/30 rounded-xl p-6">
+              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                🌀
+              </div>
+              <h3 className="text-purple-400 font-bold text-xl mb-2">균열 지대</h3>
+              <p className="text-zinc-300 text-sm mb-4">2월 11일 오픈</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 신규 PvPvE 콘텐츠</li>
+                <li>• 균열에서의 대규모 전투</li>
+                <li>• 독점 보상 시스템</li>
+              </ul>
+            </div>
 
-          <div className="bg-zinc-800/50 rounded-xl p-6">
-            <h3 className="text-white font-bold text-lg mb-3">공명전 개선</h3>
-            <ul className="text-zinc-400 text-sm space-y-1">
-              <li>• 편의성 개선</li>
-              <li>• 매칭 시스템 최적화</li>
-            </ul>
+            <div className="bg-gradient-to-br from-cyan-600/20 to-zinc-900 border border-cyan-500/30 rounded-xl p-6">
+              <div className="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
+                ⚙️
+              </div>
+              <h3 className="text-cyan-400 font-bold text-xl mb-2">시스템 개선</h3>
+              <p className="text-zinc-300 text-sm mb-4">1월 21일 적용</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• AP 시즌 총량제로 변경</li>
+                <li>• 3:0 패배 시 회랑 바로 입장</li>
+                <li>• 공명전 매칭 최적화</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 적용 완료 업데이트 */}
-      <section className="bg-green-900/10 py-12">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            ✅ 적용 완료된 사전 업데이트
-          </h2>
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              ✅ 사전 업데이트 완료
+            </h2>
+            <p className="text-zinc-400">시즌2 시작 전 이미 적용된 변경사항</p>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-zinc-800/50 rounded-xl p-6 border border-green-500/20">
+            <div className="bg-zinc-800/30 rounded-xl p-6 border border-green-500/30">
               <div className="flex items-center gap-3 mb-4">
-                <span className="bg-green-600 text-white text-sm font-bold px-3 py-1 rounded">1/7</span>
-                <h3 className="text-green-400 font-bold">펫 시스템 개선</h3>
+                <span className="bg-green-600 text-white text-sm font-bold px-3 py-1.5 rounded">1/7</span>
+                <h3 className="text-green-400 font-bold text-lg">펫 시스템 대규모 개편</h3>
               </div>
-              <ul className="text-zinc-400 text-sm space-y-1">
-                <li>• 종족 이해도 & 펫 보유 → 서버 내 캐릭터 공유</li>
-                <li>• 모든 캐릭터 펫 레벨 합산</li>
-                <li>• 필요 영혼 수량 50% 하향</li>
+              <ul className="text-zinc-400 space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>종족 이해도 & 펫 보유 → <span className="text-white">서버 내 캐릭터 공유</span></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>모든 캐릭터 펫 레벨 합산 적용</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>필요 영혼 수량 <span className="text-red-400">50% 하향</span></span>
+                </li>
               </ul>
             </div>
 
-            <div className="bg-zinc-800/50 rounded-xl p-6 border border-green-500/20">
+            <div className="bg-zinc-800/30 rounded-xl p-6 border border-green-500/30">
               <div className="flex items-center gap-3 mb-4">
-                <span className="bg-green-600 text-white text-sm font-bold px-3 py-1 rounded">1/14</span>
-                <h3 className="text-green-400 font-bold">펫 스탯 밸런스</h3>
+                <span className="bg-green-600 text-white text-sm font-bold px-3 py-1.5 rounded">1/14</span>
+                <h3 className="text-green-400 font-bold text-lg">펫 스탯 밸런스 조정</h3>
               </div>
-              <ul className="text-zinc-400 text-sm space-y-1">
-                <li>• 펫 레벨 달성 스탯 약 50% 하향</li>
-                <li>• 통합 프리셋 확장 (타이틀, 아르카나)</li>
+              <ul className="text-zinc-400 space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>펫 레벨 달성 스탯 <span className="text-red-400">약 50% 하향</span></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>통합 프리셋에 타이틀, 아르카나 추가</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span>UI/UX 편의성 개선</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -259,63 +612,114 @@ export default function Season2Page() {
       </section>
 
       {/* 편의성 업데이트 */}
-      <section className="max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold text-white mb-8 text-center">
-          🛠️ 편의성 업데이트
-        </h2>
+      <section className="bg-zinc-900/50 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              🛠️ 편의성 업데이트
+            </h2>
+            <p className="text-zinc-400">시즌2와 함께 적용되는 편의 기능</p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            { icon: '🎫', title: '티켓 시스템', desc: '원정 및 초월 티켓 차감 방식 변경' },
-            { icon: '⚜️', title: '아르카나 슬롯', desc: '신규 천칭 슬롯 추가' },
-            { icon: '🏆', title: '클래스별 랭킹', desc: '각성전/일일던전 랭킹 도입' },
-            { icon: '🛡️', title: '방어구 조율', desc: '조율 옵션 추가' },
-            { icon: '👊', title: '보스 패턴', desc: '근거리 대상 패턴 완화' },
-            { icon: '💎', title: '장비 계승', desc: '영혼 각인 옵션 계승 (예정)' },
-          ].map((item, i) => (
-            <div key={i} className="bg-zinc-800/50 rounded-lg p-4 text-center">
-              <div className="text-2xl mb-2">{item.icon}</div>
-              <h4 className="text-white font-medium mb-1">{item.title}</h4>
-              <p className="text-zinc-500 text-sm">{item.desc}</p>
-            </div>
-          ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: '🎫', title: '티켓 시스템 변경', desc: '원정/초월 티켓 차감 방식 개선', badge: '편의' },
+              { icon: '🏆', title: '클래스별 랭킹', desc: '각성전/일일던전 클래스 랭킹 도입', badge: '신규' },
+              { icon: '🛡️', title: '방어구 조율', desc: '방어구에 조율 옵션 추가', badge: '신규' },
+              { icon: '👊', title: '보스 패턴 완화', desc: '근거리 대상 패턴 부담 감소', badge: '밸런스' },
+              { icon: '💎', title: '영혼 각인 계승', desc: '장비 계승 시 영혼 각인 유지', badge: '예정' },
+              { icon: '📊', title: '통합 프리셋', desc: '타이틀, 아르카나 프리셋 포함', badge: '편의' },
+            ].map((item, i) => (
+              <div key={i} className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5 hover:border-zinc-600 transition-all">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-3xl">{item.icon}</span>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    item.badge === '신규' ? 'bg-cyan-500/20 text-cyan-400' :
+                    item.badge === '예정' ? 'bg-yellow-500/20 text-yellow-400' :
+                    item.badge === '밸런스' ? 'bg-red-500/20 text-red-400' :
+                    'bg-zinc-700 text-zinc-400'
+                  }`}>{item.badge}</span>
+                </div>
+                <h4 className="text-white font-bold mb-1">{item.title}</h4>
+                <p className="text-zinc-500 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* 향후 계획 */}
-      <section className="bg-gradient-to-t from-indigo-900/20 to-transparent py-12">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">
-            🔮 2026년 향후 계획
-          </h2>
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              🔮 2026년 향후 로드맵
+            </h2>
+            <p className="text-zinc-400">시즌2 이후 예정된 대규모 업데이트</p>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-zinc-800/50 rounded-xl p-6 text-center">
-              <div className="text-4xl mb-4">⚔️</div>
-              <h3 className="text-xl font-bold text-white mb-2">신규 클래스</h3>
-              <p className="text-zinc-400">새로운 전투 메커니즘과 호쾌한 스타일의 신규 클래스 개발중</p>
+            <div className="bg-gradient-to-br from-red-900/20 to-zinc-900 rounded-xl p-8 border border-red-500/20 text-center">
+              <div className="w-20 h-20 bg-red-500/20 rounded-2xl flex items-center justify-center text-5xl mx-auto mb-6">
+                ⚔️
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">신규 클래스</h3>
+              <p className="text-zinc-400 leading-relaxed">
+                새로운 전투 메커니즘과 호쾌한 스타일의
+                <br />
+                <span className="text-red-400 font-medium">신규 클래스</span>가 개발 중입니다
+              </p>
             </div>
-            <div className="bg-zinc-800/50 rounded-xl p-6 text-center">
-              <div className="text-4xl mb-4">🗺️</div>
-              <h3 className="text-xl font-bold text-white mb-2">새로운 영지</h3>
-              <p className="text-zinc-400">탐험할 수 있는 새로운 지역 준비중</p>
+
+            <div className="bg-gradient-to-br from-emerald-900/20 to-zinc-900 rounded-xl p-8 border border-emerald-500/20 text-center">
+              <div className="w-20 h-20 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-5xl mx-auto mb-6">
+                🗺️
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">새로운 영지</h3>
+              <p className="text-zinc-400 leading-relaxed">
+                탐험할 수 있는 광활한
+                <br />
+                <span className="text-emerald-400 font-medium">신규 지역</span>이 준비 중입니다
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 푸터 */}
-      <footer className="border-t border-zinc-800 py-8">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <Link href="/" className="text-amber-400 hover:text-amber-300 font-bold text-lg">
-            사계 레기온
-          </Link>
-          <p className="text-zinc-500 text-sm mt-2">
-            AION2 지켈 서버 · 마족
-          </p>
-          <p className="text-zinc-600 text-xs mt-4">
-            정보 출처: NCSOFT 공식 발표
-          </p>
+      <footer className="border-t border-zinc-800 py-8 bg-zinc-900/50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <Link href="/" className="text-amber-400 hover:text-amber-300 font-bold text-xl">
+              사계 레기온
+            </Link>
+            <div className="flex items-center gap-6">
+              <a
+                href="https://discord.gg/DgwjWYMu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:text-indigo-300 text-sm"
+              >
+                Discord
+              </a>
+              <a
+                href="https://open.kakao.com/o/gr52NRmg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-yellow-400 hover:text-yellow-300 text-sm"
+              >
+                카카오톡
+              </a>
+            </div>
+          </div>
+          <div className="text-center mt-6">
+            <p className="text-zinc-500 text-sm">
+              AION2 지켈 서버 · 마족
+            </p>
+            <p className="text-zinc-600 text-xs mt-2">
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.19
+            </p>
+          </div>
         </div>
       </footer>
     </div>
