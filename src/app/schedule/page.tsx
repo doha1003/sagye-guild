@@ -256,13 +256,37 @@ function FieldBossContent() {
       color: 'text-red-400',
       bgColor: 'bg-red-500/10',
       bosses: [
+        // 1시간
         { name: '녹아내린 다나르', location: '드레드기온 추락지', respawn: '1시간', minutes: 60 },
-        { name: '어둠의 타크라', location: '이름없는 묘지', respawn: '1시간', minutes: 60 },
-        { name: '절망의 에탄', location: '고대 연구 단지', respawn: '1시간', minutes: 60 },
-        { name: '광기의 쿠라스', location: '아슈테론 주둔지', respawn: '2시간', minutes: 120 },
-        { name: '사막 비틀레', location: '타렌스 폐광촌', respawn: '3시간', minutes: 180 },
-        { name: '붉은 눈의 라키', location: '불멸의 군단 요새', respawn: '4시간', minutes: 240 },
-        { name: '군단장 라그타', location: '불멸의 요새', respawn: '24시간', minutes: 1440 },
+        { name: '검은 전사 아에드', location: '이름없는 묘지', respawn: '1시간', minutes: 60 },
+        { name: '충실한 라지트', location: '성소 감시 초소', respawn: '1시간', minutes: 60 },
+        // 2시간
+        { name: '광전사 발그', location: '성소 감시 초소', respawn: '2시간', minutes: 120 },
+        // 3시간
+        { name: '혈전사 란나르', location: '모슬란 숲', respawn: '3시간', minutes: 180 },
+        // 4시간
+        { name: '포식자 가르산', location: '모슬란 숲', respawn: '4시간', minutes: 240 },
+        { name: '기만자 트리드', location: '우르툼헤임', respawn: '4시간', minutes: 240 },
+        { name: '푸른물결 켈피나', location: '정화의 숲', respawn: '4시간', minutes: 240 },
+        { name: '총감독관 누타', location: '드라낙투스', respawn: '4시간', minutes: 240 },
+        // 6시간
+        { name: '참모관 르사나', location: '드라낙투스', respawn: '6시간', minutes: 360 },
+        { name: '별동대장 링크스', location: '바스펠트 폐허', respawn: '6시간', minutes: 360 },
+        { name: '중독된 하디룬', location: '파프나이트 매장지', respawn: '6시간', minutes: 360 },
+        { name: '백전노장 슈자칸', location: '검은 발톱 부락', respawn: '6시간', minutes: 360 },
+        // 8시간
+        { name: '모독자 노블루드', location: '바스펠트 폐허', respawn: '8시간', minutes: 480 },
+        { name: '망혼의 아칸 악시오스', location: '바스펠트 폐허', respawn: '8시간', minutes: 480 },
+        { name: '처형자 바르시엔', location: '그리바데 협곡 서부', respawn: '8시간', minutes: 480 },
+        { name: '비전의 카루카', location: '검은 발톱 부락', respawn: '8시간', minutes: 480 },
+        // 12시간
+        { name: '드라칸 부대병기 구루타', location: '그리바데 협곡 동부', respawn: '12시간', minutes: 720 },
+        { name: '흑암의 비슈베다', location: '라그타 요새', respawn: '12시간', minutes: 720 },
+        { name: '예리한 쉬라크', location: '임페투시움 광장', respawn: '12시간', minutes: 720 },
+        { name: '침묵의 타르탄', location: '정화의 숲', respawn: '12시간', minutes: 720 },
+        { name: '영혼 지배자 카샤파', location: '파프나이트 매장지', respawn: '12시간', minutes: 720 },
+        // 24시간
+        { name: '군단장 라그타', location: '라그타 요새', respawn: '24시간', minutes: 1440 },
         { name: '불멸의 가르투아', location: '불멸의 섬', respawn: '24시간', minutes: 1440 },
       ]
     },
@@ -271,15 +295,37 @@ function FieldBossContent() {
       color: 'text-blue-400',
       bgColor: 'bg-blue-500/10',
       bosses: [
+        // 1시간
         { name: '서쪽의 케르논', location: '칸타스 계곡', respawn: '1시간', minutes: 60 },
         { name: '동쪽의 네이켈', location: '칸타스 계곡', respawn: '1시간', minutes: 60 },
         { name: '썩은 쿠타르', location: '엘룬강 늪지', respawn: '1시간', minutes: 60 },
+        // 2시간
         { name: '만개한 코린', location: '엘룬강 중류', respawn: '2시간', minutes: 120 },
+        // 3시간
         { name: '호위병 티간트', location: '요새 폐허', respawn: '3시간', minutes: 180 },
+        // 4시간
         { name: '광투사 쿠산', location: '요새 폐허', respawn: '4시간', minutes: 240 },
         { name: '제사장 가르심', location: '요새 폐허', respawn: '4시간', minutes: 240 },
+        { name: '학자 라울라', location: '아울라우 부락', respawn: '4시간', minutes: 240 },
+        { name: '추격자 타울로', location: '아울라우 부락', respawn: '4시간', minutes: 240 },
+        // 6시간
         { name: '피송곳니 프닌', location: '톨바스 숲', respawn: '6시간', minutes: 360 },
+        { name: '분노한 사루스', location: '톨바스 숲', respawn: '6시간', minutes: 360 },
+        { name: '배교자 레일라', location: '아르타미아 고원', respawn: '6시간', minutes: 360 },
+        { name: '수확관리자 모샤브', location: '드라나 재배지', respawn: '6시간', minutes: 360 },
+        // 8시간
+        { name: '숲전사 우라무', location: '아울라우 부락', respawn: '8시간', minutes: 480 },
+        { name: '검은 촉수 라와', location: '아르타미아 협곡', respawn: '8시간', minutes: 480 },
+        { name: '백부장 데미로스', location: '아르타미아 고원', respawn: '8시간', minutes: 480 },
+        { name: '감시병기 크나쉬', location: '드라나 재배지', respawn: '8시간', minutes: 480 },
+        // 12시간
         { name: '신성한 안사스', location: '아르타미아 고원', respawn: '12시간', minutes: 720 },
+        { name: '연구관 세트람', location: '나히드 군단 요새', respawn: '12시간', minutes: 720 },
+        { name: '환몽의 카시아', location: '환영신의 정원', respawn: '12시간', minutes: 720 },
+        { name: '침묵의 타르탄', location: '아르타미아 고원 남부', respawn: '12시간', minutes: 720 },
+        { name: '영혼 지배자 카샤파', location: '아르타미아 고원 동부', respawn: '12시간', minutes: 720 },
+        // 24시간
+        { name: '군단장 라그타', location: '붉은 숲', respawn: '24시간', minutes: 1440 },
         { name: '영원의 가르투아', location: '영원의 섬', respawn: '24시간', minutes: 1440 },
       ]
     },
@@ -290,7 +336,7 @@ function FieldBossContent() {
       bosses: [
         { name: '감시자 카이라', location: '에레슈란타 하층', respawn: '1시간', minutes: 60 },
         { name: '정령왕 아그로', location: '시엘의 날개 군도', respawn: '24시간', minutes: 1440 },
-        { name: '수호신장 나흐마', location: '어비스 거점', respawn: '24시간', minutes: 1440 },
+        { name: '수호신장 나흐마', location: '에레슈란타의 뿌리', respawn: '일요일', minutes: 0 },
       ]
     },
   ];
@@ -503,6 +549,10 @@ function FieldBossContent() {
                             취소
                           </button>
                         </div>
+                      ) : boss.minutes === 0 ? (
+                        <span className="font-bold text-xs text-purple-400">
+                          {boss.respawn}
+                        </span>
                       ) : (
                         <>
                           <span className={`font-bold text-xs ${getTimeColor(boss.minutes)}`}>
