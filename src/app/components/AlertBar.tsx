@@ -313,46 +313,17 @@ export default function AlertBar() {
         {settings.soundEnabled ? '🔊' : '🔇'}
       </button>
 
-      {/* 스크롤 알림 - 무한 루프 마퀴 */}
-      <div className="overflow-hidden py-2.5 pl-12">
-        <div className="marquee-track">
-          <div className="marquee-content">
-            {alerts.map((alert, idx) => (
-              <span key={idx} className="inline-flex items-center gap-2 mx-8 text-sm">
-                <span className="text-base">{alert.icon}</span>
-                <span className={`font-medium ${alert.color}`}>{alert.text}</span>
-              </span>
-            ))}
-          </div>
-          <div className="marquee-content">
-            {alerts.map((alert, idx) => (
-              <span key={`dup-${idx}`} className="inline-flex items-center gap-2 mx-8 text-sm">
-                <span className="text-base">{alert.icon}</span>
-                <span className={`font-medium ${alert.color}`}>{alert.text}</span>
-              </span>
-            ))}
-          </div>
+      {/* 알림 표시 */}
+      <div className="flex-1 py-2.5 pl-12 pr-4 flex items-center justify-center">
+        <div className="flex items-center gap-8 text-sm">
+          {alerts.map((alert, idx) => (
+            <span key={idx} className="inline-flex items-center gap-2">
+              <span className="text-base">{alert.icon}</span>
+              <span className={`font-medium ${alert.color}`}>{alert.text}</span>
+            </span>
+          ))}
         </div>
       </div>
-      <style jsx>{`
-        .marquee-track {
-          display: flex;
-          width: max-content;
-          animation: marquee-scroll 15s linear infinite;
-        }
-        .marquee-content {
-          display: flex;
-          flex-shrink: 0;
-        }
-        @keyframes marquee-scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </div>
   );
 }
