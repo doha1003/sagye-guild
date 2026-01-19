@@ -248,7 +248,7 @@ function FieldBossContent() {
   const [timers, setTimers] = useState<BossTimer[]>([]);
   const [now, setNow] = useState(Date.now());
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
-  const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({});
+  const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({ 마족: true, 천족: true, 어비스: true });
 
   // 이미지 프록시 URL 생성 (size: 썸네일 크기)
   const getProxyImageUrl = (url: string, size = 300) => `/api/image-proxy?url=${encodeURIComponent(url)}&size=${size}`;
