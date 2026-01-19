@@ -34,6 +34,7 @@ export default function BossTimerNotifier() {
   const [alerts, setAlerts] = useState<CompletedAlert[]>([]);
   const [activeTimers, setActiveTimers] = useState<BossTimer[]>([]);
   const [settings, setSettings] = useState<PersonalSettings>(DEFAULT_SETTINGS);
+  const [now, setNow] = useState(new Date());
   const lastNotifiedRef = useRef<Record<string, number>>({});
 
   // 설정 로드
@@ -74,6 +75,110 @@ export default function BossTimerNotifier() {
   const dismissAlert = (alertId: string) => {
     setAlerts(prev => prev.filter(a => a.id !== alertId));
   };
+
+  // 1초마다 시간 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 다음 슈고 페스타까지 남은 시간
+  const getSecondsUntilShugo = () => {
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+    let nextTarget = [15, 45].find(m => m > currentMinute);
+    if (nextTarget === undefined) nextTarget = 15 + 60;
+    return (nextTarget - currentMinute - 1) * 60 + (60 - currentSecond);
+  };
+
+  // 다음 시공까지 남은 시간
+  const getSecondsUntilRift = () => {
+    const riftHours = [2, 5, 8, 11, 14, 17, 20, 23];
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+    let nextRift = riftHours.find(h => h > currentHour);
+    if (nextRift === undefined) nextRift = riftHours[0] + 24;
+    return (nextRift - currentHour - 1) * 3600 + (59 - currentMinute) * 60 + (60 - currentSecond);
+  };
+
+  // 다음 무역단 초기화까지 남은 시간
+  const getSecondsUntilTrade = () => {
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+    return (59 - currentMinute) * 60 + (60 - currentSecond);
+  };
+
+  // 다음 나흐마까지 남은 시간 (초)
+  const getSecondsUntilNahma = () => {
+    const day = now.getDay();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const second = now.getSeconds();
+
+    let daysUntil = 0;
+    if (day === 6) {
+      if (hour < 20) daysUntil = 0;
+      else daysUntil = 1;
+    } else if (day === 0) {
+      if (hour < 20) daysUntil = 0;
+      else daysUntil = 6;
+    } else {
+      daysUntil = 6 - day;
+    }
+
+    if (daysUntil === 0) {
+      return (19 - hour) * 3600 + (60 - minute) * 60 + (60 - second);
+    }
+    return daysUntil * 86400 + (19 - hour) * 3600 + (60 - minute) * 60 + (60 - second);
+  };
+
+  // 초를 시:분:초로 포맷
+  const formatSeconds = (totalSeconds: number) => {
+    if (totalSeconds <= 0) return '지금!';
+    const hours = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    if (hours > 0) {
+      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // 임박한 이벤트 목록 (10분 이내)
+  const getUpcomingEvents = () => {
+    const events: { name: string; icon: string; seconds: number; color: string }[] = [];
+    const TEN_MINUTES = 600;
+
+    if (settings.shugoFesta) {
+      const secs = getSecondsUntilShugo();
+      if (secs <= TEN_MINUTES) {
+        events.push({ name: '슈고페스타', icon: '🦊', seconds: secs, color: 'text-orange-400' });
+      }
+    }
+    if (settings.riftPortal) {
+      const secs = getSecondsUntilRift();
+      if (secs <= TEN_MINUTES) {
+        events.push({ name: '시공', icon: '🌀', seconds: secs, color: 'text-cyan-400' });
+      }
+    }
+    if (settings.blackCloudTrade) {
+      const secs = getSecondsUntilTrade();
+      if (secs <= TEN_MINUTES) {
+        events.push({ name: '무역단', icon: '🌑', seconds: secs, color: 'text-yellow-400' });
+      }
+    }
+    if (settings.nahmaAlert) {
+      const secs = getSecondsUntilNahma();
+      if (secs <= TEN_MINUTES && secs > 0) {
+        events.push({ name: '나흐마', icon: '👑', seconds: secs, color: 'text-purple-400' });
+      }
+    }
+
+    return events.sort((a, b) => a.seconds - b.seconds);
+  };
+
+  const upcomingEvents = getUpcomingEvents();
 
   // 1초마다 타이머 체크 + 개인 알림 체크
   useEffect(() => {
@@ -233,15 +338,31 @@ export default function BossTimerNotifier() {
   };
 
   // 아무것도 없으면 렌더링하지 않음
-  if (alerts.length === 0 && activeTimers.length === 0) {
+  if (alerts.length === 0 && activeTimers.length === 0 && upcomingEvents.length === 0) {
     return null;
   }
 
   return (
     <>
+      {/* 상단 임박 알림 바 */}
+      {upcomingEvents.length > 0 && (
+        <div className="fixed top-0 left-0 right-0 z-[9998] bg-zinc-900/95 backdrop-blur border-b border-zinc-700">
+          <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-center gap-4 flex-wrap">
+            <span className="text-zinc-400 text-xs">임박</span>
+            {upcomingEvents.map((event, idx) => (
+              <div key={idx} className="flex items-center gap-1.5">
+                <span>{event.icon}</span>
+                <span className={`text-sm font-medium ${event.color}`}>{event.name}</span>
+                <span className="text-white font-mono text-sm font-bold">{formatSeconds(event.seconds)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 팝업 알림 */}
       {alerts.length > 0 && (
-        <div className="fixed top-4 right-4 z-[9999] space-y-2 max-w-sm">
+        <div className={`fixed ${upcomingEvents.length > 0 ? 'top-14' : 'top-4'} right-4 z-[9999] space-y-2 max-w-sm`}>
           {alerts.map(alert => (
             <div
               key={alert.id}
