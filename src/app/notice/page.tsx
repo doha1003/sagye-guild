@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-type NoticeType = 'guild' | 'ludra';
+type NoticeType = 'guild' | 'subguild' | 'ludra' | 'season2';
 
 export default function NoticePage() {
   const [activeTab, setActiveTab] = useState<NoticeType>('guild');
@@ -29,7 +29,7 @@ export default function NoticePage() {
         <div className="flex gap-2 mb-8 border-b border-zinc-700">
           <button
             onClick={() => setActiveTab('guild')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px ${
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === 'guild'
                 ? 'text-amber-400 border-amber-400'
                 : 'text-zinc-400 border-transparent hover:text-white'
@@ -38,8 +38,18 @@ export default function NoticePage() {
             레기온 규칙
           </button>
           <button
+            onClick={() => setActiveTab('subguild')}
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              activeTab === 'subguild'
+                ? 'text-amber-400 border-amber-400'
+                : 'text-zinc-400 border-transparent hover:text-white'
+            }`}
+          >
+            부캐 레기온
+          </button>
+          <button
             onClick={() => setActiveTab('ludra')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px ${
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === 'ludra'
                 ? 'text-amber-400 border-amber-400'
                 : 'text-zinc-400 border-transparent hover:text-white'
@@ -47,11 +57,24 @@ export default function NoticePage() {
           >
             파티 규칙
           </button>
+          <button
+            onClick={() => setActiveTab('season2')}
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              activeTab === 'season2'
+                ? 'text-cyan-400 border-cyan-400'
+                : 'text-zinc-400 border-transparent hover:text-white'
+            }`}
+          >
+            🔥 시즌2
+          </button>
         </div>
 
         {/* 공지 내용 */}
         <div className="prose-custom">
-          {activeTab === 'guild' ? <GuildRules /> : <LudraRules />}
+          {activeTab === 'guild' && <GuildRules />}
+          {activeTab === 'subguild' && <SubGuildRules />}
+          {activeTab === 'ludra' && <LudraRules />}
+          {activeTab === 'season2' && <Season2Preview />}
         </div>
 
         {/* 참여 링크 */}
@@ -87,8 +110,11 @@ function GuildRules() {
       </h2>
 
       <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-8 text-center">
-        <p className="text-amber-300 font-medium">
-          닉넴/년생/직업 → 서버프로필 변경 필수
+        <p className="text-amber-300 font-medium mb-2">
+          닉넴/년생/직업 → 디스코드 서버프로필 변경 필수
+        </p>
+        <p className="text-zinc-400 text-sm">
+          디스코드 좌측 서버 목록에서 사계 서버 우클릭 → 서버 프로필 수정
         </p>
       </div>
 
@@ -201,6 +227,111 @@ function GuildRules() {
   );
 }
 
+function SubGuildRules() {
+  return (
+    <article className="text-zinc-200 leading-relaxed tracking-wide">
+      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
+        부캐 레기온 안내
+      </h2>
+
+      <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4 mb-8">
+        <p className="text-indigo-300 font-medium text-center mb-2">
+          사계 부캐 전용 레기온
+        </p>
+        <p className="text-zinc-400 text-sm text-center">
+          본캐가 사계 레기온 소속인 분들만 가입 가능합니다
+        </p>
+      </div>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">부캐 레기온 목록</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-zinc-800 rounded-lg p-4 text-center">
+            <div className="text-2xl mb-2">🌟</div>
+            <div className="text-xl font-bold text-amber-400">오계</div>
+            <div className="text-zinc-400 text-sm mt-1">부캐 레기온 1</div>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4 text-center">
+            <div className="text-2xl mb-2">🌙</div>
+            <div className="text-xl font-bold text-purple-400">외계</div>
+            <div className="text-zinc-400 text-sm mt-1">부캐 레기온 2</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">가입 방법</h3>
+        <ul className="space-y-3 text-zinc-300">
+          <li className="pl-4 border-l-2 border-amber-500/50">
+            <strong className="text-white">본캐가 사계 레기온 소속</strong>이어야 합니다
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            게임 내 레기온 검색 → 오계 또는 외계 → 가입 신청
+          </li>
+        </ul>
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4 text-center">
+          <p className="text-zinc-400 text-sm mb-1">가입 비밀번호</p>
+          <p className="text-green-400 font-bold text-xl">Aion22</p>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-red-400 mb-4">필수 규칙</h3>
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+          <p className="text-red-300 font-medium text-center">
+            한마디에 본캐 닉네임 기재 필수!
+          </p>
+        </div>
+        <ul className="space-y-3 text-zinc-300">
+          <li className="pl-4 border-l-2 border-red-500/50">
+            <strong className="text-white">게임 내 &apos;한마디&apos;에 본캐 닉네임을 반드시 적어주세요</strong><br />
+            <span className="text-zinc-400">예시: 본캐 - 홍길동</span>
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            본캐 닉네임이 없으면 누구인지 확인이 어려워 관리가 불가능합니다
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            한마디 미기재 시 사전 경고 없이 추방될 수 있습니다
+          </li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">한마디 설정 방법</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <ol className="space-y-2 text-zinc-300">
+            <li>1. 게임 내 <strong className="text-white">L</strong> 키 눌러서 레기온 창 열기</li>
+            <li>2. 레기온 탭에서 내 캐릭터 ID 옆 <strong className="text-white">아이콘</strong> 클릭</li>
+            <li>3. <strong className="text-white">본캐 닉네임</strong> 입력 후 저장</li>
+          </ol>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">운영 방침</h3>
+        <ul className="space-y-2 text-zinc-300">
+          <li className="pl-4 border-l-2 border-zinc-700">
+            부캐 레기온은 본캐 레기온(사계)의 규칙을 동일하게 적용합니다
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            부캐로 인한 트러블 발생 시 본캐에도 제재가 적용될 수 있습니다
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            본캐가 사계에서 탈퇴/추방될 경우, 부캐 레기온에서도 자동 추방됩니다
+          </li>
+        </ul>
+      </section>
+
+      <div className="bg-zinc-800 rounded-lg p-6 text-center mt-10">
+        <p className="text-zinc-300 leading-relaxed">
+          부캐도 결국 <strong className="text-white">같은 레기온원</strong>입니다.<br />
+          본캐와 동일하게 서로 존중하며 즐겁게 플레이해주세요!
+        </p>
+      </div>
+    </article>
+  );
+}
+
 function LudraRules() {
   return (
     <article className="text-zinc-200 leading-relaxed tracking-wide">
@@ -224,7 +355,22 @@ function LudraRules() {
       </section>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">1. 클리어 우선이신 분</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">1. 실수했을 때는 "사랑합니다" 💕</h3>
+        <div className="bg-pink-500/10 border border-pink-500/30 rounded-lg p-4 mb-4">
+          <p className="text-pink-300 font-medium text-center text-lg">
+            "죄송합니다" ❌ → "사랑합니다" ⭕
+          </p>
+        </div>
+        <p className="text-zinc-300 mb-2">
+          트라이 중 실수는 누구나 합니다. 하지만 매번 <strong className="text-white">"죄송합니다"</strong>라고 하면 분위기가 무거워져요.
+        </p>
+        <p className="text-zinc-300">
+          우리 사계는 리트라이 뜰 때 <strong className="text-pink-300">"사랑합니다"</strong>라고 말하기로 했습니다. 가볍고 즐거운 분위기로 트라이해요!
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">2. 클리어 우선이신 분</h3>
         <p className="text-zinc-300 mb-2">
           <strong className="text-white">&quot;클리어&quot;가 최우선 목표</strong>이신 분은 공팟 이용을 부탁드립니다.
         </p>
@@ -232,24 +378,23 @@ function LudraRules() {
       </section>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">2. 기본 모집 기준</h3>
-        <p className="text-zinc-300 mb-2">
-          모집은 기본적으로 <strong className="text-white">&quot;1트&quot;</strong> 기준으로 진행합니다.
-        </p>
-        <p className="text-zinc-400">추가 트라이를 원하시는 경우, 아래 3번 기준을 따라주세요.</p>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">3. 2트 이상 진행 시</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">3. 모집글 작성 방법</h3>
         <p className="text-zinc-300 mb-4">
-          모집글에 <strong className="text-white">시간/트 수를 반드시 명시</strong>해 주세요.
+          디스코드 <strong className="text-indigo-400">#루드라-모집-게시판</strong> 채널에 모집글 작성 시 아래 항목을 <strong className="text-white">반드시 포함</strong>해 주세요.
         </p>
-        <div className="bg-zinc-800 rounded-lg p-4">
-          <p className="text-zinc-500 text-sm mb-2">예시:</p>
-          <ul className="space-y-1 text-zinc-300">
-            <li>• 수요일 22:00 ~ 24:00 / 2트 모집</li>
-            <li>• 토요일 16:00 ~ 20:00 / 4트 모집</li>
+        <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+          <ul className="space-y-2 text-zinc-300">
+            <li>• <strong className="text-white">날짜</strong> (예: 1월 7일)</li>
+            <li>• <strong className="text-white">요일</strong> (예: 수요일)</li>
+            <li>• <strong className="text-white">루드라 범위</strong> (1~2넴 / 막넴까지 등)</li>
+            <li>• <strong className="text-white">시간</strong> (예: 22:30~23:30)</li>
+            <li>• <strong className="text-white">트 수</strong> (1트 / 2트 등)</li>
           </ul>
+        </div>
+        <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4">
+          <p className="text-zinc-500 text-sm mb-2">모집글 예시:</p>
+          <p className="text-indigo-300 font-medium">1월 7일 수요일 루드라 1~2넴 1트 22:30~23:30 모집</p>
+          <p className="text-indigo-300 font-medium mt-1">1월 11일 토요일 루드라 막넴까지 2트 16:00~18:00 모집</p>
         </div>
       </section>
 
@@ -268,7 +413,7 @@ function LudraRules() {
       <section className="mb-8">
         <h3 className="text-lg font-semibold text-white mb-4">5. 참가 체크 방법</h3>
         <p className="text-zinc-300 mb-4">
-          참가 체크는 <strong className="text-white">이모지로 통일</strong>합니다. (작성자 포함 필수)
+          디스코드 <strong className="text-indigo-400">#루드라-모집-게시판</strong> 채널에서 참가 체크는 <strong className="text-white">이모지로 통일</strong>합니다. (작성자 포함 필수)
         </p>
         <div className="bg-zinc-800 rounded-lg p-4 space-y-3">
           <div className="flex items-center gap-4">
@@ -295,6 +440,152 @@ function LudraRules() {
           인원이 찼으면 추가 이모지 체크는 하지 말아주시고, 다음 모집글을 새로 작성해 주세요. (출발 인원 혼선 방지)
         </p>
       </section>
+    </article>
+  );
+}
+
+function Season2Preview() {
+  return (
+    <article className="text-zinc-200 leading-relaxed tracking-wide">
+      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
+        아이온2 시즌2 안내
+      </h2>
+
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4 mb-8 text-center">
+        <p className="text-cyan-300 font-medium text-lg mb-1">
+          🎮 시즌2 시작: 2026년 1월 21일 (수)
+        </p>
+        <p className="text-zinc-400 text-sm">
+          서버 매칭 확정 · 랭킹 초기화
+        </p>
+      </div>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">✅ 적용 완료된 업데이트</h3>
+        <div className="space-y-3">
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-green-600 text-white px-2 py-1 rounded text-sm font-medium">1/7 적용</span>
+              <span className="text-green-300 font-medium">펫 시스템 개선</span>
+            </div>
+            <ul className="text-zinc-400 text-sm space-y-1 ml-4">
+              <li>• 종족 이해도 & 펫 보유 → 서버 내 캐릭터 공유</li>
+              <li>• 모든 캐릭터 펫 레벨 합산</li>
+              <li>• 필요 영혼 수량 50% 하향</li>
+            </ul>
+          </div>
+
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-green-600 text-white px-2 py-1 rounded text-sm font-medium">1/14 적용</span>
+              <span className="text-green-300 font-medium">펫 스탯 밸런스 조정</span>
+            </div>
+            <ul className="text-zinc-400 text-sm space-y-1 ml-4">
+              <li>• 펫 레벨 달성 스탯 약 50% 하향</li>
+              <li>• 야성: 명중 325↓, 민첩 65↓, 지식 65↓ (65마리 기준)</li>
+              <li>• 변형: 회피 230↓, 체력 46↓, 의지 46↓ (46마리 기준)</li>
+              <li>• 지성: 치명타 205↓, 위력 41↓, 지식 41↓ (41마리 기준)</li>
+              <li>• 자연: 치명타 저항 240↓, 정확 48↓, 의지 48↓ (48마리 기준)</li>
+              <li>• 통합 프리셋 확장 (타이틀, 아르카나 포함)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">📅 시즌2 업데이트 일정</h3>
+        <div className="space-y-3">
+          <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-cyan-600 text-white px-2 py-1 rounded text-sm font-medium">1/21</span>
+              <span className="text-cyan-300 font-medium">🔥 시즌2 시작</span>
+            </div>
+            <ul className="text-zinc-300 text-sm space-y-1 ml-4">
+              <li>• <strong className="text-white">신규 원정:</strong> 죽은 드라마타의 둥지</li>
+              <li>• <strong className="text-white">토벌전:</strong> 죽은 오르쿠스의 심장, 파프나이트 제련소</li>
+              <li>• <strong className="text-white">각성전:</strong> 궤적 보관소, 폭군의 은신처</li>
+              <li>• <strong className="text-white">어비스:</strong> 중층 추가 (아이템 레벨 제한)</li>
+            </ul>
+          </div>
+
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">1/28</span>
+              <span className="text-white font-medium">신규 원정: 무의 요람</span>
+            </div>
+          </div>
+
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/4</span>
+              <span className="text-white font-medium">초월 던전: 가라앉은 생명의 신전</span>
+            </div>
+            <p className="text-zinc-400 text-sm ml-4">• 1~10단계 난이도</p>
+          </div>
+
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/18</span>
+              <span className="text-white font-medium">어려움 난이도 추가</span>
+            </div>
+            <p className="text-zinc-400 text-sm ml-4">• 죽은 드라마타의 둥지, 무의 요람</p>
+          </div>
+
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-zinc-700 text-zinc-300 px-2 py-1 rounded text-sm font-medium">2/25</span>
+              <span className="text-white font-medium">성역: 침식의 정화소</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">⚔️ 어비스 개편</h3>
+        <ul className="space-y-2 text-zinc-300">
+          <li className="pl-4 border-l-2 border-cyan-500/50">
+            <strong className="text-white">어비스 중층</strong> 추가 (아이템 레벨 제한)
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            하층 3:0 패배 시 마을 → 회랑 바로 입장 가능
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            어비스 포인트: 주간 제한 → <strong className="text-white">시즌 총량 방식</strong>으로 변경
+          </li>
+          <li className="pl-4 border-l-2 border-zinc-700">
+            공명전 편의성 개선
+          </li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">🛠️ 시즌2 편의성 업데이트</h3>
+        <ul className="space-y-2 text-zinc-300">
+          <li className="pl-4 border-l-2 border-zinc-700">원정 및 초월 티켓 차감 시스템 변경</li>
+          <li className="pl-4 border-l-2 border-zinc-700">아르카나 신규 슬롯 추가</li>
+          <li className="pl-4 border-l-2 border-zinc-700">각성전/일일던전 클래스별 랭킹 시스템 도입</li>
+          <li className="pl-4 border-l-2 border-zinc-700">방어구 조율 옵션 추가</li>
+          <li className="pl-4 border-l-2 border-zinc-700">근거리 대상 보스 패턴 완화</li>
+          <li className="pl-4 border-l-2 border-zinc-700">장비 영혼 각인 옵션 계승 시스템 (추후 예정)</li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">🔮 2026년 향후 계획</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <ul className="space-y-2 text-zinc-300">
+            <li>• <strong className="text-white">신규 클래스</strong> 개발중 (새로운 전투 메커니즘, 호쾌한 스타일)</li>
+            <li>• <strong className="text-white">새로운 영지</strong> 준비중</li>
+          </ul>
+        </div>
+      </section>
+
+      <div className="bg-zinc-800 rounded-lg p-6 text-center mt-10">
+        <p className="text-zinc-300 leading-relaxed">
+          시즌2에서는 랭킹이 초기화됩니다.<br />
+          <strong className="text-white">새로운 시작, 함께 도전해요!</strong>
+        </p>
+      </div>
     </article>
   );
 }

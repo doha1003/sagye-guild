@@ -26,6 +26,7 @@ const CLASS_INFO: { name: string; icon: string; color: string }[] = [
 export default function Home() {
   const [members, setMembers] = useState<GuildMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visitors, setVisitors] = useState({ total: 0, today: 0 });
 
   useEffect(() => {
     fetch('/api/sheets')
@@ -37,6 +38,23 @@ export default function Home() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    // 방문자 수 증가 및 조회
+    const hasVisited = sessionStorage.getItem('visited');
+    if (!hasVisited) {
+      fetch('/api/visitors', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          setVisitors(data);
+          sessionStorage.setItem('visited', 'true');
+        })
+        .catch(() => {});
+    } else {
+      fetch('/api/visitors')
+        .then(res => res.json())
+        .then(data => setVisitors(data))
+        .catch(() => {});
+    }
   }, []);
 
   const getClassCount = (className: string) =>
@@ -80,6 +98,26 @@ export default function Home() {
 
       {/* 메인 */}
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
+        {/* 시즌2 배너 */}
+        <Link
+          href="/notice"
+          className="block bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 border border-cyan-500/30 rounded-xl p-4 mb-6 hover:from-cyan-600/30 hover:to-indigo-600/30 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-cyan-300">시즌2 시작</span>
+                  <span className="bg-cyan-500 text-white text-xs font-bold px-2 py-0.5 rounded">1/21</span>
+                </div>
+                <span className="text-zinc-400 text-sm">신규 던전 · 어비스 개편 · 랭킹 초기화</span>
+              </div>
+            </div>
+            <span className="text-cyan-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </Link>
+
         {/* 타이틀 */}
         <section className="text-center mb-10">
           <h2 className="text-4xl font-bold mb-2">
@@ -239,6 +277,17 @@ export default function Home() {
           </div>
           <div className="text-center text-zinc-500 text-sm">
             <p>사계 레기온 · AION2 지켈 서버 (마족)</p>
+            <p className="text-xs text-zinc-600 mt-2">
+              AION2 오픈 2025.11.19 · 사이트 개설 2026.01.06
+            </p>
+            <p className="text-xs text-zinc-600 mt-1">
+              Today {visitors.today.toLocaleString()} · Total {visitors.total.toLocaleString()}
+            </p>
+            <p className="text-xs text-zinc-700 mt-2">
+              <Link href="/terms" className="hover:text-zinc-500">이용약관</Link>
+              {' · '}
+              <span>© 2026 사계 레기온</span>
+            </p>
           </div>
         </div>
       </footer>
