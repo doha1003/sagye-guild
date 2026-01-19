@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 
 interface PersonalSettings {
@@ -8,6 +8,7 @@ interface PersonalSettings {
   riftPortal: boolean;
   blackCloudTrade: boolean;
   nahmaAlert: boolean;
+  soundEnabled: boolean;
 }
 
 interface BossTimer {
@@ -21,9 +22,41 @@ export default function AlertBar() {
     riftPortal: true,
     blackCloudTrade: true,
     nahmaAlert: true,
+    soundEnabled: true,
   });
   const [bossTimers, setBossTimers] = useState<BossTimer[]>([]);
   const [now, setNow] = useState(new Date());
+  const notifiedAlertsRef = useRef<Set<string>>(new Set());
+  const startNotifiedRef = useRef<Set<string>>(new Set());
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // 비프음 재생 함수
+  const playBeep = useCallback(() => {
+    if (!settings.soundEnabled) return;
+
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      }
+      const ctx = audioContextRef.current;
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.value = 800; // 800Hz 음
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.2);
+    } catch {
+      // Audio API 지원하지 않는 경우 무시
+    }
+  }, [settings.soundEnabled]);
 
   // 설정 로드
   useEffect(() => {
@@ -201,20 +234,103 @@ export default function AlertBar() {
 
   const alerts = getAllAlerts();
 
+  // 소리 설정 토글
+  const toggleSound = () => {
+    setSettings(prev => {
+      const updated = { ...prev, soundEnabled: !prev.soundEnabled };
+      localStorage.setItem('personalAlertSettings', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // 새 알림이 5분 이내로 들어왔을 때 비프음 + 시작 시 비프음
+  useEffect(() => {
+    if (!settings.soundEnabled) return;
+
+    const currentAlertKeys = alerts.map(a => {
+      // 알림 타입만 추출 (시간 제외)
+      const match = a.text.match(/^(.+?)\s+[\d:]/);
+      return match ? match[1] : a.text;
+    });
+
+    // 새로 추가된 알림 확인 (5분 전)
+    currentAlertKeys.forEach(key => {
+      if (!notifiedAlertsRef.current.has(key)) {
+        playBeep();
+        notifiedAlertsRef.current.add(key);
+      }
+    });
+
+    // 시작 시 알림 (urgent 상태가 된 알림)
+    alerts.forEach(a => {
+      const match = a.text.match(/^(.+?)\s+[\d:]/);
+      const key = match ? match[1] : a.text;
+      if (a.urgent && !startNotifiedRef.current.has(key)) {
+        playBeep();
+        startNotifiedRef.current.add(key);
+      }
+    });
+
+    // 지나간 알림 정리
+    notifiedAlertsRef.current.forEach(key => {
+      if (!currentAlertKeys.includes(key)) {
+        notifiedAlertsRef.current.delete(key);
+        startNotifiedRef.current.delete(key);
+      }
+    });
+  }, [alerts, settings.soundEnabled, playBeep]);
+
+  // 알림 없을 때
   if (alerts.length === 0) {
-    return null;
+    return (
+      <div className="bg-zinc-800/50 border-b border-zinc-700">
+        <div className="max-w-4xl mx-auto px-4 py-1.5 flex items-center justify-center gap-2 text-xs text-zinc-500">
+          <span>⏰</span>
+          <span>임박한 이벤트 없음</span>
+          <span className="text-zinc-600">·</span>
+          <button
+            onClick={toggleSound}
+            className={`px-1.5 py-0.5 rounded text-xs transition-colors ${
+              settings.soundEnabled
+                ? 'text-green-400 hover:text-green-300'
+                : 'text-zinc-500 hover:text-zinc-400'
+            }`}
+          >
+            {settings.soundEnabled ? '🔊' : '🔇'}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className={`overflow-hidden ${alerts.some(a => a.urgent) ? 'bg-red-900/50' : 'bg-zinc-800/80'} border-b border-zinc-700`}>
-      <div className="py-1 whitespace-nowrap animate-marquee">
-        <div className="inline-flex items-center gap-6 px-4">
-          {[...alerts, ...alerts].map((alert, idx) => (
-            <span key={idx} className="inline-flex items-center gap-1.5">
-              <span>{alert.icon}</span>
-              <span className={`font-medium ${alert.color}`}>{alert.text}</span>
-            </span>
-          ))}
+    <div className={`${alerts.some(a => a.urgent) ? 'bg-red-900/50' : 'bg-zinc-800/80'} border-b border-zinc-700`}>
+      <div className="flex items-center">
+        {/* 소리 토글 버튼 */}
+        <button
+          onClick={toggleSound}
+          className={`px-2 py-1 text-sm flex-shrink-0 transition-colors ${
+            settings.soundEnabled
+              ? 'text-green-400 hover:text-green-300'
+              : 'text-zinc-500 hover:text-zinc-400'
+          }`}
+          title={settings.soundEnabled ? '알림음 끄기' : '알림음 켜기'}
+        >
+          {settings.soundEnabled ? '🔊' : '🔇'}
+        </button>
+
+        {/* 스크롤 알림 */}
+        <div className="overflow-hidden flex-1">
+          <div className="py-1 whitespace-nowrap animate-marquee">
+            <div className="inline-flex items-center gap-6 px-2">
+              {[...alerts, ...alerts].map((alert, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1.5">
+                  <span>{alert.icon}</span>
+                  <span className={`font-medium ${alert.color}`}>{alert.text}</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <style jsx>{`

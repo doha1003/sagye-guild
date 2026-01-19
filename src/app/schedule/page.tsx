@@ -109,6 +109,7 @@ function DailyContent() {
     riftPortal: true,
     blackCloudTrade: true,
     nahmaAlert: true,
+    soundEnabled: true,
   });
   const [now, setNow] = useState(new Date());
 
@@ -368,6 +369,28 @@ function DailyContent() {
                 }`}
               >
                 {personalSettings.nahmaAlert ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+
+          {/* 알림음 설정 */}
+          <div className="bg-zinc-900 rounded-lg p-3 mt-2 border border-zinc-700">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-300 font-bold text-sm">🔊 알림음</span>
+                  <span className="text-zinc-500 text-xs">5분 전 & 시작 시 비프음</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('soundEnabled')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.soundEnabled
+                    ? 'bg-green-500 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.soundEnabled ? '소리 ON' : '소리 OFF'}
               </button>
             </div>
           </div>
