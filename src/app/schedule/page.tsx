@@ -105,10 +105,10 @@ export default function SchedulePage() {
 
 function DailyContent() {
   const [personalSettings, setPersonalSettings] = useState({
-    shugoFesta: false,
-    riftPortal: false,
-    blackCloudTrade: false,
-    nahmaAlert: false,
+    shugoFesta: true,
+    riftPortal: true,
+    blackCloudTrade: true,
+    nahmaAlert: true,
   });
   const [now, setNow] = useState(new Date());
 

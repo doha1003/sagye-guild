@@ -17,10 +17,10 @@ interface BossTimer {
 
 export default function AlertBar() {
   const [settings, setSettings] = useState<PersonalSettings>({
-    shugoFesta: false,
-    riftPortal: false,
-    blackCloudTrade: false,
-    nahmaAlert: false,
+    shugoFesta: true,
+    riftPortal: true,
+    blackCloudTrade: true,
+    nahmaAlert: true,
   });
   const [bossTimers, setBossTimers] = useState<BossTimer[]>([]);
   const [now, setNow] = useState(new Date());
