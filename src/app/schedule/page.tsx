@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
+import { subscribeToBossTimers, setBossTimer, removeBossTimer, BossTimer as FirebaseBossTimer } from '@/lib/firebase';
 
 interface BossTimer {
   bossName: string;
@@ -709,47 +710,25 @@ function FieldBossContent() {
     },
   ];
 
-  // localStorage에서 타이머 불러오기
+  // Firebase에서 타이머 실시간 구독
   useEffect(() => {
-    const saved = localStorage.getItem('bossTimers');
-    if (saved) {
-      const parsed = JSON.parse(saved) as BossTimer[];
-      // 만료된 타이머 필터링
-      const valid = parsed.filter(t => t.endTime > Date.now());
-      setTimers(valid);
-      localStorage.setItem('bossTimers', JSON.stringify(valid));
-    }
+    const unsubscribe = subscribeToBossTimers((firebaseTimers) => {
+      const localTimers: BossTimer[] = firebaseTimers.map(t => ({
+        bossName: t.bossName,
+        endTime: t.endTime,
+        respawnMinutes: t.respawnMinutes,
+      }));
+      setTimers(localTimers);
+      // localStorage에도 백업 저장 (오프라인 대비)
+      localStorage.setItem('bossTimers', JSON.stringify(localTimers));
+    });
 
     // 알림 권한 확인
     if ('Notification' in window) {
       setNotificationPermission(Notification.permission);
     }
-  }, []);
 
-  // 1초마다 시간 업데이트
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(Date.now());
-
-      // 완료된 타이머 확인 및 알림
-      setTimers(prev => {
-        const completed = prev.filter(t => t.endTime <= Date.now());
-        const remaining = prev.filter(t => t.endTime > Date.now());
-
-        // 완료된 타이머에 대해 알림
-        completed.forEach(timer => {
-          showNotification(timer.bossName);
-        });
-
-        if (completed.length > 0) {
-          localStorage.setItem('bossTimers', JSON.stringify(remaining));
-        }
-
-        return remaining;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
+    return () => unsubscribe();
   }, []);
 
   // 알림 보내기
@@ -773,6 +752,27 @@ function FieldBossContent() {
     }
   }, []);
 
+  // 1초마다 시간 업데이트 + 완료된 타이머 알림 처리
+  const notifiedTimersRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+
+      // 완료된 타이머 확인 및 알림 (Firebase에서 자동 삭제되지 않으므로 로컬에서 처리)
+      timers.forEach(timer => {
+        if (timer.endTime <= Date.now() && !notifiedTimersRef.current.has(timer.bossName)) {
+          showNotification(timer.bossName);
+          notifiedTimersRef.current.add(timer.bossName);
+          // Firebase에서 만료된 타이머 삭제
+          removeBossTimer(timer.bossName);
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timers, showNotification]);
+
   // 알림 권한 요청
   const requestNotificationPermission = async () => {
     if ('Notification' in window) {
@@ -781,30 +781,40 @@ function FieldBossContent() {
     }
   };
 
-  // 타이머 시작
-  const startTimer = (bossName: string, minutes: number) => {
-    const newTimer: BossTimer = {
-      bossName,
-      endTime: Date.now() + minutes * 60 * 1000,
-      respawnMinutes: minutes,
-    };
+  // 타이머 시작 (Firebase에 저장)
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
 
-    setTimers(prev => {
-      // 같은 보스 타이머가 있으면 덮어쓰기
-      const filtered = prev.filter(t => t.bossName !== bossName);
-      const updated = [...filtered, newTimer];
-      localStorage.setItem('bossTimers', JSON.stringify(updated));
-      return updated;
-    });
+  const startTimer = async (bossName: string, minutes: number) => {
+    if (isSubmitting) return; // 중복 클릭 방지
+    setIsSubmitting(bossName);
+
+    try {
+      const success = await setBossTimer({
+        bossName,
+        endTime: Date.now() + minutes * 60 * 1000,
+        respawnMinutes: minutes,
+      });
+
+      if (!success) {
+        alert('이미 30초 내에 등록된 타이머입니다.');
+      }
+    } catch (error) {
+      console.error('타이머 등록 실패:', error);
+      alert('타이머 등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(null);
+    }
   };
 
-  // 타이머 취소
-  const cancelTimer = (bossName: string) => {
-    setTimers(prev => {
-      const updated = prev.filter(t => t.bossName !== bossName);
-      localStorage.setItem('bossTimers', JSON.stringify(updated));
-      return updated;
-    });
+  // 타이머 취소 (Firebase에서 삭제)
+  const cancelTimer = async (bossName: string) => {
+    try {
+      await removeBossTimer(bossName);
+      // notifiedTimersRef에서도 제거
+      notifiedTimersRef.current.delete(bossName);
+    } catch (error) {
+      console.error('타이머 취소 실패:', error);
+    }
   };
 
   // 남은 시간 포맷

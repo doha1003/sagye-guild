@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { subscribeToBossTimers, BossTimer as FirebaseBossTimer } from '@/lib/firebase';
 
 interface PersonalSettings {
   shugoFesta: boolean;
@@ -71,23 +72,17 @@ export default function AlertBar() {
     }
   }, []);
 
-  // 보스 타이머 로드
+  // 보스 타이머 Firebase 실시간 구독
   useEffect(() => {
-    const loadTimers = () => {
-      if (typeof window === 'undefined') return;
-      const saved = localStorage.getItem('bossTimers');
-      if (saved) {
-        try {
-          const timers = JSON.parse(saved) as BossTimer[];
-          setBossTimers(timers.filter(t => t.endTime > Date.now()));
-        } catch {
-          setBossTimers([]);
-        }
-      }
-    };
-    loadTimers();
-    const interval = setInterval(loadTimers, 1000);
-    return () => clearInterval(interval);
+    const unsubscribe = subscribeToBossTimers((firebaseTimers) => {
+      const localTimers: BossTimer[] = firebaseTimers.map(t => ({
+        bossName: t.bossName,
+        endTime: t.endTime,
+      }));
+      setBossTimers(localTimers);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // 1초마다 시간 업데이트
