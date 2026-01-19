@@ -104,6 +104,7 @@ export default function SchedulePage() {
 function DailyContent() {
   const [personalSettings, setPersonalSettings] = useState({
     shugoFesta: false,
+    riftPortal: false,
     dimensionInvasion: false,
     blackCloudTrade: false,
     nahmaAlert: false,
@@ -159,6 +160,47 @@ function DailyContent() {
 
   // 다음 정각까지 남은 시간
   const getTimeUntilNextHour = () => {
+    const mins = 59 - now.getMinutes();
+    const secs = 60 - now.getSeconds();
+    if (secs === 60) {
+      return `${mins + 1}:00`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // 다음 시공의 균열까지 남은 시간 (3시간 간격: 1,4,7,10,13,16,19,22시)
+  const getTimeUntilRift = () => {
+    const riftHours = [1, 4, 7, 10, 13, 16, 19, 22];
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+
+    // 다음 시공 시간 찾기
+    let nextRift = riftHours.find(h => h > currentHour);
+    if (nextRift === undefined) {
+      nextRift = riftHours[0] + 24; // 다음날 01시
+    }
+
+    const hoursUntil = nextRift - currentHour - 1;
+    const minsUntil = 59 - currentMinute;
+    const secsUntil = 60 - currentSecond;
+
+    if (secsUntil === 60) {
+      if (hoursUntil === -1) {
+        return `${minsUntil + 1}:00`;
+      }
+      return `${hoursUntil}:${(minsUntil + 1).toString().padStart(2, '0')}:00`;
+    }
+
+    if (hoursUntil <= 0 && minsUntil < 60) {
+      return `${minsUntil}:${secsUntil.toString().padStart(2, '0')}`;
+    }
+
+    return `${hoursUntil}:${minsUntil.toString().padStart(2, '0')}:${secsUntil.toString().padStart(2, '0')}`;
+  };
+
+  // 다음 차원 침공까지 남은 시간 (매시 정각)
+  const getTimeUntilInvasion = () => {
     const mins = 59 - now.getMinutes();
     const secs = 60 - now.getSeconds();
     if (secs === 60) {
@@ -259,6 +301,57 @@ function DailyContent() {
                 }`}
               >
                 {personalSettings.shugoFesta ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+
+          {/* 시공의 균열 */}
+          <div className="bg-zinc-900 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-cyan-400 font-bold text-sm">🌀 시공의 균열</span>
+                  <span className="text-zinc-500 text-xs">3시간 간격</span>
+                </div>
+                <div className="text-xs text-zinc-400 mt-1">
+                  다음: <span className="text-cyan-400 font-mono">{getTimeUntilRift()}</span>
+                  <span className="text-zinc-600 ml-2">(1,4,7,10,13,16,19,22시)</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('riftPortal')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.riftPortal
+                    ? 'bg-cyan-500 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.riftPortal ? '알림 ON' : '알림 OFF'}
+              </button>
+            </div>
+          </div>
+
+          {/* 차원 침공 */}
+          <div className="bg-zinc-900 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-red-400 font-bold text-sm">⚔️ 차원 침공</span>
+                  <span className="text-zinc-500 text-xs">매시 정각</span>
+                </div>
+                <div className="text-xs text-zinc-400 mt-1">
+                  다음: <span className="text-red-400 font-mono">{getTimeUntilInvasion()}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSetting('dimensionInvasion')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                  personalSettings.dimensionInvasion
+                    ? 'bg-red-500 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {personalSettings.dimensionInvasion ? '알림 ON' : '알림 OFF'}
               </button>
             </div>
           </div>

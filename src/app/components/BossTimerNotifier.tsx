@@ -13,18 +13,20 @@ interface CompletedAlert {
   id: string;
   bossName: string;
   timestamp: number;
-  type?: 'boss' | 'shugo' | 'invasion' | 'trade' | 'nahma';
+  type?: 'boss' | 'shugo' | 'rift' | 'invasion' | 'trade' | 'nahma';
 }
 
 interface PersonalSettings {
-  shugoFesta: boolean;      // 슈고 페스타 (매시 15분, 45분)
-  dimensionInvasion: boolean; // 차원 침공
+  shugoFesta: boolean;       // 슈고 페스타 (매시 15분, 45분)
+  riftPortal: boolean;       // 시공의 균열 (3시간 간격)
+  dimensionInvasion: boolean; // 차원 침공 (매시 정각)
   blackCloudTrade: boolean;  // 검은 구름 무역단 (매시 정각)
   nahmaAlert: boolean;       // 나흐마 (토/일 20:00)
 }
 
 const DEFAULT_SETTINGS: PersonalSettings = {
   shugoFesta: false,
+  riftPortal: false,
   dimensionInvasion: false,
   blackCloudTrade: false,
   nahmaAlert: false,
@@ -102,6 +104,25 @@ export default function BossTimerNotifier() {
         if (currentMinute === 59 && currentSecond === 0 && !lastNotifiedRef.current[tradeKey]) {
           showNotification('🌑 검은 구름 무역단!', '1분 후 상점 초기화!', 'trade');
           lastNotifiedRef.current[tradeKey] = Date.now();
+        }
+      }
+
+      // 시공의 균열 알림 (3시간 간격: 1,4,7,10,13,16,19,22시 - 5분 전 알림)
+      if (settings.riftPortal) {
+        const riftHours = [1, 4, 7, 10, 13, 16, 19, 22];
+        const riftKey = `rift-${timeKey}`;
+        if (riftHours.includes(currentHour) && currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[riftKey]) {
+          showNotification('🌀 시공의 균열!', '5분 후 시공 포탈 오픈!', 'rift');
+          lastNotifiedRef.current[riftKey] = Date.now();
+        }
+      }
+
+      // 차원 침공 알림 (매시 정각 - 5분 전 알림)
+      if (settings.dimensionInvasion) {
+        const invasionKey = `invasion-${timeKey}`;
+        if (currentMinute === 55 && currentSecond === 0 && !lastNotifiedRef.current[invasionKey]) {
+          showNotification('⚔️ 차원 침공!', '5분 후 차원 침공 시작!', 'invasion');
+          lastNotifiedRef.current[invasionKey] = Date.now();
         }
       }
 
@@ -191,8 +212,10 @@ export default function BossTimerNotifier() {
         return 'from-zinc-700 to-zinc-600';
       case 'nahma':
         return 'from-purple-600 to-pink-600';
-      case 'invasion':
+      case 'rift':
         return 'from-blue-600 to-cyan-500';
+      case 'invasion':
+        return 'from-red-500 to-rose-600';
       default:
         return 'from-red-600 to-amber-600';
     }
@@ -203,7 +226,8 @@ export default function BossTimerNotifier() {
       case 'shugo': return '🦊';
       case 'trade': return '🌑';
       case 'nahma': return '👑';
-      case 'invasion': return '🌀';
+      case 'rift': return '🌀';
+      case 'invasion': return '⚔️';
       default: return '🔥';
     }
   };
@@ -213,6 +237,7 @@ export default function BossTimerNotifier() {
       case 'shugo': return '슈고 페스타!';
       case 'trade': return '무역단 초기화!';
       case 'nahma': return '나흐마 출현!';
+      case 'rift': return '시공의 균열!';
       case 'invasion': return '차원 침공!';
       default: return '보스 리젠!';
     }
