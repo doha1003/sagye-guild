@@ -248,6 +248,29 @@ function FieldBossContent() {
   const [timers, setTimers] = useState<BossTimer[]>([]);
   const [now, setNow] = useState(Date.now());
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [showMaps, setShowMaps] = useState(false);
+  const [selectedMap, setSelectedMap] = useState<'asmodian' | 'elyos'>('asmodian');
+
+  // 지도 이미지 (인벤 출처)
+  const maps = {
+    asmodian: [
+      { name: '마족 전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1112262490.jpg' },
+      { name: '드레드기온 추락지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1478740011.jpg' },
+      { name: '모슬란 숲', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1537219396.jpg' },
+      { name: '정화의 숲', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1696484231.jpg' },
+      { name: '그리바데 구릉지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1513789306.jpg' },
+      { name: '임페투시움 광장', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1572168382.jpg' },
+      { name: '불멸의 섬', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1485154320.jpg' },
+    ],
+    elyos: [
+      { name: '천족 전체 지도', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1839745143.jpg' },
+      { name: '칸타스 계곡 · 엘룬강', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1346889650.jpg' },
+      { name: '톨바스 숲 · 아울라우', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1493088239.jpg' },
+      { name: '아르타미아 고원', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1901406732.jpg' },
+      { name: '붉은 숲 · 드라나 재배지', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1244544949.jpg' },
+      { name: '영원의 섬', url: 'https://upload3.inven.co.kr/upload/2025/12/17/bbs/i1838498016.jpg' },
+    ],
+  };
 
   // 보스 데이터 - 리젠 시간 원복 (이벤트 종료)
   const bosses = [
@@ -466,17 +489,84 @@ function FieldBossContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base sm:text-lg font-bold text-white">필드보스 리젠 타이머</h3>
-        {notificationPermission !== 'granted' && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={requestNotificationPermission}
-            className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
+            onClick={() => setShowMaps(!showMaps)}
+            className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${
+              showMaps
+                ? 'bg-cyan-500 text-zinc-900'
+                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+            }`}
           >
-            🔔 알림 허용
+            🗺️ 지도
           </button>
-        )}
+          {notificationPermission !== 'granted' && (
+            <button
+              onClick={requestNotificationPermission}
+              className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
+            >
+              🔔 알림 허용
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* 지도 섹션 */}
+      {showMaps && (
+        <div className="bg-zinc-900/80 rounded-xl p-4 border border-cyan-500/30">
+          <div className="flex items-center gap-2 mb-4">
+            <button
+              onClick={() => setSelectedMap('asmodian')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                selectedMap === 'asmodian'
+                  ? 'bg-red-500 text-white'
+                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+              }`}
+            >
+              😈 마족
+            </button>
+            <button
+              onClick={() => setSelectedMap('elyos')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                selectedMap === 'elyos'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+              }`}
+            >
+              😇 천족
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {maps[selectedMap].map((map, idx) => (
+              <a
+                key={idx}
+                href={map.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-cyan-500 transition-colors"
+              >
+                <img
+                  src={map.url + '?MW=400'}
+                  alt={map.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-2">
+                  <span className="text-white text-xs font-medium">{map.name}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <p className="text-zinc-500 text-xs mt-3 text-center">
+            출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">아이온2 인벤</a> · 클릭하면 원본 이미지
+          </p>
+        </div>
+      )}
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
