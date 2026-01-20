@@ -43,6 +43,21 @@ export default function MembersPage() {
   const [collectTime, setCollectTime] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('전체');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMember, setSelectedMember] = useState<GuildMember | null>(null);
+
+  // 연결된 캐릭터 찾기 (본캐 + 모든 부캐)
+  const getLinkedCharacters = (member: GuildMember) => {
+    // 본캐 닉네임 찾기
+    const mainNickname = member.mainCharacter || member.nickname;
+
+    // 본캐 찾기
+    const mainChar = members.find(m => m.nickname === mainNickname && !m.mainCharacter);
+
+    // 해당 본캐의 모든 부캐 찾기
+    const altChars = members.filter(m => m.mainCharacter === mainNickname);
+
+    return { mainChar, altChars };
+  };
 
   // 구글 시트에서 데이터 불러오기
   const fetchMembers = useCallback(async (forceRefresh = false) => {
@@ -206,7 +221,12 @@ export default function MembersPage() {
                   <div key={member.id} className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-white text-base">{member.nickname}</span>
+                        <button
+                          onClick={() => setSelectedMember(member)}
+                          className="font-bold text-white text-base hover:text-amber-400 transition-colors text-left"
+                        >
+                          {member.nickname}
+                        </button>
                         {member.mainCharacter ? (
                           <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">
                             부캐({member.mainCharacter})
@@ -290,7 +310,12 @@ export default function MembersPage() {
                       <tr key={member.id} className="hover:bg-zinc-700/50">
                         <td className="p-3">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-white">{member.nickname}</span>
+                            <button
+                              onClick={() => setSelectedMember(member)}
+                              className="font-medium text-white hover:text-amber-400 transition-colors"
+                            >
+                              {member.nickname}
+                            </button>
                             {member.mainCharacter && (
                               <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">
                                 부캐({member.mainCharacter})
@@ -380,6 +405,83 @@ export default function MembersPage() {
           <p>구글 시트 연동 · aion2tool.com 데이터</p>
         </div>
       </main>
+
+      {/* 연결된 캐릭터 팝업 */}
+      {selectedMember && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedMember(null)}
+        >
+          <div
+            className="bg-zinc-800 rounded-xl border border-zinc-600 max-w-md w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-zinc-700 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">연결된 캐릭터</h3>
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="text-zinc-400 hover:text-white text-xl"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4">
+              {(() => {
+                const { mainChar, altChars } = getLinkedCharacters(selectedMember);
+                return (
+                  <div className="space-y-3">
+                    {/* 본캐 */}
+                    {mainChar && (
+                      <div className="bg-zinc-900 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">본캐</span>
+                          <span className="font-bold text-white">{mainChar.nickname}</span>
+                        </div>
+                        <div className="text-sm text-zinc-400">
+                          {CLASS_ICONS[mainChar.className]} {mainChar.className} · {mainChar.rank}
+                        </div>
+                        {mainChar.combatPower && (
+                          <div className="text-sm text-zinc-500 mt-1">
+                            전투력: {Number(mainChar.combatPower).toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* 부캐 목록 */}
+                    {altChars.length > 0 && (
+                      <>
+                        <div className="text-xs text-zinc-500 mt-2">부캐 ({altChars.length})</div>
+                        {altChars.map((alt) => (
+                          <div key={alt.id} className="bg-zinc-900 rounded-lg p-3">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">부캐</span>
+                              <span className="font-bold text-white">{alt.nickname}</span>
+                            </div>
+                            <div className="text-sm text-zinc-400">
+                              {CLASS_ICONS[alt.className]} {alt.className}
+                            </div>
+                            {alt.combatPower && (
+                              <div className="text-sm text-zinc-500 mt-1">
+                                전투력: {Number(alt.combatPower).toLocaleString()}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </>
+                    )}
+
+                    {/* 부캐 없을 때 */}
+                    {altChars.length === 0 && mainChar && (
+                      <p className="text-sm text-zinc-500 text-center py-2">등록된 부캐가 없습니다</p>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
