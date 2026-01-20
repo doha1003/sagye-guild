@@ -75,7 +75,7 @@ export default function TermsPage() {
 
         <div className="mt-12 pt-8 border-t border-zinc-800 text-center">
           <p className="text-zinc-500 text-sm">
-            최종 수정일: 2026년 1월 7일
+            최종 수정일: 2026년 1월 20일
           </p>
           <Link href="/" className="text-amber-400 hover:text-amber-300 text-sm mt-2 inline-block">
             ← 메인으로 돌아가기

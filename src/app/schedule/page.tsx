@@ -1039,7 +1039,7 @@ function FieldBossContent() {
       </div>
 
       <p className="text-xs text-zinc-500 -mt-4">
-        12/17 이후 리젠 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
+        리젠 시간 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
       </p>
 
       {/* 활성 타이머 */}

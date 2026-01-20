@@ -1,7 +1,19 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
+
+// D-Day 계산 함수
+function getDDay() {
+  const target = new Date('2026-01-21T00:00:00+09:00');
+  const now = new Date();
+  const diff = Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diff > 0) return `D-${diff}`;
+  if (diff === 0) return 'D-Day';
+  return '시즌2 진행중';
+}
 
 const DUNGEON_TYPES = [
   {
@@ -156,6 +168,23 @@ const ARCANA_SETS = [
 ];
 
 export default function Season2Page() {
+  const [dDay, setDDay] = useState(getDDay());
+
+  useEffect(() => {
+    // 자정에 D-Day 업데이트
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    const timeout = setTimeout(() => {
+      setDDay(getDDay());
+    }, msUntilMidnight);
+
+    return () => clearTimeout(timeout);
+  }, [dDay]);
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <AlertBar />
@@ -180,8 +209,12 @@ export default function Season2Page() {
                 <span className="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white text-sm font-bold px-4 py-1.5 rounded-full animate-pulse">
                   2026.01.21 START
                 </span>
-                <span className="bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded border border-red-500/30">
-                  D-1
+                <span className={`text-xs font-bold px-3 py-1 rounded border ${
+                  dDay === '시즌2 진행중'
+                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                    : 'bg-red-500/20 text-red-400 border-red-500/30'
+                }`}>
+                  {dDay}
                 </span>
               </div>
 
