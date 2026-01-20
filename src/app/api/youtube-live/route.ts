@@ -7,13 +7,11 @@ const AION2_CHANNEL_HANDLE = 'AION2';
 let cachedChannelId: string | null = null;
 
 async function getChannelId(apiKey: string): Promise<string | null> {
-  // 캐시된 채널 ID가 있으면 사용
   if (cachedChannelId) {
     return cachedChannelId;
   }
 
   try {
-    // 채널 핸들로 채널 ID 조회
     const channelUrl = `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${AION2_CHANNEL_HANDLE}&key=${apiKey}`;
     const response = await fetch(channelUrl);
 
@@ -26,13 +24,43 @@ async function getChannelId(apiKey: string): Promise<string | null> {
 
     if (data.items && data.items.length > 0) {
       cachedChannelId = data.items[0].id;
-      console.log('AION2 Channel ID:', cachedChannelId);
       return cachedChannelId;
     }
 
     return null;
   } catch (error) {
     console.error('Error getting channel ID:', error);
+    return null;
+  }
+}
+
+async function getLatestVideo(apiKey: string, channelId: string) {
+  try {
+    // 채널의 최신 영상 1개 가져오기
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&order=date&maxResults=1&key=${apiKey}`;
+    const response = await fetch(searchUrl, {
+      next: { revalidate: 3600 }, // 1시간마다 캐시 갱신
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data.items && data.items.length > 0) {
+      const video = data.items[0];
+      return {
+        videoId: video.id.videoId,
+        title: video.snippet.title,
+        thumbnail: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default?.url,
+        publishedAt: video.snippet.publishedAt,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error getting latest video:', error);
     return null;
   }
 }
@@ -45,7 +73,6 @@ export async function GET() {
   }
 
   try {
-    // 채널 ID 가져오기
     const channelId = await getChannelId(apiKey);
 
     if (!channelId) {
@@ -55,44 +82,40 @@ export async function GET() {
       });
     }
 
-    // 채널의 라이브 방송 검색
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
-
-    const response = await fetch(searchUrl, {
+    // 라이브 방송 검색
+    const liveUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
+    const liveResponse = await fetch(liveUrl, {
       next: { revalidate: 1800 }, // 30분마다 캐시 갱신
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('YouTube API error:', errorData);
-      return NextResponse.json({
-        isLive: false,
-        error: 'YouTube API error'
-      });
+    if (liveResponse.ok) {
+      const liveData = await liveResponse.json();
+
+      if (liveData.items && liveData.items.length > 0) {
+        const liveVideo = liveData.items[0];
+        return NextResponse.json({
+          isLive: true,
+          videoId: liveVideo.id.videoId,
+          title: liveVideo.snippet.title,
+          thumbnail: liveVideo.snippet.thumbnails.high?.url || liveVideo.snippet.thumbnails.default?.url,
+          channelId: channelId,
+        });
+      }
     }
 
-    const data = await response.json();
-
-    if (data.items && data.items.length > 0) {
-      const liveVideo = data.items[0];
-      return NextResponse.json({
-        isLive: true,
-        videoId: liveVideo.id.videoId,
-        title: liveVideo.snippet.title,
-        thumbnail: liveVideo.snippet.thumbnails.high?.url || liveVideo.snippet.thumbnails.default?.url,
-        channelId: channelId,
-      });
-    }
+    // 라이브 없으면 최신 영상 가져오기
+    const latestVideo = await getLatestVideo(apiKey, channelId);
 
     return NextResponse.json({
       isLive: false,
       channelId: channelId,
+      latestVideo: latestVideo,
     });
   } catch (error) {
-    console.error('YouTube live check error:', error);
+    console.error('YouTube API error:', error);
     return NextResponse.json({
       isLive: false,
-      error: 'Failed to check live status'
+      error: 'Failed to check'
     });
   }
 }
