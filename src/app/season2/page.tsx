@@ -103,19 +103,19 @@ const NEW_DUNGEONS = [
   {
     date: '1/21',
     type: '각성전',
-    name: '봉인된 재앙 클라우디아',
+    name: '궤적 보관소',
     difficulty: '주간 로테이션',
-    boss: '클라우디아',
-    desc: '봉인에서 풀려난 재앙의 화신',
+    boss: '???',
+    desc: '새로운 각성전 던전',
     color: 'purple',
   },
   {
     date: '1/21',
     type: '각성전',
-    name: '타락한 폭군 메녹수스',
+    name: '폭군의 은신처',
     difficulty: '주간 로테이션',
-    boss: '메녹수스',
-    desc: '타락으로 인해 광기에 빠진 폭군',
+    boss: '???',
+    desc: '새로운 각성전 던전',
     color: 'purple',
   },
   {
@@ -181,7 +181,7 @@ export default function Season2Page() {
                   2026.01.21 START
                 </span>
                 <span className="bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1 rounded border border-red-500/30">
-                  D-2
+                  D-1
                 </span>
               </div>
 
@@ -230,6 +230,48 @@ export default function Season2Page() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 서버 매칭 - 지켈 vs 시엘 */}
+      <section className="bg-gradient-to-r from-red-950/30 via-zinc-900 to-cyan-950/30 py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-red-900/30 to-cyan-900/30 rounded-2xl p-6 md:p-8 border border-zinc-700">
+            <div className="text-center mb-6">
+              <span className="bg-amber-500 text-zinc-900 text-xs font-bold px-3 py-1 rounded">시즌2 빅매치</span>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">서버 매칭 확정</h2>
+            </div>
+
+            <div className="flex items-center justify-center gap-4 md:gap-8">
+              {/* 지켈 */}
+              <div className="text-center flex-1">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600/30 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-red-500">
+                  <span className="text-2xl md:text-3xl">😈</span>
+                </div>
+                <div className="text-red-400 font-bold text-lg md:text-xl">지켈</div>
+                <div className="text-zinc-500 text-sm">마족 1서버</div>
+                <div className="mt-2 bg-amber-500/20 text-amber-400 text-xs font-bold px-2 py-1 rounded inline-block">
+                  사계 레기온
+                </div>
+              </div>
+
+              {/* VS */}
+              <div className="text-4xl md:text-5xl font-black text-zinc-600">VS</div>
+
+              {/* 시엘 */}
+              <div className="text-center flex-1">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-cyan-600/30 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-cyan-500">
+                  <span className="text-2xl md:text-3xl">😇</span>
+                </div>
+                <div className="text-cyan-400 font-bold text-lg md:text-xl">시엘</div>
+                <div className="text-zinc-500 text-sm">천족 1서버</div>
+              </div>
+            </div>
+
+            <p className="text-center text-zinc-400 text-sm mt-6">
+              시즌2부터 지켈 서버는 천족 1서버 <span className="text-cyan-400">시엘</span>과 매칭됩니다
+            </p>
           </div>
         </div>
       </section>
@@ -548,9 +590,11 @@ export default function Season2Page() {
               <h3 className="text-cyan-400 font-bold text-xl mb-2">시스템 개선</h3>
               <p className="text-zinc-300 text-sm mb-4">1월 21일 적용</p>
               <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• <span className="text-cyan-300">주간 AP 제한 폐지</span></li>
                 <li>• AP 시즌 총량제로 변경</li>
                 <li>• 3:0 패배 시 회랑 바로 입장</li>
                 <li>• 공명전 매칭 최적화</li>
+                <li>• 어비스 장비 세트효과 추가</li>
               </ul>
             </div>
           </div>
@@ -608,6 +652,86 @@ export default function Season2Page() {
                   <span>UI/UX 편의성 개선</span>
                 </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 시즌2 주요 시스템 변경 */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              💰 시즌2 주요 시스템
+            </h2>
+            <p className="text-zinc-400">시즌 재화 및 장비 시스템 변경사항</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* 맹세의 주화 */}
+            <div className="bg-gradient-to-br from-amber-900/20 to-zinc-900 rounded-xl p-6 border border-amber-500/30">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center text-3xl">
+                  🪙
+                </div>
+                <div>
+                  <h3 className="text-amber-400 font-bold text-xl">맹세의 주화</h3>
+                  <p className="text-zinc-500 text-sm">시즌 전용 재화</p>
+                </div>
+              </div>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-red-400 mt-0.5">⚠</span>
+                  <span><span className="text-red-400 font-medium">시즌1 주화는 시즌2 시작 시 사용 불가</span></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-500 mt-0.5">•</span>
+                  <span>시즌2 전용 맹세의 주화 새로 지급</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-500 mt-0.5">•</span>
+                  <span>시즌 상점에서 성장/편의 아이템 구매</span>
+                </li>
+              </ul>
+              <div className="mt-4 p-3 bg-zinc-800/50 rounded-lg">
+                <div className="text-xs text-zinc-500 mb-2">추천 구매 (시즌1 주화 소진용)</div>
+                <div className="text-zinc-300 text-sm">분노의 사념/의지/자아, 격돌의 룬 상자</div>
+              </div>
+            </div>
+
+            {/* 장비 계승 */}
+            <div className="bg-gradient-to-br from-purple-900/20 to-zinc-900 rounded-xl p-6 border border-purple-500/30">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center text-3xl">
+                  ⚗️
+                </div>
+                <div>
+                  <h3 className="text-purple-400 font-bold text-xl">장비 계승 시스템</h3>
+                  <p className="text-zinc-500 text-sm">영혼 각인 옵션 이전</p>
+                </div>
+              </div>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-0.5">•</span>
+                  <span>동일 등급 장비 간 계승 가능</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-0.5">•</span>
+                  <span>강화, 돌파, 조율 옵션 이전 (마석/신석 제외)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-0.5">•</span>
+                  <span>첫 계승 100% 확률, 이후 확률 감소</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500 mt-0.5">✓</span>
+                  <span className="text-green-400">실패해도 원본 장비 유지 (재료만 소모)</span>
+                </li>
+              </ul>
+              <div className="mt-4 p-3 bg-zinc-800/50 rounded-lg">
+                <div className="text-xs text-zinc-500 mb-2">추천 계승 순서</div>
+                <div className="text-zinc-300 text-sm">무기 → 가더 → 상의 → 장갑</div>
+              </div>
             </div>
           </div>
         </div>
@@ -719,7 +843,7 @@ export default function Season2Page() {
               AION2 지켈 서버 · 마족
             </p>
             <p className="text-zinc-600 text-xs mt-2">
-              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.19
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.20
             </p>
           </div>
         </div>
