@@ -30,6 +30,15 @@ const updateLogs: UpdateLog[] = [
         ],
       },
       {
+        title: 'AION2 공식 라이브 연동',
+        features: [
+          'YouTube Data API 연동',
+          'AION2 공식 채널 라이브 방송 자동 감지',
+          '라이브 중일 때만 메인 페이지에 표시',
+          '1분마다 라이브 상태 자동 확인',
+        ],
+      },
+      {
         title: '부캐 관리 기능',
         features: [
           '부캐여부 칼럼 추가 (본캐 닉네임 표시)',

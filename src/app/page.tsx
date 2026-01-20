@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AlertBar from './components/AlertBar';
+import YouTubeLive from './components/YouTubeLive';
 
 interface GuildMember {
   className: string;
@@ -246,6 +247,9 @@ export default function Home() {
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">펫 DB</h3>
           </Link>
         </div>
+
+        {/* AION2 공식 라이브 방송 */}
+        <YouTubeLive />
       </main>
 
       {/* 푸터 */}
