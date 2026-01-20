@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
-import { subscribeToBossTimers, setBossTimer, removeBossTimer, BossTimer as FirebaseBossTimer } from '@/lib/firebase';
+import { subscribeToBossTimers, setBossTimer, removeBossTimer, updateBossTimer, BossTimer as FirebaseBossTimer } from '@/lib/firebase';
 
 interface BossTimer {
   bossName: string;
@@ -731,7 +731,27 @@ function FieldBossContent() {
     return () => unsubscribe();
   }, []);
 
-  // 알림 보내기
+  // 소리 알림 (3번 울림)
+  const playNotificationSound = useCallback((times = 3) => {
+    let count = 0;
+    const playOnce = () => {
+      if (count >= times) return;
+      try {
+        const audio = new Audio('/notification.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(() => {});
+        count++;
+        if (count < times) {
+          setTimeout(playOnce, 800); // 0.8초 간격
+        }
+      } catch {
+        // 소리 파일이 없어도 무시
+      }
+    };
+    playOnce();
+  }, []);
+
+  // 알림 보내기 (리젠 시)
   const showNotification = useCallback((bossName: string) => {
     // 브라우저 알림
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -741,37 +761,65 @@ function FieldBossContent() {
         tag: bossName,
       });
     }
+    playNotificationSound(3);
+  }, [playNotificationSound]);
 
-    // 소리 알림 (선택적)
-    try {
-      const audio = new Audio('/notification.mp3');
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-    } catch {
-      // 소리 파일이 없어도 무시
+  // 1분 전 알림
+  const showPreNotification = useCallback((bossName: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('⏰ 1분 전!', {
+        body: `${bossName} 리젠 1분 전!`,
+        icon: '/favicon.ico',
+        tag: `${bossName}-pre`,
+      });
     }
-  }, []);
+    playNotificationSound(3);
+  }, [playNotificationSound]);
 
-  // 1초마다 시간 업데이트 + 완료된 타이머 알림 처리
+  // 1초마다 시간 업데이트 + 완료된 타이머 알림 처리 + 자동 재시작 (30초 딜레이)
   const notifiedTimersRef = useRef<Set<string>>(new Set());
+  const preNotifiedTimersRef = useRef<Set<string>>(new Set()); // 1분 전 알림용
+  const restartingTimersRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(Date.now());
+      const currentTime = Date.now();
 
-      // 완료된 타이머 확인 및 알림 (Firebase에서 자동 삭제되지 않으므로 로컬에서 처리)
-      timers.forEach(timer => {
-        if (timer.endTime <= Date.now() && !notifiedTimersRef.current.has(timer.bossName)) {
+      timers.forEach(async timer => {
+        const remaining = timer.endTime - currentTime;
+
+        // 1분 전 알림 (55초~65초 범위에서 한 번만)
+        if (remaining > 0 && remaining <= 60000 && remaining > 55000) {
+          if (!preNotifiedTimersRef.current.has(timer.bossName)) {
+            showPreNotification(timer.bossName);
+            preNotifiedTimersRef.current.add(timer.bossName);
+          }
+        }
+
+        // 리젠 완료 알림 + 자동 재시작
+        if (timer.endTime <= currentTime && !notifiedTimersRef.current.has(timer.bossName)) {
           showNotification(timer.bossName);
           notifiedTimersRef.current.add(timer.bossName);
-          // Firebase에서 만료된 타이머 삭제
-          removeBossTimer(timer.bossName);
+
+          // 자동 재시작: 30초 후 리젠 시간만큼 다시 타이머 설정 (보스 잡는 시간 고려)
+          if (timer.respawnMinutes > 0 && !restartingTimersRef.current.has(timer.bossName)) {
+            restartingTimersRef.current.add(timer.bossName);
+            setTimeout(async () => {
+              const newEndTime = Date.now() + timer.respawnMinutes * 60 * 1000;
+              await updateBossTimer(timer.bossName, newEndTime);
+              restartingTimersRef.current.delete(timer.bossName);
+              // 다음 알림을 위해 notified 해제
+              notifiedTimersRef.current.delete(timer.bossName);
+              preNotifiedTimersRef.current.delete(timer.bossName);
+            }, 30000); // 30초 딜레이
+          }
         }
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timers, showNotification]);
+  }, [timers, showNotification, showPreNotification]);
 
   // 알림 권한 요청
   const requestNotificationPermission = async () => {
@@ -814,6 +862,58 @@ function FieldBossContent() {
       notifiedTimersRef.current.delete(bossName);
     } catch (error) {
       console.error('타이머 취소 실패:', error);
+    }
+  };
+
+  // 타이머 시간 보정 (분 단위)
+  const adjustTimer = async (bossName: string, adjustMinutes: number) => {
+    const timer = timers.find(t => t.bossName === bossName);
+    if (!timer) return;
+
+    const newEndTime = timer.endTime + adjustMinutes * 60 * 1000;
+    // 과거 시간으로 설정되지 않도록 최소 1분 보장
+    const minEndTime = Date.now() + 60 * 1000;
+    const finalEndTime = Math.max(newEndTime, minEndTime);
+
+    try {
+      await updateBossTimer(bossName, finalEndTime);
+    } catch (error) {
+      console.error('타이머 보정 실패:', error);
+    }
+  };
+
+  // 보정 모달 상태
+  const [adjustModalBoss, setAdjustModalBoss] = useState<string | null>(null);
+  const [customAdjustMinutes, setCustomAdjustMinutes] = useState<string>('');
+  const [customTimeInput, setCustomTimeInput] = useState<string>('');
+
+  // 직접 시간 설정 (HH:MM 또는 HH:MM:SS 형식)
+  const setCustomTime = async (bossName: string, timeStr: string) => {
+    const timer = timers.find(t => t.bossName === bossName);
+    if (!timer) return;
+
+    // HH:MM 또는 HH:MM:SS 파싱
+    const parts = timeStr.split(':').map(p => parseInt(p));
+    if (parts.length < 2 || parts.some(isNaN)) {
+      alert('시간 형식: HH:MM 또는 HH:MM:SS');
+      return;
+    }
+
+    const [hours, minutes, seconds = 0] = parts;
+    const now = new Date();
+    const target = new Date();
+    target.setHours(hours, minutes, seconds, 0);
+
+    // 입력한 시간이 현재보다 과거면 내일로 설정
+    if (target.getTime() <= now.getTime()) {
+      target.setDate(target.getDate() + 1);
+    }
+
+    try {
+      await updateBossTimer(bossName, target.getTime());
+      setCustomTimeInput('');
+    } catch (error) {
+      console.error('시간 설정 실패:', error);
     }
   };
 
@@ -866,35 +966,127 @@ function FieldBossContent() {
         <div className="bg-gradient-to-r from-amber-500/20 to-red-500/20 border border-amber-500/30 rounded-xl p-4">
           <h4 className="text-amber-400 font-bold text-sm mb-3 flex items-center gap-2">
             <span className="animate-pulse">⏱️</span> 활성 타이머 ({timers.length})
+            <span className="text-zinc-500 text-xs font-normal ml-2">리젠 시 자동 재시작</span>
           </h4>
           <div className="space-y-2">
             {timers.map(timer => {
               const remaining = timer.endTime - now;
               const isUrgent = remaining < 5 * 60 * 1000; // 5분 이하
+              const isAdjusting = adjustModalBoss === timer.bossName;
               return (
                 <div
                   key={timer.bossName}
-                  className={`flex items-center justify-between p-3 rounded-lg ${
+                  className={`p-3 rounded-lg ${
                     isUrgent ? 'bg-red-500/20 animate-pulse' : 'bg-zinc-900/50'
                   }`}
                 >
-                  <div>
-                    <div className={`font-bold text-sm ${isUrgent ? 'text-red-400' : 'text-white'}`}>
-                      {timer.bossName}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className={`font-bold text-sm ${isUrgent ? 'text-red-400' : 'text-white'}`}>
+                        {timer.bossName}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`font-mono font-bold text-lg ${isUrgent ? 'text-red-400' : 'text-amber-400'}`}>
+                        {formatRemaining(timer.endTime)}
+                      </span>
+                      <button
+                        onClick={() => setAdjustModalBoss(isAdjusting ? null : timer.bossName)}
+                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                          isAdjusting
+                            ? 'bg-cyan-500 text-zinc-900'
+                            : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                        }`}
+                        title="시간 보정"
+                      >
+                        보정
+                      </button>
+                      <button
+                        onClick={() => cancelTimer(timer.bossName)}
+                        className="text-zinc-500 hover:text-red-400 transition-colors"
+                        title="타이머 취소"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`font-mono font-bold text-lg ${isUrgent ? 'text-red-400' : 'text-amber-400'}`}>
-                      {formatRemaining(timer.endTime)}
-                    </span>
-                    <button
-                      onClick={() => cancelTimer(timer.bossName)}
-                      className="text-zinc-500 hover:text-red-400 transition-colors"
-                      title="타이머 취소"
-                    >
-                      ✕
-                    </button>
-                  </div>
+
+                  {/* 보정 패널 */}
+                  {isAdjusting && (
+                    <div className="mt-3 pt-3 border-t border-zinc-700">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-zinc-400 text-xs">빠르게:</span>
+                        <button
+                          onClick={() => adjustTimer(timer.bossName, -5)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          -5분
+                        </button>
+                        <button
+                          onClick={() => adjustTimer(timer.bossName, -1)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          -1분
+                        </button>
+                        <span className="text-zinc-600">|</span>
+                        <span className="text-zinc-400 text-xs">느리게:</span>
+                        <button
+                          onClick={() => adjustTimer(timer.bossName, 1)}
+                          className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          +1분
+                        </button>
+                        <button
+                          onClick={() => adjustTimer(timer.bossName, 5)}
+                          className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          +5분
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-zinc-400 text-xs">보정:</span>
+                        <input
+                          type="number"
+                          value={customAdjustMinutes}
+                          onChange={(e) => setCustomAdjustMinutes(e.target.value)}
+                          placeholder="±분"
+                          className="w-16 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-xs text-white"
+                        />
+                        <button
+                          onClick={() => {
+                            const mins = parseInt(customAdjustMinutes);
+                            if (!isNaN(mins)) {
+                              adjustTimer(timer.bossName, mins);
+                              setCustomAdjustMinutes('');
+                            }
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          적용
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-zinc-400 text-xs">시간 직접 설정:</span>
+                        <input
+                          type="text"
+                          value={customTimeInput}
+                          onChange={(e) => setCustomTimeInput(e.target.value)}
+                          placeholder="14:30"
+                          className="w-20 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-xs text-white font-mono"
+                        />
+                        <button
+                          onClick={() => {
+                            if (customTimeInput) {
+                              setCustomTime(timer.bossName, customTimeInput);
+                            }
+                          }}
+                          className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded"
+                        >
+                          설정
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

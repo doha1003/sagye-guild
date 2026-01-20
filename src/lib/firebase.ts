@@ -108,6 +108,31 @@ export async function removeBossTimer(bossName: string): Promise<void> {
   await set(timerRef, null);
 }
 
+// Update boss timer (for time adjustment)
+export async function updateBossTimer(bossName: string, newEndTime: number): Promise<boolean> {
+  const db = getFirebaseDatabase();
+
+  if (!db) {
+    console.error('Firebase not initialized');
+    return false;
+  }
+
+  const timerRef = ref(db, `bossTimers/${bossName}`);
+  const snapshot = await get(timerRef);
+
+  if (!snapshot.exists()) {
+    return false;
+  }
+
+  const existing = snapshot.val() as BossTimer;
+  await set(timerRef, {
+    ...existing,
+    endTime: newEndTime,
+  });
+
+  return true;
+}
+
 // Clean up expired timers (can be called periodically)
 export async function cleanupExpiredTimers(): Promise<void> {
   const db = getFirebaseDatabase();
