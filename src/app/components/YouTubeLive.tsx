@@ -17,6 +17,14 @@ export default function YouTubeLive() {
 
   useEffect(() => {
     const checkLive = async () => {
+      // 저녁 7시~11시 사이에만 체크 (한국 시간)
+      const now = new Date();
+      const hour = now.getHours();
+      if (hour < 19 || hour >= 23) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/youtube-live');
         const data = await res.json();
@@ -36,8 +44,8 @@ export default function YouTubeLive() {
 
     checkLive();
 
-    // 5분마다 라이브 상태 확인 (매주 화요일 8시 방송)
-    const interval = setInterval(checkLive, 300000);
+    // 30분마다 라이브 상태 확인 (화요일 저녁 8시 방송)
+    const interval = setInterval(checkLive, 1800000);
     return () => clearInterval(interval);
   }, []);
 

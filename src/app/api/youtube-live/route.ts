@@ -59,7 +59,7 @@ export async function GET() {
     const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
 
     const response = await fetch(searchUrl, {
-      next: { revalidate: 300 }, // 5분마다 캐시 갱신
+      next: { revalidate: 1800 }, // 30분마다 캐시 갱신
     });
 
     if (!response.ok) {
