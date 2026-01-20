@@ -943,23 +943,109 @@ function FieldBossContent() {
     return 'text-red-400';
   };
 
+  // 사용방법 가이드 토글
+  const [showGuide, setShowGuide] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base sm:text-lg font-bold text-white">필드보스 리젠 타이머</h3>
-        {notificationPermission !== 'granted' && (
+        <div className="flex gap-2">
           <button
-            onClick={requestNotificationPermission}
-            className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
+            onClick={() => setShowGuide(!showGuide)}
+            className={`text-xs px-3 py-1.5 rounded-lg font-bold transition-colors ${
+              showGuide
+                ? 'bg-cyan-500 text-zinc-900'
+                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+            }`}
           >
-            🔔 알림 허용
+            📖 사용방법
           </button>
-        )}
+          {notificationPermission !== 'granted' && (
+            <button
+              onClick={requestNotificationPermission}
+              className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
+            >
+              🔔 알림 허용
+            </button>
+          )}
+        </div>
       </div>
 
       <p className="text-xs text-zinc-500 -mt-4">
         12/17 이후 리젠 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
       </p>
+
+      {/* 사용방법 가이드 */}
+      {showGuide && (
+        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl p-4 space-y-4">
+          <h4 className="text-cyan-400 font-bold text-sm flex items-center gap-2">
+            📖 타이머 사용방법
+          </h4>
+
+          {/* 기본 사용법 */}
+          <div className="space-y-2">
+            <h5 className="text-white font-bold text-xs">🎯 기본 사용법</h5>
+            <div className="text-zinc-300 text-xs space-y-1 pl-4">
+              <p>1. 보스를 처치하면 해당 보스의 <span className="text-amber-400 font-bold">[처치]</span> 버튼 클릭</p>
+              <p>2. 타이머가 시작되고, 리젠 시간이 카운트다운됩니다</p>
+              <p>3. <span className="text-cyan-400 font-bold">1분 전</span>에 알림 + 비프음 3번</p>
+              <p>4. <span className="text-red-400 font-bold">리젠 시</span> 알림 + 비프음 3번</p>
+              <p>5. 리젠 후 <span className="text-green-400 font-bold">30초 뒤 자동으로 다음 사이클 시작</span></p>
+            </div>
+          </div>
+
+          {/* 시간 보정 */}
+          <div className="space-y-2">
+            <h5 className="text-white font-bold text-xs">⏱️ 시간 보정 (타이머가 맞지 않을 때)</h5>
+            <div className="text-zinc-300 text-xs space-y-1 pl-4">
+              <p>1. 활성 타이머에서 <span className="text-cyan-400 font-bold">[보정]</span> 버튼 클릭</p>
+              <p>2. 보정 패널이 열립니다:</p>
+              <div className="pl-4 space-y-1 mt-1">
+                <p>• <span className="text-blue-400">-5분, -1분</span>: 타이머를 빠르게 (예상보다 빨리 리젠될 때)</p>
+                <p>• <span className="text-orange-400">+1분, +5분</span>: 타이머를 느리게 (예상보다 늦게 리젠될 때)</p>
+                <p>• <span className="text-green-400">보정 입력</span>: ±분 단위로 직접 입력 (예: -3, +7)</p>
+                <p>• <span className="text-purple-400">시간 직접 설정</span>: 정확한 리젠 시간 입력 (예: 14:30)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 타이머 취소 */}
+          <div className="space-y-2">
+            <h5 className="text-white font-bold text-xs">❌ 타이머 취소</h5>
+            <div className="text-zinc-300 text-xs space-y-1 pl-4">
+              <p>• 활성 타이머의 <span className="text-red-400 font-bold">[✕]</span> 버튼 또는 <span className="text-zinc-400">[취소]</span> 클릭</p>
+              <p>• 타이머가 완전히 삭제되며, 자동 재시작도 중단됩니다</p>
+            </div>
+          </div>
+
+          {/* 알림 설정 */}
+          <div className="space-y-2">
+            <h5 className="text-white font-bold text-xs">🔔 알림 받기</h5>
+            <div className="text-zinc-300 text-xs space-y-1 pl-4">
+              <p>• 상단의 <span className="text-amber-400 font-bold">[🔔 알림 허용]</span> 버튼 클릭</p>
+              <p>• 브라우저 알림 권한을 허용해주세요</p>
+              <p>• 브라우저를 열어둬야 알림을 받을 수 있습니다</p>
+            </div>
+          </div>
+
+          {/* 공유 기능 */}
+          <div className="space-y-2">
+            <h5 className="text-white font-bold text-xs">👥 실시간 공유</h5>
+            <div className="text-zinc-300 text-xs space-y-1 pl-4">
+              <p>• 타이머는 <span className="text-amber-400 font-bold">모든 사용자에게 실시간 공유</span>됩니다</p>
+              <p>• 누군가 처치 버튼을 누르면 다른 사람도 타이머를 볼 수 있습니다</p>
+              <p>• 길드원끼리 보스 타이머를 공유하세요!</p>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-zinc-700">
+            <p className="text-zinc-500 text-xs">
+              💡 Tip: 보스는 보통 리젠 후 1분 내외로 처치되므로, 자동 재시작 시 30초 딜레이가 적용됩니다.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
