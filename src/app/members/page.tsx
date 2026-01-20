@@ -280,7 +280,7 @@ export default function MembersPage() {
                             <span className="font-medium text-white">{member.nickname}</span>
                             {member.mainCharacter && (
                               <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">
-                                부캐
+                                부캐({member.mainCharacter})
                               </span>
                             )}
                           </div>
@@ -290,15 +290,7 @@ export default function MembersPage() {
                             {CLASS_ICONS[member.className] || ''} {member.className}
                           </span>
                         </td>
-                        <td className="p-3 text-zinc-300">
-                          {member.mainCharacter ? (
-                            <span className="text-purple-300" title={`본캐: ${member.mainCharacter}`}>
-                              {member.mainCharacter}
-                            </span>
-                          ) : (
-                            member.rank
-                          )}
-                        </td>
+                        <td className="p-3 text-zinc-300">{member.rank}</td>
                         <td className="p-3 text-center">
                           {!member.age || member.age === 'X' || member.age === 'x' || member.age.trim() === '' ? (
                             <span className="text-red-400">미입력</span>
