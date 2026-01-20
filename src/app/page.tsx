@@ -286,6 +286,8 @@ export default function Home() {
               Today {visitors.today.toLocaleString()} · Total {visitors.total.toLocaleString()}
             </p>
             <p className="text-xs text-zinc-700 mt-2">
+              <Link href="/updates" className="hover:text-zinc-500">업데이트 내역</Link>
+              {' · '}
               <Link href="/terms" className="hover:text-zinc-500">이용약관</Link>
               {' · '}
               <span>© 2026 사계 레기온</span>

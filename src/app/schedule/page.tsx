@@ -141,6 +141,9 @@ export default function SchedulePage() {
       <footer className="border-t border-zinc-800 mt-12">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
           <p>사계 레기온 · AION2 지켈 서버 (마족)</p>
+          <p className="text-xs text-zinc-600 mt-2">
+            <Link href="/updates" className="hover:text-zinc-400">업데이트 내역</Link>
+          </p>
         </div>
       </footer>
     </div>
