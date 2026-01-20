@@ -5,7 +5,7 @@ import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
 
 // 직업 정보 (8개 직업)
-const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성'] as const;
+const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성', '부캐'] as const;
 
 const CLASS_ICONS: Record<string, string> = {
   '검성': '🗡️',
@@ -16,6 +16,7 @@ const CLASS_ICONS: Record<string, string> = {
   '마도성': '✨',
   '치유성': '💚',
   '호법성': '📿',
+  '부캐': '👥',
 };
 
 // 지켈 서버 ID (마족)
@@ -70,7 +71,14 @@ export default function MembersPage() {
 
   // 필터링
   const filteredMembers = members.filter((m) => {
-    const matchesClass = activeFilter === '전체' || m.className === activeFilter;
+    let matchesClass = false;
+    if (activeFilter === '전체') {
+      matchesClass = true;
+    } else if (activeFilter === '부캐') {
+      matchesClass = !!m.mainCharacter;
+    } else {
+      matchesClass = m.className === activeFilter;
+    }
     const matchesSearch = !searchQuery ||
       m.nickname.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesClass && matchesSearch;
@@ -150,9 +158,14 @@ export default function MembersPage() {
         {/* 직업별 필터 */}
         <section className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
           {CLASSES.map((cls) => {
-            const count = cls === '전체'
-              ? members.length
-              : members.filter(m => m.className === cls).length;
+            let count = 0;
+            if (cls === '전체') {
+              count = members.length;
+            } else if (cls === '부캐') {
+              count = members.filter(m => m.mainCharacter).length;
+            } else {
+              count = members.filter(m => m.className === cls).length;
+            }
             return (
               <button
                 key={cls}
