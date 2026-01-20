@@ -36,8 +36,8 @@ export default function YouTubeLive() {
 
     checkLive();
 
-    // 1분마다 라이브 상태 확인
-    const interval = setInterval(checkLive, 60000);
+    // 5분마다 라이브 상태 확인 (매주 화요일 8시 방송)
+    const interval = setInterval(checkLive, 300000);
     return () => clearInterval(interval);
   }, []);
 
