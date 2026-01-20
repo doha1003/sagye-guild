@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
       return str;
     };
 
-    // 행 데이터 변환
-    const members = table.rows.map((row: { c: Array<{ v: string | number | null }> }, index: number) => {
+    // 1차: 모든 멤버 기본 데이터 파싱 (부캐여부 포함)
+    const rawMembers = table.rows.map((row: { c: Array<{ v: string | number | null }> }, index: number) => {
       const cells = row.c.map((cell: { v: string | number | null } | null) => cell?.v ?? '');
 
       return {
@@ -59,14 +59,58 @@ export async function GET(request: NextRequest) {
         maxCombatScore: cells[6] || 0,  // G: 최고 전투점수
         combatScore: cells[7] || 0,     // H: 현재 전투점수
         combatPower: cells[8] || 0,     // I: 전투력
+        mainCharacter: String(cells[9] || '').trim(), // J: 부캐여부 (본캐 닉네임)
       };
     }).filter((m: { nickname: string }) => m.nickname); // 빈 행 제거
 
-    // J열에서 수집 시간 가져오기
+    // 2차: 본캐 닉네임으로 빠르게 찾을 수 있도록 맵 생성
+    const mainCharMap = new Map<string, { age: string; discord: string; kakao: string }>();
+    for (const m of rawMembers) {
+      if (!m.mainCharacter) {
+        // 본캐인 경우에만 맵에 추가
+        mainCharMap.set(m.nickname, {
+          age: m.age,
+          discord: m.discord,
+          kakao: m.kakao,
+        });
+      }
+    }
+
+    // 3차: 부캐의 경우 본캐 정보 상속
+    interface RawMember {
+      id: string;
+      rank: string;
+      nickname: string;
+      className: string;
+      age: string;
+      discord: string;
+      kakao: string;
+      maxCombatScore: string | number;
+      combatScore: string | number;
+      combatPower: string | number;
+      mainCharacter: string;
+    }
+    const members = rawMembers.map((m: RawMember) => {
+      if (m.mainCharacter) {
+        // 부캐인 경우 본캐 정보 가져오기
+        const mainInfo = mainCharMap.get(m.mainCharacter);
+        if (mainInfo) {
+          return {
+            ...m,
+            age: m.age || mainInfo.age,           // 직접 입력값 우선, 없으면 본캐에서 상속
+            discord: m.discord || mainInfo.discord,
+            kakao: m.kakao || mainInfo.kakao,
+          };
+        }
+      }
+      return m;
+    });
+
+    // K열에서 수집 시간 가져오기 (J에서 K로 이동됨)
     let collectTime = '';
     try {
-      if (table.cols.length >= 10 && table.rows[0]?.c[9]?.v) {
-        const rawValue = String(table.rows[0].c[9].v);
+      if (table.cols.length >= 11 && table.rows[0]?.c[10]?.v) {
+        const rawValue = String(table.rows[0].c[10].v);
         // Google Sheets Date 형식 파싱: Date(year,month,day,hour,min,sec)
         const dateMatch = rawValue.match(/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/);
         if (dateMatch) {

@@ -32,6 +32,7 @@ interface GuildMember {
   maxCombatScore?: number;
   combatScore?: number;
   combatPower?: number;
+  mainCharacter?: string;  // 부캐인 경우 본캐 닉네임
 }
 
 export default function MembersPage() {
@@ -193,7 +194,13 @@ export default function MembersPage() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-white text-base">{member.nickname}</span>
-                        <span className="text-zinc-400 text-xs">{member.rank}</span>
+                        {member.mainCharacter ? (
+                          <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">
+                            부캐({member.mainCharacter})
+                          </span>
+                        ) : (
+                          <span className="text-zinc-400 text-xs">{member.rank}</span>
+                        )}
                       </div>
                       <a
                         href={`https://www.aion2tool.com/char/serverid=${ZIKEL_SERVER_ID}/${encodeURIComponent(member.nickname)}`}
@@ -269,14 +276,29 @@ export default function MembersPage() {
                     {sortedMembers.map((member) => (
                       <tr key={member.id} className="hover:bg-zinc-700/50">
                         <td className="p-3">
-                          <span className="font-medium text-white">{member.nickname}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-white">{member.nickname}</span>
+                            {member.mainCharacter && (
+                              <span className="text-xs bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">
+                                부캐
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-3">
                           <span className="text-zinc-200">
                             {CLASS_ICONS[member.className] || ''} {member.className}
                           </span>
                         </td>
-                        <td className="p-3 text-zinc-300">{member.rank}</td>
+                        <td className="p-3 text-zinc-300">
+                          {member.mainCharacter ? (
+                            <span className="text-purple-300" title={`본캐: ${member.mainCharacter}`}>
+                              {member.mainCharacter}
+                            </span>
+                          ) : (
+                            member.rank
+                          )}
+                        </td>
                         <td className="p-3 text-center">
                           {!member.age || member.age === 'X' || member.age === 'x' || member.age.trim() === '' ? (
                             <span className="text-red-400">미입력</span>
