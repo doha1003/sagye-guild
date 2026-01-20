@@ -12,7 +12,31 @@ interface BossTimer {
 }
 
 export default function SchedulePage() {
-  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'boss'>('daily');
+  const [activeTab, setActiveTab] = useState<'schedule' | 'boss' | 'manual'>('schedule');
+  const [activeBossCount, setActiveBossCount] = useState(0);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+
+  // Firebase에서 활성 타이머 개수 구독
+  useEffect(() => {
+    const unsubscribe = subscribeToBossTimers((timers) => {
+      setActiveBossCount(timers.length);
+    });
+
+    // 알림 권한 확인
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setNotificationPermission(Notification.permission);
+    }
+
+    return () => unsubscribe();
+  }, []);
+
+  // 알림 권한 요청
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-950">
@@ -35,63 +59,82 @@ export default function SchedulePage() {
           <p className="text-zinc-400 mt-1 text-sm sm:text-base">아이온2 컨텐츠 스케줄</p>
         </div>
 
-        {/* 초기화 시간 안내 */}
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">⏰</span>
-            <span className="font-bold text-amber-400">초기화 시간</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-zinc-400">일일 초기화:</span>
-              <span className="text-white ml-2 font-bold">매일 05:00</span>
+        {/* 상단 고정: 알림 설정 + 활성 타이머 */}
+        <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* 알림 설정 */}
+            <div className="flex items-center gap-3">
+              <span className="text-zinc-400 text-sm">🔔 알림:</span>
+              {notificationPermission === 'granted' ? (
+                <span className="text-green-400 text-sm font-medium">허용됨 ✓</span>
+              ) : (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  알림 허용하기
+                </button>
+              )}
             </div>
-            <div>
-              <span className="text-zinc-400">주간 초기화:</span>
-              <span className="text-white ml-2 font-bold">수요일 05:00</span>
+
+            {/* 활성 보스 타이머 */}
+            <div className="flex items-center gap-2">
+              <span className="text-zinc-400 text-sm">⏱️ 활성 타이머:</span>
+              {activeBossCount > 0 ? (
+                <span className="bg-amber-500 text-zinc-900 font-bold px-2 py-0.5 rounded text-sm animate-pulse">
+                  {activeBossCount}개
+                </span>
+              ) : (
+                <span className="text-zinc-500 text-sm">없음</span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* 탭 */}
+        {/* 탭 3개 */}
         <div className="flex gap-1.5 sm:gap-2 mb-6">
           <button
-            onClick={() => setActiveTab('daily')}
+            onClick={() => setActiveTab('schedule')}
             className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-              activeTab === 'daily'
+              activeTab === 'schedule'
                 ? 'bg-amber-500 text-zinc-900'
                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
             }`}
           >
-            일일
-          </button>
-          <button
-            onClick={() => setActiveTab('weekly')}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
-              activeTab === 'weekly'
-                ? 'bg-amber-500 text-zinc-900'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }`}
-          >
-            주간
+            일일/주간
           </button>
           <button
             onClick={() => setActiveTab('boss')}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors relative ${
               activeTab === 'boss'
                 ? 'bg-amber-500 text-zinc-900'
                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
             }`}
           >
             필드보스
+            {activeBossCount > 0 && activeTab !== 'boss' && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                {activeBossCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('manual')}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
+              activeTab === 'manual'
+                ? 'bg-amber-500 text-zinc-900'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            📖 매뉴얼
           </button>
         </div>
 
         {/* 컨텐츠 */}
         <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4 sm:p-6">
-          {activeTab === 'daily' && <DailyContent />}
-          {activeTab === 'weekly' && <WeeklyContent />}
+          {activeTab === 'schedule' && <ScheduleContent />}
           {activeTab === 'boss' && <FieldBossContent />}
+          {activeTab === 'manual' && <ManualContent />}
         </div>
       </main>
 
@@ -104,7 +147,7 @@ export default function SchedulePage() {
   );
 }
 
-function DailyContent() {
+function ScheduleContent() {
   const [personalSettings, setPersonalSettings] = useState({
     shugoFesta: true,
     riftPortal: true,
@@ -113,6 +156,7 @@ function DailyContent() {
     soundEnabled: true,
   });
   const [now, setNow] = useState(new Date());
+  const [subTab, setSubTab] = useState<'daily' | 'weekly'>('daily');
 
   // 설정 로드
   useEffect(() => {
@@ -248,10 +292,60 @@ function DailyContent() {
     { name: '긴급 어비스 보급', count: '1회', reward: '어비스 포인트', color: 'text-red-400' },
   ];
 
+  const weeklyContents = [
+    { name: '성역 (루드라)', count: '4회', reward: '최상급 장비', color: 'text-purple-400' },
+    { name: '일일 던전 (미지의 틈새)', count: '7회', reward: '달성도 보상', color: 'text-blue-400' },
+    { name: '각성전', count: '3회', reward: '실렌티움, 데비니온', color: 'text-cyan-400' },
+    { name: '토벌전', count: '3회', reward: '마석/영석 상자', color: 'text-green-400' },
+    { name: '어비스 시간', count: '7시간', reward: '멤버십 14시간', color: 'text-red-400' },
+    { name: '시즌 주간 보상', count: '-', reward: '랭킹 보상', color: 'text-amber-400' },
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4">일일 컨텐츠 (매일 05:00 초기화)</h3>
+      {/* 초기화 시간 안내 */}
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="text-zinc-400">일일 초기화:</span>
+            <span className="text-white ml-2 font-bold">매일 05:00</span>
+          </div>
+          <div>
+            <span className="text-zinc-400">주간 초기화:</span>
+            <span className="text-white ml-2 font-bold">수요일 05:00</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 서브탭 */}
+      <div className="flex gap-2 border-b border-zinc-700 pb-2">
+        <button
+          onClick={() => setSubTab('daily')}
+          className={`px-3 py-1.5 rounded-t-lg text-sm font-medium transition-colors ${
+            subTab === 'daily'
+              ? 'bg-zinc-700 text-amber-400'
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          일일
+        </button>
+        <button
+          onClick={() => setSubTab('weekly')}
+          className={`px-3 py-1.5 rounded-t-lg text-sm font-medium transition-colors ${
+            subTab === 'weekly'
+              ? 'bg-zinc-700 text-amber-400'
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          주간
+        </button>
+      </div>
+
+      {/* 일일 컨텐츠 */}
+      {subTab === 'daily' && (
+        <>
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">일일 컨텐츠</h3>
         <div className="space-y-2">
           {dailyContents.map((content, idx) => (
             <div key={idx} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
@@ -420,162 +514,154 @@ function DailyContent() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+        </>
+      )}
 
-function WeeklyContent() {
-  const weeklyContents = [
-    { name: '성역 (루드라)', count: '4회', reward: '최상급 장비', color: 'text-purple-400' },
-    { name: '일일 던전 (미지의 틈새)', count: '7회', reward: '달성도 보상', color: 'text-blue-400' },
-    { name: '각성전', count: '3회', reward: '실렌티움, 데비니온', color: 'text-cyan-400' },
-    { name: '토벌전', count: '3회', reward: '마석/영석 상자', color: 'text-green-400' },
-    { name: '어비스 시간', count: '7시간', reward: '멤버십 14시간', color: 'text-red-400' },
-    { name: '시즌 주간 보상', count: '-', reward: '랭킹 보상', color: 'text-amber-400' },
-  ];
+      {/* 주간 컨텐츠 */}
+      {subTab === 'weekly' && (
+        <>
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4">주간 컨텐츠</h3>
+            <div className="space-y-2">
+              {weeklyContents.map((content, idx) => (
+                <div key={idx} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                  <span className={`font-bold text-sm ${content.color}`}>{content.name}</span>
+                  <div className="text-right">
+                    <div className="text-white font-bold text-sm">{content.count}</div>
+                    <div className="text-zinc-500 text-xs">{content.reward}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4">주간 컨텐츠 (수요일 05:00 초기화)</h3>
-        <div className="space-y-2">
-          {weeklyContents.map((content, idx) => (
-            <div key={idx} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-              <span className={`font-bold text-sm ${content.color}`}>{content.name}</span>
-              <div className="text-right">
-                <div className="text-white font-bold text-sm">{content.count}</div>
-                <div className="text-zinc-500 text-xs">{content.reward}</div>
+          {/* 물질변환 */}
+          <div className="pt-4 border-t border-zinc-700">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span>🔮</span> 물질변환
+            </h3>
+            <div className="bg-zinc-900 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-cyan-400 font-bold">오드 에너지</span>
+                <span className="text-white font-bold">주 7회</span>
+              </div>
+              <div className="text-xs text-zinc-400 space-y-1">
+                <p>📍 물질변환 → 특수 → 소모품</p>
+                <p>📦 재료: 오드 25개 + 순도 높은 오드 5개 + 순수한 오드 1개</p>
+                <p>💰 비용: 50,000 키나</p>
+                <p>⚡ 획득: 40 에너지 × 7 = <span className="text-cyan-400 font-bold">280 에너지</span></p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* 물질변환 */}
-      <div className="pt-4 border-t border-zinc-700">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <span>🔮</span> 물질변환 (수요일 05:00 초기화)
-        </h3>
-        <div className="bg-zinc-900 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-cyan-400 font-bold">오드 에너지</span>
-            <span className="text-white font-bold">주 7회</span>
+          {/* 산들바람 상회 */}
+          <div className="pt-4 border-t border-zinc-700">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span>🏪</span> 산들바람 상회 특수
+            </h3>
+            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
+              <p className="text-red-300 text-xs sm:text-sm font-bold">
+                ⚠️ 일요일 자정 초기화 (수요일 아님!)
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                <div>
+                  <span className="text-cyan-400 font-bold text-sm">오드 에너지</span>
+                  <p className="text-zinc-500 text-xs">40 에너지 × 7개 = 280</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-white font-bold text-sm">7개</div>
+                  <div className="text-zinc-500 text-xs">70만 키나/개</div>
+                </div>
+              </div>
+              <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                <div>
+                  <span className="text-green-400 font-bold text-sm">부활의 정령석</span>
+                  <p className="text-zinc-500 text-xs">던전 부활용</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-white font-bold text-sm">7개</div>
+                  <div className="text-zinc-500 text-xs">키나 구매</div>
+                </div>
+              </div>
+              <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                <div>
+                  <span className="text-blue-400 font-bold text-sm">일일 던전 입장권</span>
+                  <p className="text-zinc-500 text-xs">생체 연구기지 도전권</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-white font-bold text-sm">7개</div>
+                  <div className="text-zinc-500 text-xs">키나 구매</div>
+                </div>
+              </div>
+              <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
+                <div>
+                  <span className="text-purple-400 font-bold text-sm">어비스 균열석</span>
+                  <p className="text-zinc-500 text-xs">어비스 입장</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-white font-bold text-sm">구매</div>
+                  <div className="text-zinc-500 text-xs">키나</div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+              <p className="text-cyan-300 text-xs">
+                💡 주간 오드 에너지 총합: 기본 840 + 물질변환 280 + 상회 280 = <span className="font-bold">1,400</span>
+              </p>
+            </div>
           </div>
-          <div className="text-xs text-zinc-400 space-y-1">
-            <p>📍 물질변환 → 특수 → 소모품</p>
-            <p>📦 재료: 오드 25개 + 순도 높은 오드 5개 + 순수한 오드 1개</p>
-            <p>💰 비용: 50,000 키나</p>
-            <p>⚡ 획득: 40 에너지 × 7 = <span className="text-cyan-400 font-bold">280 에너지</span></p>
-          </div>
-        </div>
-      </div>
 
-      {/* 산들바람 상회 */}
-      <div className="pt-4 border-t border-zinc-700">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <span>🏪</span> 산들바람 상회 특수
-        </h3>
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
-          <p className="text-red-300 text-xs sm:text-sm font-bold">
-            ⚠️ 일요일 자정 초기화 (수요일 아님!)
-          </p>
-        </div>
-        <div className="space-y-2">
-          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-            <div>
-              <span className="text-cyan-400 font-bold text-sm">오드 에너지</span>
-              <p className="text-zinc-500 text-xs">40 에너지 × 7개 = 280</p>
+          {/* 성역 루드라 */}
+          <div className="pt-4 border-t border-zinc-700">
+            <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <span>⚔️</span> 성역: 루드라
+            </h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">입장 횟수</span>
+                  <span className="text-white font-bold">주 4회</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">제한 시간</span>
+                  <span className="text-white font-bold">1시간</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">최소 레벨</span>
+                  <span className="text-white font-bold">2,700</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">권장 레벨</span>
+                  <span className="text-amber-400 font-bold">3,200+</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">인원</span>
+                  <span className="text-white font-bold">8인</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">막보 큐브</span>
+                  <span className="text-white font-bold">주 2회</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">보스</span>
+                  <span className="text-white font-bold">3보스</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">초기화</span>
+                  <span className="text-white font-bold">수 05:00</span>
+                </div>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-white font-bold text-sm">7개</div>
-              <div className="text-zinc-500 text-xs">70만 키나/개</div>
-            </div>
+            <p className="text-xs text-zinc-400 mt-3">
+              📌 1페 라후 → 2페 케투 → 3페 루드라
+            </p>
           </div>
-          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-            <div>
-              <span className="text-green-400 font-bold text-sm">부활의 정령석</span>
-              <p className="text-zinc-500 text-xs">던전 부활용</p>
-            </div>
-            <div className="text-right">
-              <div className="text-white font-bold text-sm">7개</div>
-              <div className="text-zinc-500 text-xs">키나 구매</div>
-            </div>
-          </div>
-          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-            <div>
-              <span className="text-blue-400 font-bold text-sm">일일 던전 입장권</span>
-              <p className="text-zinc-500 text-xs">생체 연구기지 도전권</p>
-            </div>
-            <div className="text-right">
-              <div className="text-white font-bold text-sm">7개</div>
-              <div className="text-zinc-500 text-xs">키나 구매</div>
-            </div>
-          </div>
-          <div className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
-            <div>
-              <span className="text-purple-400 font-bold text-sm">어비스 균열석</span>
-              <p className="text-zinc-500 text-xs">어비스 입장</p>
-            </div>
-            <div className="text-right">
-              <div className="text-white font-bold text-sm">구매</div>
-              <div className="text-zinc-500 text-xs">키나</div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-3 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
-          <p className="text-cyan-300 text-xs">
-            💡 주간 오드 에너지 총합: 기본 840 + 물질변환 280 + 상회 280 = <span className="font-bold">1,400</span>
-          </p>
-        </div>
-      </div>
-
-      {/* 성역 루드라 */}
-      <div className="pt-4 border-t border-zinc-700">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <span>⚔️</span> 성역: 루드라
-        </h3>
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-zinc-400">입장 횟수</span>
-              <span className="text-white font-bold">주 4회</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">제한 시간</span>
-              <span className="text-white font-bold">1시간</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">최소 레벨</span>
-              <span className="text-white font-bold">2,700</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">권장 레벨</span>
-              <span className="text-amber-400 font-bold">3,200+</span>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-zinc-400">인원</span>
-              <span className="text-white font-bold">8인</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">막보 큐브</span>
-              <span className="text-white font-bold">주 2회</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">보스</span>
-              <span className="text-white font-bold">3보스</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-400">초기화</span>
-              <span className="text-white font-bold">수 05:00</span>
-            </div>
-          </div>
-        </div>
-        <p className="text-xs text-zinc-400 mt-3">
-          📌 1페 라후 → 2페 케투 → 3페 루드라
-        </p>
-      </div>
+        </>
+      )}
     </div>
   );
 }
@@ -943,109 +1029,15 @@ function FieldBossContent() {
     return 'text-red-400';
   };
 
-  // 사용방법 가이드 토글
-  const [showGuide, setShowGuide] = useState(false);
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base sm:text-lg font-bold text-white">필드보스 리젠 타이머</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowGuide(!showGuide)}
-            className={`text-xs px-3 py-1.5 rounded-lg font-bold transition-colors ${
-              showGuide
-                ? 'bg-cyan-500 text-zinc-900'
-                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-            }`}
-          >
-            📖 사용방법
-          </button>
-          {notificationPermission !== 'granted' && (
-            <button
-              onClick={requestNotificationPermission}
-              className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
-            >
-              🔔 알림 허용
-            </button>
-          )}
-        </div>
       </div>
 
       <p className="text-xs text-zinc-500 -mt-4">
         12/17 이후 리젠 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
       </p>
-
-      {/* 사용방법 가이드 */}
-      {showGuide && (
-        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl p-4 space-y-4">
-          <h4 className="text-cyan-400 font-bold text-sm flex items-center gap-2">
-            📖 타이머 사용방법
-          </h4>
-
-          {/* 기본 사용법 */}
-          <div className="space-y-2">
-            <h5 className="text-white font-bold text-xs">🎯 기본 사용법</h5>
-            <div className="text-zinc-300 text-xs space-y-1 pl-4">
-              <p>1. 보스를 처치하면 해당 보스의 <span className="text-amber-400 font-bold">[처치]</span> 버튼 클릭</p>
-              <p>2. 타이머가 시작되고, 리젠 시간이 카운트다운됩니다</p>
-              <p>3. <span className="text-cyan-400 font-bold">1분 전</span>에 알림 + 비프음 3번</p>
-              <p>4. <span className="text-red-400 font-bold">리젠 시</span> 알림 + 비프음 3번</p>
-              <p>5. 리젠 후 <span className="text-green-400 font-bold">30초 뒤 자동으로 다음 사이클 시작</span></p>
-            </div>
-          </div>
-
-          {/* 시간 보정 */}
-          <div className="space-y-2">
-            <h5 className="text-white font-bold text-xs">⏱️ 시간 보정 (타이머가 맞지 않을 때)</h5>
-            <div className="text-zinc-300 text-xs space-y-1 pl-4">
-              <p>1. 활성 타이머에서 <span className="text-cyan-400 font-bold">[보정]</span> 버튼 클릭</p>
-              <p>2. 보정 패널이 열립니다:</p>
-              <div className="pl-4 space-y-1 mt-1">
-                <p>• <span className="text-blue-400">-5분, -1분</span>: 타이머를 빠르게 (예상보다 빨리 리젠될 때)</p>
-                <p>• <span className="text-orange-400">+1분, +5분</span>: 타이머를 느리게 (예상보다 늦게 리젠될 때)</p>
-                <p>• <span className="text-green-400">보정 입력</span>: ±분 단위로 직접 입력 (예: -3, +7)</p>
-                <p>• <span className="text-purple-400">시간 직접 설정</span>: 정확한 리젠 시간 입력 (예: 14:30)</p>
-              </div>
-            </div>
-          </div>
-
-          {/* 타이머 취소 */}
-          <div className="space-y-2">
-            <h5 className="text-white font-bold text-xs">❌ 타이머 취소</h5>
-            <div className="text-zinc-300 text-xs space-y-1 pl-4">
-              <p>• 활성 타이머의 <span className="text-red-400 font-bold">[✕]</span> 버튼 또는 <span className="text-zinc-400">[취소]</span> 클릭</p>
-              <p>• 타이머가 완전히 삭제되며, 자동 재시작도 중단됩니다</p>
-            </div>
-          </div>
-
-          {/* 알림 설정 */}
-          <div className="space-y-2">
-            <h5 className="text-white font-bold text-xs">🔔 알림 받기</h5>
-            <div className="text-zinc-300 text-xs space-y-1 pl-4">
-              <p>• 상단의 <span className="text-amber-400 font-bold">[🔔 알림 허용]</span> 버튼 클릭</p>
-              <p>• 브라우저 알림 권한을 허용해주세요</p>
-              <p>• 브라우저를 열어둬야 알림을 받을 수 있습니다</p>
-            </div>
-          </div>
-
-          {/* 공유 기능 */}
-          <div className="space-y-2">
-            <h5 className="text-white font-bold text-xs">👥 실시간 공유</h5>
-            <div className="text-zinc-300 text-xs space-y-1 pl-4">
-              <p>• 타이머는 <span className="text-amber-400 font-bold">모든 사용자에게 실시간 공유</span>됩니다</p>
-              <p>• 누군가 처치 버튼을 누르면 다른 사람도 타이머를 볼 수 있습니다</p>
-              <p>• 길드원끼리 보스 타이머를 공유하세요!</p>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-zinc-700">
-            <p className="text-zinc-500 text-xs">
-              💡 Tip: 보스는 보통 리젠 후 1분 내외로 처치되므로, 자동 재시작 시 30초 딜레이가 적용됩니다.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
@@ -1294,8 +1286,113 @@ function FieldBossContent() {
           📌 &quot;처치&quot; 버튼 클릭 시 타이머 시작, 리젠 시 알림
         </p>
         <p className="text-amber-400 text-xs">
-          ⚠️ 타이머는 브라우저에 저장됩니다 (다른 페이지에서도 알림)
+          ⚠️ 타이머는 모든 사용자에게 실시간 공유됩니다
         </p>
+      </div>
+    </div>
+  );
+}
+
+function ManualContent() {
+  return (
+    <div className="space-y-6">
+      <h3 className="text-base sm:text-lg font-bold text-white">📖 사용 매뉴얼</h3>
+
+      {/* 필드보스 타이머 */}
+      <div className="bg-gradient-to-r from-amber-500/10 to-red-500/10 border border-amber-500/30 rounded-xl p-4 space-y-4">
+        <h4 className="text-amber-400 font-bold text-sm flex items-center gap-2">
+          ⏱️ 필드보스 타이머 사용법
+        </h4>
+
+        {/* 기본 사용법 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">🎯 기본 사용법</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>1. 보스를 처치하면 해당 보스의 <span className="text-amber-400 font-bold">[처치]</span> 버튼 클릭</p>
+            <p>2. 타이머가 시작되고, 리젠 시간이 카운트다운됩니다</p>
+            <p>3. <span className="text-cyan-400 font-bold">1분 전</span>에 알림 + 비프음 3번</p>
+            <p>4. <span className="text-red-400 font-bold">리젠 시</span> 알림 + 비프음 3번</p>
+            <p>5. 리젠 후 <span className="text-green-400 font-bold">30초 뒤 자동으로 다음 사이클 시작</span></p>
+          </div>
+        </div>
+
+        {/* 시간 보정 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">⏱️ 시간 보정 (타이머가 맞지 않을 때)</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>1. 활성 타이머에서 <span className="text-cyan-400 font-bold">[보정]</span> 버튼 클릭</p>
+            <p>2. 보정 패널이 열립니다:</p>
+            <div className="pl-4 space-y-1 mt-1">
+              <p>• <span className="text-blue-400">-5분, -1분</span>: 타이머를 빠르게 (예상보다 빨리 리젠될 때)</p>
+              <p>• <span className="text-orange-400">+1분, +5분</span>: 타이머를 느리게 (예상보다 늦게 리젠될 때)</p>
+              <p>• <span className="text-green-400">보정 입력</span>: ±분 단위로 직접 입력 (예: -3, +7)</p>
+              <p>• <span className="text-purple-400">시간 직접 설정</span>: 정확한 리젠 시간 입력 (예: 14:30)</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 타이머 취소 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">❌ 타이머 취소</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>• 활성 타이머의 <span className="text-red-400 font-bold">[✕]</span> 버튼 또는 <span className="text-zinc-400">[취소]</span> 클릭</p>
+            <p>• 타이머가 완전히 삭제되며, 자동 재시작도 중단됩니다</p>
+          </div>
+        </div>
+
+        {/* 공유 기능 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">👥 실시간 공유</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>• 타이머는 <span className="text-amber-400 font-bold">모든 사용자에게 실시간 공유</span>됩니다</p>
+            <p>• 누군가 처치 버튼을 누르면 다른 사람도 타이머를 볼 수 있습니다</p>
+            <p>• 길드원끼리 보스 타이머를 공유하세요!</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 알림 설정 */}
+      <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl p-4 space-y-4">
+        <h4 className="text-cyan-400 font-bold text-sm flex items-center gap-2">
+          🔔 알림 설정 방법
+        </h4>
+
+        <div className="text-zinc-300 text-xs space-y-2 pl-4">
+          <p>1. 페이지 상단의 <span className="text-amber-400 font-bold">[알림 허용하기]</span> 버튼 클릭</p>
+          <p>2. 브라우저에서 알림 권한 허용 팝업이 뜨면 <span className="text-green-400 font-bold">[허용]</span> 클릭</p>
+          <p>3. 알림이 허용되면 &quot;허용됨 ✓&quot;로 표시됩니다</p>
+        </div>
+
+        <div className="bg-zinc-900/50 rounded-lg p-3 mt-2">
+          <p className="text-zinc-400 text-xs">
+            💡 <span className="text-white">브라우저를 열어둬야</span> 알림을 받을 수 있습니다.<br/>
+            탭을 닫거나 브라우저를 종료하면 알림이 오지 않습니다.
+          </p>
+        </div>
+      </div>
+
+      {/* 일일/주간 알림 */}
+      <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-4 space-y-4">
+        <h4 className="text-purple-400 font-bold text-sm flex items-center gap-2">
+          📅 일일/주간 컨텐츠 알림
+        </h4>
+
+        <div className="text-zinc-300 text-xs space-y-2 pl-4">
+          <p>• 일일/주간 탭에서 각 컨텐츠별로 <span className="text-amber-400 font-bold">[알림 ON/OFF]</span> 설정 가능</p>
+          <p>• 슈고 페스타, 시공의 균열, 무역단, 나흐마 등</p>
+          <p>• 설정한 시간 전에 브라우저 알림이 옵니다</p>
+        </div>
+      </div>
+
+      {/* 팁 */}
+      <div className="bg-zinc-900 rounded-lg p-4 space-y-2">
+        <h4 className="text-zinc-300 font-bold text-sm">💡 유용한 팁</h4>
+        <div className="text-zinc-400 text-xs space-y-1">
+          <p>• 보스는 보통 리젠 후 1분 내외로 처치되므로, 자동 재시작 시 30초 딜레이가 적용됩니다</p>
+          <p>• 타이머 시간은 ±10분 정도 오차가 있을 수 있습니다</p>
+          <p>• 모바일에서도 브라우저를 열어두면 알림을 받을 수 있습니다</p>
+          <p>• 여러 보스 타이머를 동시에 관리할 수 있습니다</p>
+        </div>
       </div>
     </div>
   );
