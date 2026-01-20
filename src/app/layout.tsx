@@ -18,6 +18,16 @@ export const metadata: Metadata = {
   title: "사계 레기온 - AION2 지켈",
   description: "아이온2 지켈 서버 사계 레기온 관리 사이트",
   metadataBase: new URL('https://sagye.kr'),
+  manifest: '/manifest.json',
+  themeColor: '#f59e0b',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: '사계 레기온',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: '사계 레기온',
     description: '아이온2 지켈 서버 사계 레기온',
@@ -38,6 +48,15 @@ export const metadata: Metadata = {
     title: '사계 레기온',
     description: '아이온2 지켈 서버 사계 레기온',
     images: ['/og-image.jpg'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 };
 
