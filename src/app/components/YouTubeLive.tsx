@@ -42,11 +42,39 @@ export default function YouTubeLive() {
       }
     };
 
+    // 초기 체크
     checkLive();
 
-    // 30분마다 라이브 상태 확인
-    const interval = setInterval(checkLive, 1800000);
-    return () => clearInterval(interval);
+    // 다음 55분까지 남은 시간 계산
+    const getMsUntilNext55 = () => {
+      const now = new Date();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      let minutesUntil55;
+      if (minutes < 55) {
+        minutesUntil55 = 55 - minutes;
+      } else {
+        minutesUntil55 = 60 - minutes + 55;
+      }
+
+      return (minutesUntil55 * 60 - seconds) * 1000;
+    };
+
+    // 매시 55분에 체크
+    let timeoutId: NodeJS.Timeout;
+
+    const scheduleCheck = () => {
+      const delay = getMsUntilNext55();
+      timeoutId = setTimeout(() => {
+        checkLive();
+        scheduleCheck();
+      }, delay);
+    };
+
+    scheduleCheck();
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // 로딩 중

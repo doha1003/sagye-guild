@@ -85,7 +85,7 @@ export async function GET() {
     // 라이브 방송 검색
     const liveUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
     const liveResponse = await fetch(liveUrl, {
-      next: { revalidate: 1800 }, // 30분마다 캐시 갱신
+      next: { revalidate: 3600 }, // 1시간마다 캐시 갱신
     });
 
     if (liveResponse.ok) {
