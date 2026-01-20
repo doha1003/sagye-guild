@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import AlertBar from '../components/AlertBar';
 
-type NoticeType = 'guild' | 'subguild' | 'ludra';
+type NoticeType = 'guild' | 'subguild' | 'ludra' | 'pwa';
 
 export default function NoticePage() {
   const [activeTab, setActiveTab] = useState<NoticeType>('guild');
@@ -59,6 +60,16 @@ export default function NoticePage() {
           >
             파티 규칙
           </button>
+          <button
+            onClick={() => setActiveTab('pwa')}
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              activeTab === 'pwa'
+                ? 'text-amber-400 border-amber-400'
+                : 'text-zinc-400 border-transparent hover:text-white'
+            }`}
+          >
+            앱 설치
+          </button>
         </div>
 
         {/* 공지 내용 */}
@@ -66,6 +77,7 @@ export default function NoticePage() {
           {activeTab === 'guild' && <GuildRules />}
           {activeTab === 'subguild' && <SubGuildRules />}
           {activeTab === 'ludra' && <LudraRules />}
+          {activeTab === 'pwa' && <PWAGuide />}
         </div>
 
         {/* 참여 링크 */}
@@ -317,6 +329,151 @@ function SubGuildRules() {
         <p className="text-zinc-300 leading-relaxed">
           부캐도 결국 <strong className="text-white">같은 레기온원</strong>입니다.<br />
           본캐와 동일하게 서로 존중하며 즐겁게 플레이해주세요!
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function PWAGuide() {
+  return (
+    <article className="text-zinc-200 leading-relaxed tracking-wide">
+      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
+        사계 레기온 앱 설치 가이드
+      </h2>
+
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4 mb-8">
+        <p className="text-cyan-300 font-medium text-center mb-2">
+          홈 화면에 앱처럼 설치 가능!
+        </p>
+        <p className="text-zinc-400 text-sm text-center">
+          사계 레기온 사이트를 앱처럼 사용할 수 있습니다 (Android / iOS 모두 지원)
+        </p>
+      </div>
+
+      {/* 설치 이미지 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">설치된 모습</h3>
+        <div className="bg-zinc-800 rounded-xl p-4 flex justify-center">
+          <Image
+            src="/images/pwa-install.jpg"
+            alt="사계 레기온 앱 설치 예시"
+            width={300}
+            height={600}
+            className="rounded-lg border border-zinc-600"
+          />
+        </div>
+        <p className="text-zinc-500 text-sm text-center mt-3">
+          홈 화면에 사계 레기온 아이콘이 추가됩니다
+        </p>
+      </section>
+
+      {/* 안드로이드 설치 방법 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-green-400 mb-4">Android 설치 방법</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <ol className="space-y-4 text-zinc-300">
+            <li className="flex gap-3">
+              <span className="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">1</span>
+              <div>
+                <strong className="text-white">Chrome 브라우저</strong>로 sagye.kr 접속
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">2</span>
+              <div>
+                우측 상단 <strong className="text-white">점 3개 메뉴 (⋮)</strong> 클릭
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">3</span>
+              <div>
+                <strong className="text-white">&quot;홈 화면에 추가&quot;</strong> 또는 <strong className="text-white">&quot;앱 설치&quot;</strong> 선택
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">4</span>
+              <div>
+                <strong className="text-white">&quot;설치&quot;</strong> 버튼 클릭
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      {/* iOS 설치 방법 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-blue-400 mb-4">iOS (iPhone/iPad) 설치 방법</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <ol className="space-y-4 text-zinc-300">
+            <li className="flex gap-3">
+              <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">1</span>
+              <div>
+                <strong className="text-white">Safari 브라우저</strong>로 sagye.kr 접속
+                <p className="text-zinc-500 text-sm mt-1">* Chrome에서는 설치 불가, Safari 필수!</p>
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">2</span>
+              <div>
+                하단 <strong className="text-white">공유 버튼 (□↑)</strong> 클릭
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">3</span>
+              <div>
+                스크롤해서 <strong className="text-white">&quot;홈 화면에 추가&quot;</strong> 선택
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <span className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold shrink-0">4</span>
+              <div>
+                우측 상단 <strong className="text-white">&quot;추가&quot;</strong> 버튼 클릭
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      {/* 앱 기능 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">앱 설치 시 장점</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-zinc-800 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-2xl">📱</span>
+            <div>
+              <div className="text-white font-medium">전체화면 모드</div>
+              <div className="text-zinc-500 text-sm">브라우저 UI 없이 깔끔하게</div>
+            </div>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-2xl">⚡</span>
+            <div>
+              <div className="text-white font-medium">빠른 접근</div>
+              <div className="text-zinc-500 text-sm">홈 화면에서 바로 실행</div>
+            </div>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-2xl">🔔</span>
+            <div>
+              <div className="text-white font-medium">보스 타이머 알림</div>
+              <div className="text-zinc-500 text-sm">필드보스 리젠 알림 수신</div>
+            </div>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-2xl">💾</span>
+            <div>
+              <div className="text-white font-medium">오프라인 지원</div>
+              <div className="text-zinc-500 text-sm">일부 페이지 오프라인 접근</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-zinc-800 rounded-lg p-6 text-center">
+        <p className="text-zinc-300 leading-relaxed">
+          설치 후 홈 화면의 <strong className="text-amber-400">사계 레기온</strong> 아이콘을 터치하면<br />
+          바로 사이트에 접속할 수 있습니다!
         </p>
       </div>
     </article>
