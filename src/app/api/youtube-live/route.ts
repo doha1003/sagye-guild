@@ -82,10 +82,10 @@ export async function GET() {
       });
     }
 
-    // 라이브 방송 검색 (캐시 5분 - API 쿼터 절약)
+    // 라이브 방송 검색 (캐시 30분 - API 쿼터 절약: 하루 48회 = 4,800 유닛)
     const liveUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&type=video&eventType=live&key=${apiKey}`;
     const liveResponse = await fetch(liveUrl, {
-      next: { revalidate: 300 }, // 5분마다 캐시 갱신
+      next: { revalidate: 1800 }, // 30분마다 캐시 갱신
     });
 
     if (liveResponse.ok) {

@@ -45,10 +45,10 @@ export default function YouTubeLive() {
     // 초기 체크
     checkLive();
 
-    // 5분마다 정기 체크 (라이브 빠른 감지용)
+    // 30분마다 정기 체크 (API 쿼터 절약)
     const intervalId = setInterval(() => {
       checkLive();
-    }, 5 * 60 * 1000); // 5분
+    }, 30 * 60 * 1000); // 30분
 
     return () => clearInterval(intervalId);
   }, []);
