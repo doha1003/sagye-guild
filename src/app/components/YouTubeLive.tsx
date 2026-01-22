@@ -42,41 +42,73 @@ export default function YouTubeLive() {
       }
     };
 
-    // 초기 체크
-    checkLive();
+    // 초기 체크 (12시~22시 사이만)
+    const isInLiveHours = () => {
+      const hour = new Date().getHours();
+      return hour >= 12 && hour < 22;
+    };
 
-    // 다음 29분 또는 59분까지 남은 시간 계산
+    if (isInLiveHours()) {
+      checkLive();
+    }
+
+    // 다음 체크 시간까지 남은 ms 계산 (매시 29분, 59분 / 12시~22시만)
     const getMsUntilNextCheck = () => {
       const now = new Date();
+      const hour = now.getHours();
       const minutes = now.getMinutes();
       const seconds = now.getSeconds();
 
+      // 22시 이후면 다음날 12시 29분까지
+      if (hour >= 22) {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(12, 29, 0, 0);
+        return tomorrow.getTime() - now.getTime();
+      }
+
+      // 12시 이전이면 오늘 12시 29분까지
+      if (hour < 12) {
+        const today = new Date(now);
+        today.setHours(12, 29, 0, 0);
+        return today.getTime() - now.getTime();
+      }
+
+      // 12시~22시 사이: 다음 29분 또는 59분
       let targetMinute;
+      let targetHour = hour;
+
       if (minutes < 29) {
         targetMinute = 29;
       } else if (minutes < 59) {
         targetMinute = 59;
       } else {
-        targetMinute = 29; // 다음 시간의 29분
+        targetMinute = 29;
+        targetHour = hour + 1;
       }
 
-      let minutesUntil;
-      if (minutes >= 59) {
-        minutesUntil = 60 - minutes + 29; // 다음 시간 29분까지
-      } else {
-        minutesUntil = targetMinute - minutes;
+      // 다음 체크가 22시 이후면 다음날 12시 29분
+      if (targetHour >= 22) {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(12, 29, 0, 0);
+        return tomorrow.getTime() - now.getTime();
       }
 
-      return (minutesUntil * 60 - seconds) * 1000;
+      const target = new Date(now);
+      target.setHours(targetHour, targetMinute, 0, 0);
+      return target.getTime() - now.getTime();
     };
 
-    // 매시 29분, 59분에 체크 (하루 48회 = 4,800 유닛)
+    // 매시 29분, 59분 체크 (12시~22시만, 하루 20회 = 2,000 유닛)
     let timeoutId: NodeJS.Timeout;
 
     const scheduleCheck = () => {
       const delay = getMsUntilNextCheck();
       timeoutId = setTimeout(() => {
-        checkLive();
+        if (isInLiveHours()) {
+          checkLive();
+        }
         scheduleCheck();
       }, delay);
     };
