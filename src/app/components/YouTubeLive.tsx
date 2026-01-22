@@ -45,36 +45,12 @@ export default function YouTubeLive() {
     // 초기 체크
     checkLive();
 
-    // 다음 55분까지 남은 시간 계산
-    const getMsUntilNext55 = () => {
-      const now = new Date();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+    // 5분마다 정기 체크 (라이브 빠른 감지용)
+    const intervalId = setInterval(() => {
+      checkLive();
+    }, 5 * 60 * 1000); // 5분
 
-      let minutesUntil55;
-      if (minutes < 55) {
-        minutesUntil55 = 55 - minutes;
-      } else {
-        minutesUntil55 = 60 - minutes + 55;
-      }
-
-      return (minutesUntil55 * 60 - seconds) * 1000;
-    };
-
-    // 매시 55분에 체크
-    let timeoutId: NodeJS.Timeout;
-
-    const scheduleCheck = () => {
-      const delay = getMsUntilNext55();
-      timeoutId = setTimeout(() => {
-        checkLive();
-        scheduleCheck();
-      }, delay);
-    };
-
-    scheduleCheck();
-
-    return () => clearTimeout(timeoutId);
+    return () => clearInterval(intervalId);
   }, []);
 
   // 로딩 중

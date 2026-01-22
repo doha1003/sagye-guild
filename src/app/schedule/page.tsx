@@ -894,9 +894,11 @@ function FieldBossContent() {
           // 자동 재시작: 30초 후 리젠 시간만큼 다시 타이머 설정 (보스 잡는 시간 고려)
           if (timer.respawnMinutes > 0 && !restartingTimersRef.current.has(timer.bossName)) {
             restartingTimersRef.current.add(timer.bossName);
+            const savedRespawnMinutes = timer.respawnMinutes; // 클로저에 저장
             setTimeout(async () => {
-              const newEndTime = Date.now() + timer.respawnMinutes * 60 * 1000;
-              await updateBossTimer(timer.bossName, newEndTime);
+              const newEndTime = Date.now() + savedRespawnMinutes * 60 * 1000;
+              // respawnMinutes 전달하여 타이머가 없어도 새로 생성되도록 함
+              await updateBossTimer(timer.bossName, newEndTime, savedRespawnMinutes);
               restartingTimersRef.current.delete(timer.bossName);
               // 다음 알림을 위해 notified 해제
               notifiedTimersRef.current.delete(timer.bossName);
@@ -976,6 +978,10 @@ function FieldBossContent() {
   const [customAdjustMinutes, setCustomAdjustMinutes] = useState<string>('');
   const [customTimeInput, setCustomTimeInput] = useState<string>('');
 
+  // 점검 리셋 상태
+  const [maintenanceEndTime, setMaintenanceEndTime] = useState<string>('');
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+
   // 직접 시간 설정 (HH:MM 또는 HH:MM:SS 형식)
   const setCustomTime = async (bossName: string, timeStr: string) => {
     const timer = timers.find(t => t.bossName === bossName);
@@ -1032,6 +1038,50 @@ function FieldBossContent() {
     return 'text-red-400';
   };
 
+  // 점검 종료 시간으로 모든 활성 타이머 리셋
+  const resetAllTimersToMaintenanceEnd = async () => {
+    if (!maintenanceEndTime) {
+      alert('점검 종료 시간을 입력해주세요 (예: 14:30)');
+      return;
+    }
+
+    // HH:MM 파싱
+    const parts = maintenanceEndTime.split(':').map(p => parseInt(p));
+    if (parts.length < 2 || parts.some(isNaN)) {
+      alert('시간 형식: HH:MM (예: 14:30)');
+      return;
+    }
+
+    const [hours, minutes] = parts;
+    const now = new Date();
+    const target = new Date();
+    target.setHours(hours, minutes, 0, 0);
+
+    // 입력한 시간이 현재보다 과거면 내일로 설정
+    if (target.getTime() <= now.getTime()) {
+      target.setDate(target.getDate() + 1);
+    }
+
+    const maintenanceEndMs = target.getTime();
+
+    // 모든 활성 타이머를 점검 종료 시간으로 리셋
+    for (const timer of timers) {
+      try {
+        await updateBossTimer(timer.bossName, maintenanceEndMs, timer.respawnMinutes);
+      } catch (error) {
+        console.error(`타이머 리셋 실패: ${timer.bossName}`, error);
+      }
+    }
+
+    // notified refs 초기화
+    notifiedTimersRef.current.clear();
+    preNotifiedTimersRef.current.clear();
+    restartingTimersRef.current.clear();
+
+    alert(`${timers.length}개 타이머가 ${maintenanceEndTime} 기준으로 리셋되었습니다.\n보스 처치 시 [처치] 버튼으로 보정하세요.`);
+    setIsMaintenanceMode(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -1041,6 +1091,58 @@ function FieldBossContent() {
       <p className="text-xs text-zinc-500 -mt-4">
         리젠 시간 2배 빠름 상시 적용 · 출처: <a href="https://www.inven.co.kr/board/aion2/6444" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">인벤</a>
       </p>
+
+      {/* 점검 리셋 기능 */}
+      {timers.length > 0 && (
+        <div className="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-500/30 rounded-xl p-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-orange-400 font-bold text-sm">🔧 점검 리셋</span>
+              <span className="text-zinc-500 text-xs">점검 후 보스 리젠 시 사용</span>
+            </div>
+            <button
+              onClick={() => setIsMaintenanceMode(!isMaintenanceMode)}
+              className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                isMaintenanceMode
+                  ? 'bg-orange-500 text-zinc-900'
+                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+              }`}
+            >
+              {isMaintenanceMode ? '닫기' : '열기'}
+            </button>
+          </div>
+
+          {isMaintenanceMode && (
+            <div className="mt-4 pt-4 border-t border-orange-500/20 space-y-3">
+              <p className="text-zinc-400 text-xs">
+                점검 종료 시간을 입력하면 모든 활성 타이머가 해당 시간으로 리셋됩니다.
+                <br />이후 보스를 처치하면 [처치] 버튼을 눌러 정상 타이머로 보정하세요.
+              </p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400 text-xs">점검 종료:</span>
+                  <input
+                    type="text"
+                    value={maintenanceEndTime}
+                    onChange={(e) => setMaintenanceEndTime(e.target.value)}
+                    placeholder="14:30"
+                    className="w-20 bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white font-mono focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+                <button
+                  onClick={resetAllTimersToMaintenanceEnd}
+                  className="bg-orange-500 hover:bg-orange-600 text-zinc-900 font-bold text-xs px-4 py-1.5 rounded-lg transition-colors"
+                >
+                  전체 리셋 ({timers.length}개)
+                </button>
+              </div>
+              <p className="text-orange-400/70 text-xs">
+                ⚠️ 모든 타이머가 점검 종료 시간에 리젠으로 설정됩니다
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
@@ -1350,6 +1452,17 @@ function ManualContent() {
             <p>• 타이머는 <span className="text-amber-400 font-bold">모든 사용자에게 실시간 공유</span>됩니다</p>
             <p>• 누군가 처치 버튼을 누르면 다른 사람도 타이머를 볼 수 있습니다</p>
             <p>• 길드원끼리 보스 타이머를 공유하세요!</p>
+          </div>
+        </div>
+
+        {/* 점검 리셋 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">🔧 점검 리셋 (점검 후 보스 리젠 시)</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>• 임시점검/정기점검 후 대부분의 필드보스가 리젠됩니다</p>
+            <p>• <span className="text-orange-400 font-bold">[점검 리셋]</span> 버튼 클릭 → 점검 종료 시간 입력 (예: 14:30)</p>
+            <p>• <span className="text-orange-400 font-bold">[전체 리셋]</span> 클릭 시 모든 활성 타이머가 해당 시간으로 설정</p>
+            <p>• 이후 보스 처치 시 <span className="text-amber-400 font-bold">[처치]</span> 버튼으로 정상 타이머 보정</p>
           </div>
         </div>
       </div>

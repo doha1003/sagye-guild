@@ -108,8 +108,8 @@ export async function removeBossTimer(bossName: string): Promise<void> {
   await set(timerRef, null);
 }
 
-// Update boss timer (for time adjustment)
-export async function updateBossTimer(bossName: string, newEndTime: number): Promise<boolean> {
+// Update boss timer (for time adjustment) - upsert 방식: 없으면 새로 생성
+export async function updateBossTimer(bossName: string, newEndTime: number, respawnMinutes?: number): Promise<boolean> {
   const db = getFirebaseDatabase();
 
   if (!db) {
@@ -121,6 +121,16 @@ export async function updateBossTimer(bossName: string, newEndTime: number): Pro
   const snapshot = await get(timerRef);
 
   if (!snapshot.exists()) {
+    // 타이머가 없으면 새로 생성 (자동 재시작용)
+    if (respawnMinutes !== undefined) {
+      await set(timerRef, {
+        bossName,
+        endTime: newEndTime,
+        respawnMinutes,
+        registeredAt: Date.now(),
+      });
+      return true;
+    }
     return false;
   }
 
