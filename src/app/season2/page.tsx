@@ -97,19 +97,10 @@ const NEW_DUNGEONS = [
   {
     date: '1/21',
     type: '토벌전',
-    name: '죽은 오르쿠스의 심장',
-    difficulty: '일반',
-    boss: '오르쿠스',
-    desc: '거대한 심장부에서의 전투',
-    color: 'red',
-  },
-  {
-    date: '1/21',
-    type: '토벌전',
-    name: '파프나이트 제련소',
-    difficulty: '일반',
-    boss: '파프나이트',
-    desc: '용암 제련소에서의 결전',
+    name: '오르쿠스의 무덤 / 파프나이트 제련소',
+    difficulty: '주간 로테이션',
+    boss: '오르쿠스 / 파프나이트 (4마리)',
+    desc: '두 던전이 번갈아 등장',
     color: 'red',
   },
   {
@@ -117,7 +108,7 @@ const NEW_DUNGEONS = [
     type: '각성전',
     name: '궤적 보관소',
     difficulty: '주간 로테이션',
-    boss: '???',
+    boss: '클라우디아',
     desc: '새로운 각성전 던전',
     color: 'purple',
   },
@@ -126,7 +117,7 @@ const NEW_DUNGEONS = [
     type: '각성전',
     name: '폭군의 은신처',
     difficulty: '주간 로테이션',
-    boss: '???',
+    boss: '메녹스',
     desc: '새로운 각성전 던전',
     color: 'purple',
   },
@@ -135,7 +126,7 @@ const NEW_DUNGEONS = [
     type: '원정',
     name: '무의 요람',
     difficulty: '탐험 (어려움 2/18)',
-    boss: '???',
+    boss: '고뇌하는 바카르마',
     desc: '허무의 근원지에서의 탐험',
     color: 'cyan',
   },
@@ -144,7 +135,7 @@ const NEW_DUNGEONS = [
     type: '초월',
     name: '가라앉은 생명의 신전',
     difficulty: '1~10단계',
-    boss: '신전 수호자',
+    boss: '가라앉은 에몬',
     desc: '수몰된 고대 신전의 비밀',
     color: 'orange',
   },
@@ -153,7 +144,7 @@ const NEW_DUNGEONS = [
     type: '성역',
     name: '침식의 정화소',
     difficulty: '8인 레이드',
-    boss: '???',
+    boss: '중합체 바고트',
     desc: '최상위 엔드게임 레이드',
     color: 'yellow',
   },
@@ -634,6 +625,44 @@ export default function Season2Page() {
         </div>
       </section>
 
+      {/* 악몽 보스 7종 */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              😈 시즌2 악몽 보스 7종
+            </h2>
+            <p className="text-zinc-400">시즌1 보스 유지 + 신규 보스 7종 추가</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { name: '변이된 올고른', icon: '🦎', color: 'from-green-600/20' },
+              { name: '영혼수확자 라트만', icon: '💀', color: 'from-gray-600/20' },
+              { name: '분노한 레다', icon: '😠', color: 'from-red-600/20' },
+              { name: '교도관 산트라스', icon: '⛓️', color: 'from-purple-600/20' },
+              { name: '날카로운 울라크', icon: '🗡️', color: 'from-cyan-600/20' },
+              { name: '봉인된 수라', icon: '🔒', color: 'from-indigo-600/20' },
+              { name: '카이시넬의 환영', icon: '👻', color: 'from-amber-600/20' },
+            ].map((boss, i) => (
+              <div
+                key={i}
+                className={`bg-gradient-to-br ${boss.color} to-zinc-900 border border-zinc-700 rounded-xl p-4 hover:border-zinc-500 transition-all text-center`}
+              >
+                <span className="text-3xl mb-2 block">{boss.icon}</span>
+                <span className="text-white font-medium text-sm">{boss.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 p-4 bg-zinc-800/50 rounded-xl border border-zinc-700 text-center">
+            <p className="text-zinc-400 text-sm">
+              💡 <span className="text-amber-400">카이시넬의 환영</span> - 악몽 상점 필수템!
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* 적용 완료 업데이트 */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4">
@@ -876,7 +905,7 @@ export default function Season2Page() {
               AION2 지켈 서버 · 마족
             </p>
             <p className="text-zinc-600 text-xs mt-2">
-              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.20
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.22
             </p>
           </div>
         </div>
