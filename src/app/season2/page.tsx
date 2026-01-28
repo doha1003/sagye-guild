@@ -97,7 +97,7 @@ const NEW_DUNGEONS = [
   {
     date: '1/21',
     type: '토벌전',
-    name: '오르쿠스의 무덤 / 파프나이트 제련소',
+    name: '죽은 오르쿠스의 심장 / 파프나이트 제련소',
     difficulty: '주간 로테이션',
     boss: '오르쿠스 / 파프나이트 (4마리)',
     desc: '두 던전이 번갈아 등장',
@@ -883,7 +883,7 @@ export default function Season2Page() {
             </Link>
             <div className="flex items-center gap-6">
               <a
-                href="https://discord.gg/DgwjWYMu"
+                href="https://discord.gg/KB5Ef2C37Z"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-400 hover:text-indigo-300 text-sm"

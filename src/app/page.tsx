@@ -86,7 +86,7 @@ export default function Home() {
           <h1 className="text-2xl font-bold text-amber-400">사계 레기온</h1>
           <div className="flex items-center gap-4">
             <a
-              href="https://discord.gg/DgwjWYMu"
+              href="https://discord.gg/KB5Ef2C37Z"
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
@@ -153,7 +153,7 @@ export default function Home() {
         {/* 참여 링크 */}
         <section className="grid grid-cols-2 gap-4 mb-6">
           <a
-            href="https://discord.gg/DgwjWYMu"
+            href="https://discord.gg/KB5Ef2C37Z"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-5 text-center transition-colors"

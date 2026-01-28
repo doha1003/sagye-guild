@@ -48,7 +48,7 @@ export default function NoticePage() {
                 : 'text-zinc-400 border-transparent hover:text-white'
             }`}
           >
-            부캐 레기온
+            부캐 가입
           </button>
           <button
             onClick={() => setActiveTab('ludra')}
@@ -83,7 +83,7 @@ export default function NoticePage() {
         {/* 참여 링크 */}
         <div className="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-zinc-800">
           <a
-            href="https://discord.gg/DgwjWYMu"
+            href="https://discord.gg/KB5Ef2C37Z"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-indigo-600 hover:bg-indigo-500 rounded-lg p-4 text-center transition-colors"
@@ -234,42 +234,40 @@ function SubGuildRules() {
   return (
     <article className="text-zinc-200 leading-relaxed tracking-wide">
       <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
-        부캐 레기온 안내
+        부캐 가입 안내
       </h2>
 
-      <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4 mb-8">
-        <p className="text-indigo-300 font-medium text-center mb-2">
-          사계 부캐 전용 레기온
+      <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-8">
+        <p className="text-green-300 font-medium text-center mb-2">
+          부캐도 사계 레기온에 바로 가입!
         </p>
         <p className="text-zinc-400 text-sm text-center">
-          본캐가 사계 레기온 소속인 분들만 가입 가능합니다
+          레기온 인원이 128명으로 늘어나 부캐도 사계에 함께 가입합니다
         </p>
       </div>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">부캐 레기온 목록</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-zinc-800 rounded-lg p-4 text-center">
-            <div className="text-2xl mb-2">🌟</div>
-            <div className="text-xl font-bold text-amber-400">오계</div>
-            <div className="text-zinc-400 text-sm mt-1">부캐 레기온 1</div>
-          </div>
-          <div className="bg-zinc-800 rounded-lg p-4 text-center">
-            <div className="text-2xl mb-2">🌙</div>
-            <div className="text-xl font-bold text-purple-400">외계</div>
-            <div className="text-zinc-400 text-sm mt-1">부캐 레기온 2</div>
-          </div>
+        <div className="bg-zinc-800 rounded-lg p-4 text-center">
+          <div className="text-3xl mb-2">🍂</div>
+          <div className="text-2xl font-bold text-amber-400">사계</div>
+          <div className="text-zinc-400 text-sm mt-1">본캐 + 부캐 통합 운영</div>
+          <div className="text-zinc-500 text-xs mt-2">최대 128명</div>
+        </div>
+        <div className="bg-zinc-700/30 border border-zinc-600 rounded-lg p-3 mt-4 text-center">
+          <p className="text-zinc-400 text-sm">
+            <span className="text-zinc-500 line-through">오계 (부캐 레기온)</span> → 해체됨
+          </p>
         </div>
       </section>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">가입 방법</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">부캐 가입 방법</h3>
         <ul className="space-y-3 text-zinc-300">
           <li className="pl-4 border-l-2 border-amber-500/50">
             <strong className="text-white">본캐가 사계 레기온 소속</strong>이어야 합니다
           </li>
           <li className="pl-4 border-l-2 border-zinc-700">
-            게임 내 레기온 검색 → 오계 또는 외계 → 가입 신청
+            게임 내 레기온 검색 → <strong className="text-amber-400">사계</strong> → 가입 신청
           </li>
         </ul>
         <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4 text-center">
@@ -314,13 +312,10 @@ function SubGuildRules() {
         <h3 className="text-lg font-semibold text-white mb-4">운영 방침</h3>
         <ul className="space-y-2 text-zinc-300">
           <li className="pl-4 border-l-2 border-zinc-700">
-            부캐 레기온은 본캐 레기온(사계)의 규칙을 동일하게 적용합니다
+            부캐도 본캐와 동일한 레기온 규칙을 적용합니다
           </li>
           <li className="pl-4 border-l-2 border-zinc-700">
             부캐로 인한 트러블 발생 시 본캐에도 제재가 적용될 수 있습니다
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            본캐가 사계에서 탈퇴/추방될 경우, 부캐 레기온에서도 자동 추방됩니다
           </li>
         </ul>
       </section>
