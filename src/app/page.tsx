@@ -12,6 +12,7 @@ interface GuildMember {
   maxCombatScore?: number;
   combatScore?: number;
   combatPower?: number;
+  mainCharacter?: string;  // 부캐인 경우 본캐 닉네임
 }
 
 const CLASS_INFO: { name: string; icon: string; color: string }[] = [
@@ -66,10 +67,12 @@ export default function Home() {
   const totalPower = membersWithPower.reduce((sum, m) => sum + Number(m.combatPower || 0), 0);
   const avgPower = membersWithPower.length > 0 ? Math.round(totalPower / membersWithPower.length) : 0;
 
+  // 본캐만 집계 (부캐 제외)
+  const mainMembers = members.filter(m => !m.mainCharacter);
   const stats = {
     total: members.length,
-    discord: members.filter(m => m.discord === 'O').length,
-    kakao: members.filter(m => m.kakao === 'O').length,
+    discord: mainMembers.filter(m => m.discord === 'O').length,
+    kakao: mainMembers.filter(m => m.kakao === 'O').length,
   };
 
   return (
