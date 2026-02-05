@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 const CONFIG = {
   SERVER_ID: 2002,
   SHEET_ID: '1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo',
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzfog5o5XS2CIYehbSdHrfAjgMerheTBDP6_ItxQGmQkdL4WeJaRUpXMwfXlnkd25fo8Q/exec',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxCIVgHZjaVPxrP9xq8edGfXj2o38zhJJ5Rt1CPjP8BjH27FPh82bgTjQP8nDWf_HkxPQ/exec',
 };
 
 async function main() {
@@ -64,51 +64,70 @@ async function main() {
 
   const results = [];
 
+  const MAX_RETRIES = 3;  // 최대 재시도 횟수
+
   for (let i = 0; i < members.length; i++) {
     const member = members[i];
     const url = `https://www.aion2tool.com/char/serverid=${CONFIG.SERVER_ID}/${encodeURIComponent(member.nickname)}`;
 
-    process.stdout.write(`   [${String(i + 1).padStart(2)}/${members.length}] ${member.nickname.padEnd(15)} `);
+    let success = false;
+    let lastError = null;
 
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-      await page.waitForTimeout(4000);
-
-      let combatPower = null;      // 현재 전투력
-      let combatScore = null;      // 현재 전투점수
-      let maxCombatScore = null;   // 최고 전투점수
-
-      try {
-        combatPower = await page.$eval('#result-combat-power', el => el.textContent.trim());
-      } catch {}
-
-      try {
-        combatScore = await page.$eval('#dps-score-value', el => el.textContent.trim());
-      } catch {}
-
-      // 최고 전투점수 찾기 (#combat-score-max-info 내의 strong 태그)
-      try {
-        maxCombatScore = await page.$eval('#combat-score-max-info strong', el => el.textContent.trim());
-      } catch {}
-      // 최고 점수를 못 찾으면 현재 점수로 대체
-      if (!maxCombatScore && combatScore) {
-        maxCombatScore = combatScore;
-      }
-
-      if (combatPower || combatScore || maxCombatScore) {
-        results.push({
-          row: member.row,
-          nickname: member.nickname,
-          maxCombatScore: maxCombatScore ? maxCombatScore.replace(/,/g, '') : '',
-          combatScore: combatScore ? combatScore.replace(/,/g, '') : '',
-          combatPower: combatPower ? combatPower.replace(/,/g, '') : '',
-        });
-        console.log(`=> 최고:${maxCombatScore || '-'} / 현재:${combatScore || '-'} / 전투력:${combatPower || '-'}`);
+    for (let retry = 0; retry < MAX_RETRIES && !success; retry++) {
+      if (retry > 0) {
+        process.stdout.write(`   [${String(i + 1).padStart(2)}/${members.length}] ${member.nickname.padEnd(15)} (재시도 ${retry}/${MAX_RETRIES - 1}) `);
+        await page.waitForTimeout(2000);  // 재시도 전 2초 대기
       } else {
-        console.log(`=> 데이터 없음`);
+        process.stdout.write(`   [${String(i + 1).padStart(2)}/${members.length}] ${member.nickname.padEnd(15)} `);
       }
-    } catch (e) {
-      console.log(`=> 에러`);
+
+      try {
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
+        await page.waitForTimeout(4000);
+
+        let combatPower = null;      // 현재 전투력
+        let combatScore = null;      // 현재 전투점수
+        let maxCombatScore = null;   // 최고 전투점수
+
+        try {
+          combatPower = await page.$eval('#result-combat-power', el => el.textContent.trim());
+        } catch {}
+
+        try {
+          combatScore = await page.$eval('#dps-score-value', el => el.textContent.trim());
+        } catch {}
+
+        // 최고 전투점수 찾기 (#combat-score-max-info 내의 strong 태그)
+        try {
+          maxCombatScore = await page.$eval('#combat-score-max-info strong', el => el.textContent.trim());
+        } catch {}
+        // 최고 점수를 못 찾으면 현재 점수로 대체
+        if (!maxCombatScore && combatScore) {
+          maxCombatScore = combatScore;
+        }
+
+        if (combatPower || combatScore || maxCombatScore) {
+          results.push({
+            row: member.row,
+            nickname: member.nickname,
+            maxCombatScore: maxCombatScore ? maxCombatScore.replace(/,/g, '') : '',
+            combatScore: combatScore ? combatScore.replace(/,/g, '') : '',
+            combatPower: combatPower ? combatPower.replace(/,/g, '') : '',
+          });
+          console.log(`=> 최고:${maxCombatScore || '-'} / 현재:${combatScore || '-'} / 전투력:${combatPower || '-'}`);
+          success = true;
+        } else {
+          console.log(`=> 데이터 없음`);
+          lastError = 'no_data';
+        }
+      } catch (e) {
+        console.log(`=> 에러: ${e.message}`);
+        lastError = e.message;
+      }
+    }
+
+    if (!success) {
+      console.log(`   ※ ${member.nickname}: ${MAX_RETRIES}회 시도 후 실패`);
     }
   }
 

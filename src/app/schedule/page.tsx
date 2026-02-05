@@ -1113,12 +1113,9 @@ function FieldBossContent() {
     const target = new Date();
     target.setHours(hours, minutes, 0, 0);
 
-    // 입력한 시간이 현재보다 과거면 내일로 설정
-    if (target.getTime() <= Date.now()) {
-      target.setDate(target.getDate() + 1);
-    }
-
+    // 점검 종료 시간은 과거여도 그대로 사용 (리젠 사이클 계산 기준점)
     const maintenanceEndMs = target.getTime();
+    const now = Date.now();
     let count = 0;
 
     // 모든 보스 데이터 순회 (활성 타이머가 아닌 전체 보스)
@@ -1128,12 +1125,18 @@ function FieldBossContent() {
         if (EXCLUDED_BOSSES.includes(boss.name) || boss.minutes === 0) continue;
 
         // 점검 종료 + 리젠 시간 = 첫 리젠 예정 시각
-        const firstRespawnTime = maintenanceEndMs + (boss.minutes * 60 * 1000);
+        let nextRespawnTime = maintenanceEndMs + (boss.minutes * 60 * 1000);
+
+        // 현재 시간보다 과거면, 리젠 사이클을 더해서 미래 시간으로 조정
+        const respawnIntervalMs = boss.minutes * 60 * 1000;
+        while (nextRespawnTime <= now) {
+          nextRespawnTime += respawnIntervalMs;
+        }
 
         try {
           await setBossTimer({
             bossName: boss.name,
-            endTime: firstRespawnTime,
+            endTime: nextRespawnTime,
             respawnMinutes: boss.minutes,
           });
           count++;
@@ -1148,14 +1151,8 @@ function FieldBossContent() {
     preNotifiedTimersRef.current.clear();
     restartingTimersRef.current.clear();
 
-    alert(`${count}개 보스 타이머가 생성되었습니다.\n점검 종료: ${maintenanceEndTime}\n\n각 보스별 첫 리젠 시간:\n• 30분 보스 → ${formatTimeFromMs(maintenanceEndMs + 30 * 60 * 1000)}\n• 1시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 60 * 60 * 1000)}\n• 3시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 180 * 60 * 1000)}\n• 6시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 360 * 60 * 1000)}\n• 12시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 720 * 60 * 1000)}\n\n※ 감시자 카이라, 수호신장 나흐마 제외`);
+    alert(`${count}개 보스 타이머가 생성되었습니다.\n\n점검 종료 기준: ${maintenanceEndTime}\n각 보스별 리젠 사이클이 계산되어 다음 리젠 시간이 설정되었습니다.\n\n※ 감시자 카이라, 수호신장 나흐마 제외`);
     setIsMaintenanceMode(false);
-  };
-
-  // ms를 HH:MM 형식으로 변환
-  const formatTimeFromMs = (ms: number) => {
-    const date = new Date(ms);
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   };
 
   return (

@@ -13,9 +13,9 @@ export const CLASSES = {
 export type ClassId = keyof typeof CLASSES;
 export type Role = 'tank' | 'dps' | 'healer' | 'support';
 
-// 서버 정보 (루드라 = 마족 서버)
+// 서버 정보 (지켈 = 마족 서버)
 export const SERVERS = {
-  2011: '루드라',
+  2011: '지켈',
 } as const;
 
 // 길드원 타입
