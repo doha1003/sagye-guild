@@ -980,40 +980,6 @@ function DiscordBotGuide() {
         </div>
       </section>
 
-      {/* 파티 모집 */}
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-orange-400 mb-4">파티 모집</h3>
-
-        <div className="space-y-4">
-          {/* /파티 */}
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <code className="bg-zinc-700 px-2 py-1 rounded text-orange-400 font-mono">/파티</code>
-              <span className="text-zinc-500 text-sm">파티 모집 생성</span>
-            </div>
-            <p className="text-zinc-300 mb-2">파티 모집 게시물을 생성합니다.</p>
-            <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/파티 컨텐츠:루드라 시간:22:00 메모:1~2넴</code>
-            </div>
-            <ul className="mt-3 space-y-1 text-zinc-400 text-sm">
-              <li>• 이모지 반응으로 참가 신청</li>
-              <li>• 역할(탱/힐/딜)별 자동 분류</li>
-              <li>• 인원 충족 시 알림</li>
-            </ul>
-          </div>
-
-          {/* /참가현황 */}
-          <div className="bg-zinc-800 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <code className="bg-zinc-700 px-2 py-1 rounded text-orange-400 font-mono">/참가현황</code>
-              <span className="text-zinc-500 text-sm">참가 현황 확인</span>
-            </div>
-            <p className="text-zinc-300">현재 모집 중인 파티의 참가 현황을 확인합니다.</p>
-          </div>
-        </div>
-      </section>
-
       {/* 기타 명령어 */}
       <section className="mb-8">
         <h3 className="text-lg font-semibold text-zinc-400 mb-4">기타 명령어</h3>
