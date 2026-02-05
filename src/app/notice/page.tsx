@@ -806,7 +806,7 @@ function DiscordBotGuide() {
           디스코드 사계봇 - 레기온 전용 봇
         </p>
         <p className="text-zinc-400 text-sm text-center">
-          인증, 전투력 조회, 파티 모집 등 다양한 기능을 디스코드에서 바로 사용
+          인증, 전투력 조회 등 다양한 기능을 디스코드에서 바로 사용
         </p>
       </div>
 
@@ -836,13 +836,10 @@ function DiscordBotGuide() {
             </div>
             <p className="text-zinc-300 mb-2">게임 캐릭터를 디스코드 계정에 연결합니다.</p>
             <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/인증 닉네임:도하</code>
+              <p className="text-zinc-400 text-sm mb-1">사용법:</p>
+              <code className="text-indigo-300">/인증 캐릭터명:내캐릭터</code>
             </div>
-            <ul className="mt-3 space-y-1 text-zinc-400 text-sm">
-              <li>• 인증 후 디스코드 닉네임이 자동으로 변경됩니다</li>
-              <li>• 레기온원 정보와 연동되어 역할이 부여됩니다</li>
-            </ul>
+            <p className="text-zinc-500 text-sm mt-2">* 시트에 등록된 캐릭터명이어야 합니다</p>
           </div>
 
           {/* /부캐인증 */}
@@ -853,8 +850,8 @@ function DiscordBotGuide() {
             </div>
             <p className="text-zinc-300 mb-2">본캐 인증 후 부캐를 추가로 등록합니다.</p>
             <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/부캐인증 닉네임:부캐닉</code>
+              <p className="text-zinc-400 text-sm mb-1">사용법:</p>
+              <code className="text-indigo-300">/부캐인증 캐릭터명:내부캐</code>
             </div>
             <p className="text-zinc-500 text-sm mt-2">* 본캐 인증이 선행되어야 합니다</p>
           </div>
@@ -867,9 +864,10 @@ function DiscordBotGuide() {
             </div>
             <p className="text-zinc-300 mb-2">게임 내 닉네임 변경 시 인증 정보를 업데이트합니다.</p>
             <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/닉변경 새닉네임:새닉</code>
+              <p className="text-zinc-400 text-sm mb-1">사용법:</p>
+              <code className="text-indigo-300">/닉변경 기존닉:옛날닉 새닉:새로운닉</code>
             </div>
+            <p className="text-zinc-500 text-sm mt-2">* 본인이 인증한 캐릭터만 변경 가능</p>
           </div>
 
           {/* /인증해제 */}
@@ -878,7 +876,7 @@ function DiscordBotGuide() {
               <code className="bg-zinc-700 px-2 py-1 rounded text-red-400 font-mono">/인증해제</code>
               <span className="text-zinc-500 text-sm">인증 삭제</span>
             </div>
-            <p className="text-zinc-300">등록된 인증 정보를 삭제합니다.</p>
+            <p className="text-zinc-300">등록된 본캐/부캐 인증 정보를 모두 삭제합니다.</p>
           </div>
 
           {/* /내정보 */}
@@ -887,7 +885,7 @@ function DiscordBotGuide() {
               <code className="bg-zinc-700 px-2 py-1 rounded text-cyan-400 font-mono">/내정보</code>
               <span className="text-zinc-500 text-sm">내 인증 정보 확인</span>
             </div>
-            <p className="text-zinc-300">현재 등록된 본캐/부캐 정보를 확인합니다.</p>
+            <p className="text-zinc-300">현재 등록된 본캐/부캐 목록을 확인합니다.</p>
           </div>
         </div>
       </section>
@@ -901,12 +899,11 @@ function DiscordBotGuide() {
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/아툴</code>
-              <span className="text-zinc-500 text-sm">aion2tool 링크</span>
+              <span className="text-zinc-500 text-sm">내 전투점수 조회</span>
             </div>
-            <p className="text-zinc-300 mb-2">캐릭터의 aion2tool 상세 페이지 링크를 생성합니다.</p>
-            <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/아툴 닉네임:도하</code>
+            <p className="text-zinc-300 mb-2">인증된 내 캐릭터들의 전투점수를 조회합니다.</p>
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded p-2 mt-2">
+              <p className="text-amber-300 text-sm">* 인증 필요 (파라미터 없음)</p>
             </div>
           </div>
 
@@ -914,47 +911,46 @@ function DiscordBotGuide() {
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/전투력</code>
-              <span className="text-zinc-500 text-sm">전투력 조회</span>
+              <span className="text-zinc-500 text-sm">내 전투력 조회</span>
             </div>
-            <p className="text-zinc-300 mb-2">캐릭터의 현재 전투력, 전투점수 등을 조회합니다.</p>
-            <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/전투력 닉네임:도하</code>
+            <p className="text-zinc-300 mb-2">인증된 내 캐릭터들의 전투력을 조회합니다.</p>
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded p-2 mt-2">
+              <p className="text-amber-300 text-sm">* 인증 필요 (파라미터 없음)</p>
             </div>
-            <p className="text-zinc-400 text-sm mt-2">aion2tool API를 통해 실시간 데이터를 가져옵니다.</p>
           </div>
 
           {/* /검색 */}
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/검색</code>
-              <span className="text-zinc-500 text-sm">캐릭터 검색</span>
+              <span className="text-zinc-500 text-sm">다른 캐릭터 검색</span>
             </div>
-            <p className="text-zinc-300 mb-2">PlayNC 공식 API로 캐릭터를 검색합니다.</p>
+            <p className="text-zinc-300 mb-2">시트에 등록된 특정 캐릭터의 정보를 검색합니다.</p>
             <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/검색 닉네임:도하</code>
+              <p className="text-zinc-400 text-sm mb-1">사용법:</p>
+              <code className="text-indigo-300">/검색 캐릭터명:검색할캐릭터</code>
             </div>
+            <p className="text-zinc-400 text-sm mt-2">직업, 전투력, 전투점수, 최고점수 등 표시</p>
           </div>
         </div>
       </section>
 
       {/* 데이터 수집 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-purple-400 mb-4">데이터 수집 (운영진 전용)</h3>
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">데이터 수집</h3>
 
         <div className="space-y-4">
           {/* /수집 */}
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <code className="bg-zinc-700 px-2 py-1 rounded text-purple-400 font-mono">/수집</code>
-              <span className="text-zinc-500 text-sm">단일 캐릭터 수집</span>
+              <span className="text-zinc-500 text-sm">내 캐릭터 전투력 수집</span>
             </div>
-            <p className="text-zinc-300 mb-2">특정 캐릭터의 전투정보를 수집하여 구글 시트에 저장합니다.</p>
-            <div className="bg-zinc-700/50 rounded p-3 mt-2">
-              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
-              <code className="text-indigo-300">/수집 닉네임:도하</code>
+            <p className="text-zinc-300 mb-2">인증된 내 캐릭터들의 전투정보를 아툴에서 새로 수집합니다.</p>
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded p-2 mt-2">
+              <p className="text-amber-300 text-sm">* 인증 필요 (파라미터 없음)</p>
             </div>
+            <p className="text-zinc-500 text-sm mt-2">수집 완료 후 구글 시트에 자동 저장됩니다</p>
           </div>
 
           {/* /통합수집 */}
@@ -965,7 +961,7 @@ function DiscordBotGuide() {
             </div>
             <p className="text-zinc-300 mb-2">레기온원 전체의 전투정보를 일괄 수집합니다.</p>
             <div className="bg-red-500/10 border border-red-500/30 rounded p-2 mt-2">
-              <p className="text-red-300 text-sm">* 운영진 전용 명령어입니다</p>
+              <p className="text-red-300 text-sm">* 관리자 전용 (시간이 오래 걸림)</p>
             </div>
           </div>
 
@@ -973,9 +969,10 @@ function DiscordBotGuide() {
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <code className="bg-zinc-700 px-2 py-1 rounded text-purple-400 font-mono">/동기화</code>
-              <span className="text-zinc-500 text-sm">시트 동기화</span>
+              <span className="text-zinc-500 text-sm">디스코드-시트 동기화</span>
             </div>
-            <p className="text-zinc-300">구글 시트 데이터를 최신 상태로 동기화합니다.</p>
+            <p className="text-zinc-300">디스코드 참여 현황을 구글 시트와 동기화합니다.</p>
+            <p className="text-zinc-500 text-sm mt-2">입장/퇴장 시 자동 동기화되지만, 수동 실행도 가능</p>
           </div>
         </div>
       </section>
