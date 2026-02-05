@@ -675,6 +675,38 @@ function FieldBossContent() {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({ 마족: true, 천족: true, 어비스: true });
 
+  // 관심 보스 (개인 설정, localStorage 저장)
+  const [favoriteBosses, setFavoriteBosses] = useState<Set<string>>(new Set());
+
+  // 관심 보스 로드
+  useEffect(() => {
+    const saved = localStorage.getItem('favoriteBosses');
+    if (saved) {
+      try {
+        setFavoriteBosses(new Set(JSON.parse(saved)));
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
+  // 관심 보스 토글
+  const toggleFavorite = (bossName: string) => {
+    setFavoriteBosses(prev => {
+      const next = new Set(prev);
+      if (next.has(bossName)) {
+        next.delete(bossName);
+      } else {
+        next.add(bossName);
+      }
+      localStorage.setItem('favoriteBosses', JSON.stringify([...next]));
+      return next;
+    });
+  };
+
+  // 관심 보스 여부 확인
+  const isFavorite = (bossName: string) => favoriteBosses.has(bossName);
+
   // 이미지 프록시 URL 생성 (size: 썸네일 크기)
   const getProxyImageUrl = (url: string, size = 300) => `/api/image-proxy?url=${encodeURIComponent(url)}&size=${size}`;
 
@@ -841,33 +873,46 @@ function FieldBossContent() {
   }, []);
 
   // 알림 보내기 (리젠 시)
-  const showNotification = useCallback((bossName: string) => {
+  const showNotification = useCallback((bossName: string, isFav: boolean) => {
     // 브라우저 알림
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('🔥 보스 리젠!', {
+      new Notification(isFav ? '⭐🔥 관심 보스 리젠!' : '🔥 보스 리젠!', {
         body: `${bossName} 리젠 시간입니다!`,
         icon: '/favicon.ico',
         tag: bossName,
       });
     }
-    playNotificationSound(3);
+    playNotificationSound(isFav ? 5 : 3); // 관심 보스는 5번, 일반은 3번
   }, [playNotificationSound]);
 
   // 1분 전 알림
-  const showPreNotification = useCallback((bossName: string) => {
+  const showPreNotification = useCallback((bossName: string, isFav: boolean) => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('⏰ 1분 전!', {
+      new Notification(isFav ? '⭐⏰ 관심 보스 1분 전!' : '⏰ 1분 전!', {
         body: `${bossName} 리젠 1분 전!`,
         icon: '/favicon.ico',
         tag: `${bossName}-pre`,
       });
     }
-    playNotificationSound(3);
+    playNotificationSound(isFav ? 5 : 3);
   }, [playNotificationSound]);
 
-  // 1초마다 시간 업데이트 + 완료된 타이머 알림 처리 + 자동 재시작 (30초 딜레이)
+  // 5분 전 알림 (관심 보스 전용)
+  const showFavoritePreNotification = useCallback((bossName: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('⭐ 관심 보스 5분 전!', {
+        body: `${bossName} 리젠 5분 전!`,
+        icon: '/favicon.ico',
+        tag: `${bossName}-fav-pre`,
+      });
+    }
+    playNotificationSound(5);
+  }, [playNotificationSound]);
+
+  // 1초마다 시간 업데이트 + 완료된 타이머 알림 처리 + 자동 재시작
   const notifiedTimersRef = useRef<Set<string>>(new Set());
   const preNotifiedTimersRef = useRef<Set<string>>(new Set()); // 1분 전 알림용
+  const favPreNotifiedTimersRef = useRef<Set<string>>(new Set()); // 5분 전 알림용 (관심 보스)
   const restartingTimersRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -877,18 +922,27 @@ function FieldBossContent() {
 
       timers.forEach(async timer => {
         const remaining = timer.endTime - currentTime;
+        const isFav = favoriteBosses.has(timer.bossName);
+
+        // 5분 전 알림 (관심 보스 전용, 295초~305초 범위에서 한 번만)
+        if (isFav && remaining > 0 && remaining <= 300000 && remaining > 295000) {
+          if (!favPreNotifiedTimersRef.current.has(timer.bossName)) {
+            showFavoritePreNotification(timer.bossName);
+            favPreNotifiedTimersRef.current.add(timer.bossName);
+          }
+        }
 
         // 1분 전 알림 (55초~65초 범위에서 한 번만)
         if (remaining > 0 && remaining <= 60000 && remaining > 55000) {
           if (!preNotifiedTimersRef.current.has(timer.bossName)) {
-            showPreNotification(timer.bossName);
+            showPreNotification(timer.bossName, isFav);
             preNotifiedTimersRef.current.add(timer.bossName);
           }
         }
 
         // 리젠 완료 알림 + 자동 재시작
         if (timer.endTime <= currentTime && !notifiedTimersRef.current.has(timer.bossName)) {
-          showNotification(timer.bossName);
+          showNotification(timer.bossName, isFav);
           notifiedTimersRef.current.add(timer.bossName);
 
           // 자동 재시작: 리젠 시간만큼 다시 타이머 설정 (즉시 실행)
@@ -905,6 +959,7 @@ function FieldBossContent() {
               // 다음 알림을 위해 notified 해제
               notifiedTimersRef.current.delete(savedBossName);
               preNotifiedTimersRef.current.delete(savedBossName);
+              favPreNotifiedTimersRef.current.delete(savedBossName);
             })();
           }
         }
@@ -912,7 +967,7 @@ function FieldBossContent() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timers, showNotification, showPreNotification]);
+  }, [timers, favoriteBosses, showNotification, showPreNotification, showFavoritePreNotification]);
 
   // 알림 권한 요청
   const requestNotificationPermission = async () => {
@@ -1268,20 +1323,38 @@ function FieldBossContent() {
             </button>
           </div>
           <div className="space-y-2">
-            {timers.map(timer => {
+            {/* 관심 보스 상단 정렬 */}
+            {[...timers].sort((a, b) => {
+              const aFav = favoriteBosses.has(a.bossName) ? 0 : 1;
+              const bFav = favoriteBosses.has(b.bossName) ? 0 : 1;
+              if (aFav !== bFav) return aFav - bFav;
+              return a.endTime - b.endTime; // 같은 그룹 내에서는 시간순
+            }).map(timer => {
               const remaining = timer.endTime - now;
               const isUrgent = remaining < 5 * 60 * 1000; // 5분 이하
               const isAdjusting = adjustModalBoss === timer.bossName;
+              const isFav = favoriteBosses.has(timer.bossName);
               return (
                 <div
                   key={timer.bossName}
                   className={`p-3 rounded-lg ${
-                    isUrgent ? 'bg-red-500/20 animate-pulse' : 'bg-zinc-900/50'
+                    isFav
+                      ? 'bg-amber-500/20 border-2 border-amber-500/50'
+                      : isUrgent
+                        ? 'bg-red-500/20 animate-pulse'
+                        : 'bg-zinc-900/50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className={`font-bold text-sm ${isUrgent ? 'text-red-400' : 'text-white'}`}>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => toggleFavorite(timer.bossName)}
+                        className={`text-lg transition-colors ${isFav ? 'text-amber-400' : 'text-zinc-600 hover:text-amber-400'}`}
+                        title={isFav ? '관심 보스 해제' : '관심 보스 등록'}
+                      >
+                        {isFav ? '⭐' : '☆'}
+                      </button>
+                      <div className={`font-bold text-sm ${isFav ? 'text-amber-400' : isUrgent ? 'text-red-400' : 'text-white'}`}>
                         {timer.bossName}
                       </div>
                     </div>
@@ -1450,12 +1523,22 @@ function FieldBossContent() {
           <div className="space-y-2">
             {group.bosses.map((boss, bIdx) => {
               const activeTimer = getTimer(boss.name);
+              const isFav = isFavorite(boss.name);
               return (
-                <div key={bIdx} className="bg-zinc-900/80 rounded-lg p-3">
+                <div key={bIdx} className={`rounded-lg p-3 ${isFav ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-zinc-900/80'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="text-white font-medium text-sm">{boss.name}</div>
-                      <div className="text-zinc-500 text-xs">{boss.location}</div>
+                    <div className="flex items-center gap-2 flex-1">
+                      <button
+                        onClick={() => toggleFavorite(boss.name)}
+                        className={`text-base transition-colors ${isFav ? 'text-amber-400' : 'text-zinc-600 hover:text-amber-400'}`}
+                        title={isFav ? '관심 보스 해제' : '관심 보스 등록'}
+                      >
+                        {isFav ? '⭐' : '☆'}
+                      </button>
+                      <div>
+                        <div className={`font-medium text-sm ${isFav ? 'text-amber-400' : 'text-white'}`}>{boss.name}</div>
+                        <div className="text-zinc-500 text-xs">{boss.location}</div>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       {activeTimer ? (
