@@ -93,6 +93,7 @@ const NEW_DUNGEONS = [
     boss: '드라마타',
     desc: '고대 용의 둥지에서 벌어지는 사투',
     color: 'cyan',
+    status: 'live',
   },
   {
     date: '1/21',
@@ -102,6 +103,7 @@ const NEW_DUNGEONS = [
     boss: '오르쿠스 / 파프나이트 (4마리)',
     desc: '두 던전이 번갈아 등장',
     color: 'red',
+    status: 'live',
   },
   {
     date: '1/21',
@@ -111,6 +113,7 @@ const NEW_DUNGEONS = [
     boss: '클라우디아',
     desc: '새로운 각성전 던전',
     color: 'purple',
+    status: 'live',
   },
   {
     date: '1/21',
@@ -120,6 +123,7 @@ const NEW_DUNGEONS = [
     boss: '메녹스',
     desc: '새로운 각성전 던전',
     color: 'purple',
+    status: 'live',
   },
   {
     date: '1/28',
@@ -129,6 +133,7 @@ const NEW_DUNGEONS = [
     boss: '고뇌하는 바카르마',
     desc: '허무의 근원지에서의 탐험',
     color: 'cyan',
+    status: 'live',
   },
   {
     date: '2/4',
@@ -138,6 +143,7 @@ const NEW_DUNGEONS = [
     boss: '가라앉은 에몬',
     desc: '수몰된 고대 신전의 비밀',
     color: 'orange',
+    status: 'live',
   },
   {
     date: '2/25',
@@ -147,6 +153,7 @@ const NEW_DUNGEONS = [
     boss: '중합체 바고트',
     desc: '최상위 엔드게임 레이드',
     color: 'yellow',
+    status: 'upcoming',
   },
 ];
 
@@ -356,13 +363,22 @@ export default function Season2Page() {
                 className={`bg-gradient-to-br from-${dungeon.color}-900/20 to-zinc-900/50 border border-${dungeon.color}-500/30 rounded-xl p-5 hover:border-${dungeon.color}-500/50 transition-all`}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className={`bg-${dungeon.color}-600/30 text-${dungeon.color}-400 text-xs font-bold px-2 py-1 rounded`}>
                       {dungeon.type}
                     </span>
                     <span className="bg-zinc-700 text-zinc-300 text-xs font-bold px-2 py-1 rounded">
                       {dungeon.date}
                     </span>
+                    {dungeon.status === 'live' ? (
+                      <span className="bg-green-600/30 text-green-400 text-xs font-bold px-2 py-1 rounded animate-pulse">
+                        LIVE
+                      </span>
+                    ) : (
+                      <span className="bg-zinc-600/30 text-zinc-400 text-xs font-bold px-2 py-1 rounded">
+                        예정
+                      </span>
+                    )}
                   </div>
                   <span className="text-zinc-500 text-xs">{dungeon.difficulty}</span>
                 </div>
@@ -395,11 +411,14 @@ export default function Season2Page() {
             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-indigo-500 to-purple-500" />
 
             <div className="space-y-8">
-              {/* 1/21 */}
+              {/* 1/21 - LIVE */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8">
-                  <div className="bg-gradient-to-r from-cyan-600/20 to-cyan-600/5 rounded-xl p-4 inline-block text-left">
-                    <div className="text-cyan-400 font-bold mb-2">시즌2 시작</div>
+                  <div className="bg-gradient-to-r from-cyan-600/20 to-cyan-600/5 rounded-xl p-4 inline-block text-left border border-green-500/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-cyan-400 font-bold">시즌2 시작</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
                     <ul className="text-zinc-400 text-sm space-y-1">
                       <li>• 랭킹 전체 초기화</li>
                       <li>• 서버 매칭 시스템</li>
@@ -407,57 +426,72 @@ export default function Season2Page() {
                     </ul>
                   </div>
                 </div>
-                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
-                  <span className="text-xs font-bold text-white">21</span>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-xs font-bold text-white">✓</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
                   <span className="text-cyan-400 font-bold text-lg">1월</span>
-                  <div className="md:hidden bg-cyan-600/20 rounded-lg p-3 mt-2">
-                    <div className="text-cyan-300 font-medium text-sm">시즌2 시작 · 신규 원정/토벌전/각성전</div>
+                  <div className="md:hidden bg-cyan-600/20 rounded-lg p-3 mt-2 border border-green-500/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-cyan-300 font-medium text-sm">시즌2 시작</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* 1/28 */}
+              {/* 1/28 - LIVE */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8" />
-                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-zinc-600 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
-                  <span className="text-[10px] font-bold text-white">28</span>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">✓</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
-                  <div className="bg-zinc-800/50 rounded-lg p-3">
-                    <span className="text-zinc-300 font-medium text-sm">신규 원정: 무의 요람</span>
+                  <div className="bg-zinc-800/50 rounded-lg p-3 border border-green-500/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-300 font-medium text-sm">신규 원정: 무의 요람</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* 2/4 */}
+              {/* 2/4 - LIVE (어제 오픈!) */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8">
-                  <div className="bg-orange-600/20 rounded-lg p-3">
-                    <span className="text-orange-300 font-medium text-sm">초월: 가라앉은 생명의 신전 (1~10단계)</span>
+                  <div className="bg-orange-600/20 rounded-lg p-3 border border-green-500/30">
+                    <div className="flex items-center gap-2 justify-end">
+                      <span className="text-orange-300 font-medium text-sm">초월: 가라앉은 생명의 신전</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">NEW!</span>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
-                  <span className="text-[10px] font-bold text-white">04</span>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950 animate-pulse">
+                  <span className="text-[10px] font-bold text-white">✓</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
                   <span className="text-orange-400 font-bold text-lg">2월</span>
-                  <div className="md:hidden bg-orange-600/20 rounded-lg p-3 mt-2">
-                    <span className="text-orange-300 font-medium text-sm">초월 던전 오픈</span>
+                  <div className="md:hidden bg-orange-600/20 rounded-lg p-3 mt-2 border border-green-500/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange-300 font-medium text-sm">초월 던전 오픈</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">NEW!</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* 2/11 */}
+              {/* 2/11 - 다음 업데이트 */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8" />
                 <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
                   <span className="text-[10px] font-bold text-white">11</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
-                  <div className="bg-purple-600/20 rounded-lg p-3">
-                    <span className="text-purple-300 font-medium text-sm">어비스 균열 지대 (신규 PvPvE)</span>
+                  <div className="bg-purple-600/20 rounded-lg p-3 border border-purple-500/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-purple-300 font-medium text-sm">어비스 균열 지대 (신규 PvPvE)</span>
+                      <span className="bg-purple-600/30 text-purple-400 text-[10px] font-bold px-1.5 py-0.5 rounded">D-6</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -905,7 +939,7 @@ export default function Season2Page() {
               AION2 지켈 서버 · 마족
             </p>
             <p className="text-zinc-600 text-xs mt-2">
-              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.01.22
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.02.05
             </p>
           </div>
         </div>
