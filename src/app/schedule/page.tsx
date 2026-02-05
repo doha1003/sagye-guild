@@ -562,9 +562,9 @@ function ScheduleContent() {
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
               <span>🏪</span> 산들바람 상회 특수
             </h3>
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
-              <p className="text-red-300 text-xs sm:text-sm font-bold">
-                ⚠️ 일요일 자정 초기화 (수요일 아님!)
+            <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-4">
+              <p className="text-amber-300 text-xs sm:text-sm font-bold">
+                ⏰ 수요일 05:00 초기화 (주간 초기화와 동일)
               </p>
             </div>
             <div className="space-y-2">
@@ -891,19 +891,21 @@ function FieldBossContent() {
           showNotification(timer.bossName);
           notifiedTimersRef.current.add(timer.bossName);
 
-          // 자동 재시작: 30초 후 리젠 시간만큼 다시 타이머 설정 (보스 잡는 시간 고려)
+          // 자동 재시작: 리젠 시간만큼 다시 타이머 설정 (즉시 실행)
           if (timer.respawnMinutes > 0 && !restartingTimersRef.current.has(timer.bossName)) {
             restartingTimersRef.current.add(timer.bossName);
             const savedRespawnMinutes = timer.respawnMinutes; // 클로저에 저장
-            setTimeout(async () => {
+            const savedBossName = timer.bossName;
+            // 즉시 실행 (IIFE)
+            (async () => {
               const newEndTime = Date.now() + savedRespawnMinutes * 60 * 1000;
               // respawnMinutes 전달하여 타이머가 없어도 새로 생성되도록 함
-              await updateBossTimer(timer.bossName, newEndTime, savedRespawnMinutes);
-              restartingTimersRef.current.delete(timer.bossName);
+              await updateBossTimer(savedBossName, newEndTime, savedRespawnMinutes);
+              restartingTimersRef.current.delete(savedBossName);
               // 다음 알림을 위해 notified 해제
-              notifiedTimersRef.current.delete(timer.bossName);
-              preNotifiedTimersRef.current.delete(timer.bossName);
-            }, 30000); // 30초 딜레이
+              notifiedTimersRef.current.delete(savedBossName);
+              preNotifiedTimersRef.current.delete(savedBossName);
+            })();
           }
         }
       });
@@ -982,6 +984,58 @@ function FieldBossContent() {
   const [maintenanceEndTime, setMaintenanceEndTime] = useState<string>('');
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
 
+  // 직접 시간 입력 상태 (보스별)
+  const [directTimeInputs, setDirectTimeInputs] = useState<Record<string, string>>({});
+  const [showDirectInput, setShowDirectInput] = useState<string | null>(null);
+
+  // 남은 시간 문자열을 밀리초로 변환 (H:MM:SS, MM:SS, MM 형식 지원)
+  const parseRemainingTimeToMs = (timeStr: string): number | null => {
+    const trimmed = timeStr.trim();
+    if (!trimmed) return null;
+
+    const parts = trimmed.split(':').map(p => parseInt(p));
+    if (parts.some(isNaN)) return null;
+
+    if (parts.length === 1) {
+      // MM 형식 (분만)
+      return parts[0] * 60 * 1000;
+    } else if (parts.length === 2) {
+      // MM:SS 형식
+      const [mins, secs] = parts;
+      return (mins * 60 + secs) * 1000;
+    } else if (parts.length === 3) {
+      // H:MM:SS 형식
+      const [hours, mins, secs] = parts;
+      return (hours * 3600 + mins * 60 + secs) * 1000;
+    }
+    return null;
+  };
+
+  // 직접 시간 입력으로 타이머 시작
+  const startTimerWithDirectTime = async (bossName: string, respawnMinutes: number) => {
+    const timeStr = directTimeInputs[bossName];
+    const remainingMs = parseRemainingTimeToMs(timeStr);
+
+    if (remainingMs === null || remainingMs <= 0) {
+      alert('시간 형식: H:MM:SS, MM:SS, 또는 MM\n예: 1:23:45, 45:30, 30');
+      return;
+    }
+
+    try {
+      await setBossTimer({
+        bossName,
+        endTime: Date.now() + remainingMs,
+        respawnMinutes,
+      });
+      // 입력 초기화
+      setDirectTimeInputs(prev => ({ ...prev, [bossName]: '' }));
+      setShowDirectInput(null);
+    } catch (error) {
+      console.error('타이머 시작 실패:', error);
+      alert('타이머 시작에 실패했습니다.');
+    }
+  };
+
   // 직접 시간 설정 (HH:MM 또는 HH:MM:SS 형식)
   const setCustomTime = async (bossName: string, timeStr: string) => {
     const timer = timers.find(t => t.bossName === bossName);
@@ -1038,8 +1092,11 @@ function FieldBossContent() {
     return 'text-red-400';
   };
 
-  // 점검 종료 시간으로 모든 활성 타이머 리셋
-  const resetAllTimersToMaintenanceEnd = async () => {
+  // 특수 보스 목록 (점검 리셋에서 제외)
+  const EXCLUDED_BOSSES = ['감시자 카이라', '수호신장 나흐마'];
+
+  // 점검 종료 시간 기준으로 모든 보스 타이머 생성 (개별 리젠 시간 적용)
+  const resetAllBossesFromMaintenanceEnd = async () => {
     if (!maintenanceEndTime) {
       alert('점검 종료 시간을 입력해주세요 (예: 14:30)');
       return;
@@ -1053,23 +1110,36 @@ function FieldBossContent() {
     }
 
     const [hours, minutes] = parts;
-    const now = new Date();
     const target = new Date();
     target.setHours(hours, minutes, 0, 0);
 
     // 입력한 시간이 현재보다 과거면 내일로 설정
-    if (target.getTime() <= now.getTime()) {
+    if (target.getTime() <= Date.now()) {
       target.setDate(target.getDate() + 1);
     }
 
     const maintenanceEndMs = target.getTime();
+    let count = 0;
 
-    // 모든 활성 타이머를 점검 종료 시간으로 리셋
-    for (const timer of timers) {
-      try {
-        await updateBossTimer(timer.bossName, maintenanceEndMs, timer.respawnMinutes);
-      } catch (error) {
-        console.error(`타이머 리셋 실패: ${timer.bossName}`, error);
+    // 모든 보스 데이터 순회 (활성 타이머가 아닌 전체 보스)
+    for (const group of bosses) {
+      for (const boss of group.bosses) {
+        // 특수 보스 제외 (카이라: 매 정각, 나흐마: 토/일 고정)
+        if (EXCLUDED_BOSSES.includes(boss.name) || boss.minutes === 0) continue;
+
+        // 점검 종료 + 리젠 시간 = 첫 리젠 예정 시각
+        const firstRespawnTime = maintenanceEndMs + (boss.minutes * 60 * 1000);
+
+        try {
+          await setBossTimer({
+            bossName: boss.name,
+            endTime: firstRespawnTime,
+            respawnMinutes: boss.minutes,
+          });
+          count++;
+        } catch (error) {
+          console.error(`타이머 생성 실패: ${boss.name}`, error);
+        }
       }
     }
 
@@ -1078,8 +1148,14 @@ function FieldBossContent() {
     preNotifiedTimersRef.current.clear();
     restartingTimersRef.current.clear();
 
-    alert(`${timers.length}개 타이머가 ${maintenanceEndTime} 기준으로 리셋되었습니다.\n보스 처치 시 [처치] 버튼으로 보정하세요.`);
+    alert(`${count}개 보스 타이머가 생성되었습니다.\n점검 종료: ${maintenanceEndTime}\n\n각 보스별 첫 리젠 시간:\n• 30분 보스 → ${formatTimeFromMs(maintenanceEndMs + 30 * 60 * 1000)}\n• 1시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 60 * 60 * 1000)}\n• 3시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 180 * 60 * 1000)}\n• 6시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 360 * 60 * 1000)}\n• 12시간 보스 → ${formatTimeFromMs(maintenanceEndMs + 720 * 60 * 1000)}\n\n※ 감시자 카이라, 수호신장 나흐마 제외`);
     setIsMaintenanceMode(false);
+  };
+
+  // ms를 HH:MM 형식으로 변환
+  const formatTimeFromMs = (ms: number) => {
+    const date = new Date(ms);
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   };
 
   return (
@@ -1093,8 +1169,7 @@ function FieldBossContent() {
       </p>
 
       {/* 점검 리셋 기능 */}
-      {timers.length > 0 && (
-        <div className="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-500/30 rounded-xl p-4">
+      <div className="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-500/30 rounded-xl p-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <span className="text-orange-400 font-bold text-sm">🔧 점검 리셋</span>
@@ -1115,8 +1190,9 @@ function FieldBossContent() {
           {isMaintenanceMode && (
             <div className="mt-4 pt-4 border-t border-orange-500/20 space-y-3">
               <p className="text-zinc-400 text-xs">
-                점검 종료 시간을 입력하면 모든 활성 타이머가 해당 시간으로 리셋됩니다.
-                <br />이후 보스를 처치하면 [처치] 버튼을 눌러 정상 타이머로 보정하세요.
+                점검 종료 시간을 입력하면 <span className="text-amber-400">모든 보스의 타이머가 자동 생성</span>됩니다.
+                <br />각 보스의 리젠 시간에 맞춰 계산됩니다 (30분 보스 → +30분, 6시간 보스 → +6시간)
+                <br /><span className="text-purple-400">※ 감시자 카이라(매 정각), 수호신장 나흐마(토/일 20시)는 제외</span>
               </p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -1130,19 +1206,18 @@ function FieldBossContent() {
                   />
                 </div>
                 <button
-                  onClick={resetAllTimersToMaintenanceEnd}
+                  onClick={resetAllBossesFromMaintenanceEnd}
                   className="bg-orange-500 hover:bg-orange-600 text-zinc-900 font-bold text-xs px-4 py-1.5 rounded-lg transition-colors"
                 >
-                  전체 리셋 ({timers.length}개)
+                  전체 타이머 생성
                 </button>
               </div>
               <p className="text-orange-400/70 text-xs">
-                ⚠️ 모든 타이머가 점검 종료 시간에 리젠으로 설정됩니다
+                ⚠️ 기존 타이머를 덮어쓰고 모든 보스의 새 타이머가 생성됩니다
               </p>
             </div>
           )}
         </div>
-      )}
 
       {/* 활성 타이머 */}
       {timers.length > 0 && (
@@ -1364,6 +1439,13 @@ function FieldBossContent() {
                             {boss.respawn}
                           </span>
                           <button
+                            onClick={() => setShowDirectInput(showDirectInput === boss.name ? null : boss.name)}
+                            className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 font-medium text-xs px-2 py-1 rounded transition-colors"
+                            title="남은 시간 직접 입력"
+                          >
+                            입력
+                          </button>
+                          <button
                             onClick={() => startTimer(boss.name, boss.minutes)}
                             className="bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold text-xs px-2 py-1 rounded transition-colors"
                           >
@@ -1373,6 +1455,26 @@ function FieldBossContent() {
                       )}
                     </div>
                   </div>
+                  {/* 직접 시간 입력 패널 */}
+                  {showDirectInput === boss.name && boss.minutes > 0 && (
+                    <div className="mt-2 pt-2 border-t border-zinc-700 flex items-center gap-2 flex-wrap">
+                      <span className="text-zinc-400 text-xs">남은 시간:</span>
+                      <input
+                        type="text"
+                        value={directTimeInputs[boss.name] || ''}
+                        onChange={(e) => setDirectTimeInputs(prev => ({ ...prev, [boss.name]: e.target.value }))}
+                        placeholder="1:23:45"
+                        className="w-24 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-xs text-white font-mono focus:border-cyan-500 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => startTimerWithDirectTime(boss.name, boss.minutes)}
+                        className="bg-cyan-500 hover:bg-cyan-600 text-zinc-900 font-bold text-xs px-2 py-1 rounded transition-colors"
+                      >
+                        시작
+                      </button>
+                      <span className="text-zinc-500 text-xs">(H:MM:SS, MM:SS, MM)</span>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -1417,7 +1519,22 @@ function ManualContent() {
             <p>2. 타이머가 시작되고, 리젠 시간이 카운트다운됩니다</p>
             <p>3. <span className="text-cyan-400 font-bold">1분 전</span>에 알림 + 비프음 3번</p>
             <p>4. <span className="text-red-400 font-bold">리젠 시</span> 알림 + 비프음 3번</p>
-            <p>5. 리젠 후 <span className="text-green-400 font-bold">30초 뒤 자동으로 다음 사이클 시작</span></p>
+            <p>5. 리젠 후 <span className="text-green-400 font-bold">즉시 자동으로 다음 사이클 시작</span></p>
+          </div>
+        </div>
+
+        {/* 직접 시간 입력 */}
+        <div className="space-y-2">
+          <h5 className="text-white font-bold text-xs">⌨️ 직접 시간 입력 (게임 내 시간 확인 시)</h5>
+          <div className="text-zinc-300 text-xs space-y-1 pl-4">
+            <p>1. 보스 옆의 <span className="text-zinc-400 font-bold">[입력]</span> 버튼 클릭</p>
+            <p>2. 게임에서 확인한 남은 시간을 입력합니다:</p>
+            <div className="pl-4 space-y-1 mt-1">
+              <p>• <span className="text-cyan-400">H:MM:SS</span>: 1:23:45 (1시간 23분 45초)</p>
+              <p>• <span className="text-cyan-400">MM:SS</span>: 45:30 (45분 30초)</p>
+              <p>• <span className="text-cyan-400">MM</span>: 30 (30분)</p>
+            </div>
+            <p>3. <span className="text-cyan-400 font-bold">[시작]</span> 버튼으로 타이머 시작</p>
           </div>
         </div>
 
@@ -1460,9 +1577,15 @@ function ManualContent() {
           <h5 className="text-white font-bold text-xs">🔧 점검 리셋 (점검 후 보스 리젠 시)</h5>
           <div className="text-zinc-300 text-xs space-y-1 pl-4">
             <p>• 임시점검/정기점검 후 대부분의 필드보스가 리젠됩니다</p>
-            <p>• <span className="text-orange-400 font-bold">[점검 리셋]</span> 버튼 클릭 → 점검 종료 시간 입력 (예: 14:30)</p>
-            <p>• <span className="text-orange-400 font-bold">[전체 리셋]</span> 클릭 시 모든 활성 타이머가 해당 시간으로 설정</p>
-            <p>• 이후 보스 처치 시 <span className="text-amber-400 font-bold">[처치]</span> 버튼으로 정상 타이머 보정</p>
+            <p>• <span className="text-orange-400 font-bold">[점검 리셋]</span> 열기 → 점검 종료 시간 입력 (예: 14:30)</p>
+            <p>• <span className="text-orange-400 font-bold">[전체 타이머 생성]</span> 클릭 시:</p>
+            <div className="pl-4 space-y-1 mt-1">
+              <p>• 30분 보스 → 점검 종료 + 30분 후 리젠</p>
+              <p>• 1시간 보스 → 점검 종료 + 1시간 후 리젠</p>
+              <p>• 6시간 보스 → 점검 종료 + 6시간 후 리젠</p>
+              <p>• <span className="text-purple-400">※ 감시자 카이라, 수호신장 나흐마는 제외</span></p>
+            </div>
+            <p>• 보정 필요 시 <span className="text-zinc-400 font-bold">[입력]</span> 버튼으로 직접 시간 입력</p>
           </div>
         </div>
       </div>
@@ -1504,7 +1627,8 @@ function ManualContent() {
       <div className="bg-zinc-900 rounded-lg p-4 space-y-2">
         <h4 className="text-zinc-300 font-bold text-sm">💡 유용한 팁</h4>
         <div className="text-zinc-400 text-xs space-y-1">
-          <p>• 보스는 보통 리젠 후 1분 내외로 처치되므로, 자동 재시작 시 30초 딜레이가 적용됩니다</p>
+          <p>• 리젠 후 즉시 다음 타이머가 자동 시작됩니다</p>
+          <p>• 게임에서 남은 시간 확인 시 <span className="text-cyan-400">[입력]</span> 버튼으로 정확한 시간 설정 가능</p>
           <p>• 타이머 시간은 ±10분 정도 오차가 있을 수 있습니다</p>
           <p>• 모바일에서도 브라우저를 열어두면 알림을 받을 수 있습니다</p>
           <p>• 여러 보스 타이머를 동시에 관리할 수 있습니다</p>

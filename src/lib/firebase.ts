@@ -138,6 +138,8 @@ export async function updateBossTimer(bossName: string, newEndTime: number, resp
   await set(timerRef, {
     ...existing,
     endTime: newEndTime,
+    // respawnMinutes가 전달되면 업데이트, 아니면 기존 값 유지
+    respawnMinutes: respawnMinutes !== undefined ? respawnMinutes : existing.respawnMinutes,
   });
 
   return true;
