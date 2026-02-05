@@ -958,6 +958,22 @@ function FieldBossContent() {
     }
   };
 
+  // 모든 타이머 삭제
+  const cancelAllTimers = async () => {
+    if (!confirm(`활성 타이머 ${timers.length}개를 모두 삭제하시겠습니까?`)) return;
+
+    for (const timer of timers) {
+      try {
+        await removeBossTimer(timer.bossName);
+        notifiedTimersRef.current.delete(timer.bossName);
+        preNotifiedTimersRef.current.delete(timer.bossName);
+      } catch (error) {
+        console.error(`타이머 삭제 실패: ${timer.bossName}`, error);
+      }
+    }
+    restartingTimersRef.current.clear();
+  };
+
   // 타이머 시간 보정 (분 단위)
   const adjustTimer = async (bossName: string, adjustMinutes: number) => {
     const timer = timers.find(t => t.bossName === bossName);
@@ -981,7 +997,8 @@ function FieldBossContent() {
   const [customTimeInput, setCustomTimeInput] = useState<string>('');
 
   // 점검 리셋 상태
-  const [maintenanceEndTime, setMaintenanceEndTime] = useState<string>('');
+  const [maintenanceEndDate, setMaintenanceEndDate] = useState<string>(''); // YYYY-MM-DD
+  const [maintenanceEndTime, setMaintenanceEndTime] = useState<string>(''); // HH:MM
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
 
   // 직접 시간 입력 상태 (보스별)
@@ -1098,19 +1115,29 @@ function FieldBossContent() {
   // 점검 종료 시간 기준으로 모든 보스 타이머 생성 (개별 리젠 시간 적용)
   const resetAllBossesFromMaintenanceEnd = async () => {
     if (!maintenanceEndTime) {
-      alert('점검 종료 시간을 입력해주세요 (예: 14:30)');
+      alert('점검 종료 시간을 입력해주세요 (예: 16:30)');
       return;
     }
 
     // HH:MM 파싱
-    const parts = maintenanceEndTime.split(':').map(p => parseInt(p));
-    if (parts.length < 2 || parts.some(isNaN)) {
-      alert('시간 형식: HH:MM (예: 14:30)');
+    const timeParts = maintenanceEndTime.split(':').map(p => parseInt(p));
+    if (timeParts.length < 2 || timeParts.some(isNaN)) {
+      alert('시간 형식: HH:MM (예: 16:30)');
       return;
     }
 
-    const [hours, minutes] = parts;
+    const [hours, minutes] = timeParts;
     const target = new Date();
+
+    // 날짜가 입력되었으면 해당 날짜 사용
+    if (maintenanceEndDate) {
+      const dateParts = maintenanceEndDate.split('-').map(p => parseInt(p));
+      if (dateParts.length === 3 && !dateParts.some(isNaN)) {
+        const [year, month, day] = dateParts;
+        target.setFullYear(year, month - 1, day); // month는 0-indexed
+      }
+    }
+
     target.setHours(hours, minutes, 0, 0);
 
     // 점검 종료 시간은 과거여도 그대로 사용 (리젠 사이클 계산 기준점)
@@ -1193,12 +1220,21 @@ function FieldBossContent() {
               </p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <span className="text-zinc-400 text-xs">점검 종료:</span>
+                  <span className="text-zinc-400 text-xs">날짜:</span>
+                  <input
+                    type="date"
+                    value={maintenanceEndDate}
+                    onChange={(e) => setMaintenanceEndDate(e.target.value)}
+                    className="bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white font-mono focus:border-orange-500 focus:outline-none"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400 text-xs">시간:</span>
                   <input
                     type="text"
                     value={maintenanceEndTime}
                     onChange={(e) => setMaintenanceEndTime(e.target.value)}
-                    placeholder="14:30"
+                    placeholder="16:30"
                     className="w-20 bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white font-mono focus:border-orange-500 focus:outline-none"
                   />
                 </div>
@@ -1219,10 +1255,18 @@ function FieldBossContent() {
       {/* 활성 타이머 */}
       {timers.length > 0 && (
         <div className="bg-gradient-to-r from-amber-500/20 to-red-500/20 border border-amber-500/30 rounded-xl p-4">
-          <h4 className="text-amber-400 font-bold text-sm mb-3 flex items-center gap-2">
-            <span className="animate-pulse">⏱️</span> 활성 타이머 ({timers.length})
-            <span className="text-zinc-500 text-xs font-normal ml-2">리젠 시 자동 재시작</span>
-          </h4>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-amber-400 font-bold text-sm flex items-center gap-2">
+              <span className="animate-pulse">⏱️</span> 활성 타이머 ({timers.length})
+              <span className="text-zinc-500 text-xs font-normal ml-2">리젠 시 자동 재시작</span>
+            </h4>
+            <button
+              onClick={cancelAllTimers}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors"
+            >
+              전체 삭제
+            </button>
+          </div>
           <div className="space-y-2">
             {timers.map(timer => {
               const remaining = timer.endTime - now;
