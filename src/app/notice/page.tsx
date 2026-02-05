@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import AlertBar from '../components/AlertBar';
 
-type NoticeType = 'guild' | 'subguild' | 'ludra' | 'pwa';
+type NoticeType = 'guild' | 'subguild' | 'ludra' | 'pwa' | 'siteGuide' | 'discordBot';
 
 export default function NoticePage() {
   const [activeTab, setActiveTab] = useState<NoticeType>('guild');
@@ -29,7 +29,7 @@ export default function NoticePage() {
         <h1 className="text-2xl font-bold text-white mb-6">공지사항</h1>
 
         {/* 탭 버튼 */}
-        <div className="flex gap-2 mb-8 border-b border-zinc-700">
+        <div className="flex gap-2 mb-8 border-b border-zinc-700 overflow-x-auto pb-px scrollbar-hide">
           <button
             onClick={() => setActiveTab('guild')}
             className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
@@ -70,6 +70,26 @@ export default function NoticePage() {
           >
             앱 설치
           </button>
+          <button
+            onClick={() => setActiveTab('siteGuide')}
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              activeTab === 'siteGuide'
+                ? 'text-amber-400 border-amber-400'
+                : 'text-zinc-400 border-transparent hover:text-white'
+            }`}
+          >
+            사이트 가이드
+          </button>
+          <button
+            onClick={() => setActiveTab('discordBot')}
+            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+              activeTab === 'discordBot'
+                ? 'text-amber-400 border-amber-400'
+                : 'text-zinc-400 border-transparent hover:text-white'
+            }`}
+          >
+            사계봇 가이드
+          </button>
         </div>
 
         {/* 공지 내용 */}
@@ -78,6 +98,8 @@ export default function NoticePage() {
           {activeTab === 'subguild' && <SubGuildRules />}
           {activeTab === 'ludra' && <LudraRules />}
           {activeTab === 'pwa' && <PWAGuide />}
+          {activeTab === 'siteGuide' && <SiteGuide />}
+          {activeTab === 'discordBot' && <DiscordBotGuide />}
         </div>
 
         {/* 참여 링크 */}
@@ -583,6 +605,463 @@ function LudraRules() {
           인원이 찼으면 추가 이모지 체크는 하지 말아주시고, 다음 모집글을 새로 작성해 주세요. (출발 인원 혼선 방지)
         </p>
       </section>
+    </article>
+  );
+}
+
+function SiteGuide() {
+  return (
+    <article className="text-zinc-200 leading-relaxed tracking-wide">
+      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
+        사계 레기온 사이트 사용 가이드
+      </h2>
+
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-8">
+        <p className="text-amber-300 font-medium text-center mb-2">
+          sagye.kr - 사계 레기온 공식 사이트
+        </p>
+        <p className="text-zinc-400 text-sm text-center">
+          레기온원 정보, 일정, 필드보스 타이머 등 다양한 기능을 제공합니다
+        </p>
+      </div>
+
+      {/* 메인 페이지 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-cyan-400 mb-4">메인 페이지</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <ul className="space-y-3 text-zinc-300">
+            <li className="pl-4 border-l-2 border-cyan-500/50">
+              <strong className="text-white">AION2 공식 유튜브 연동</strong><br />
+              <span className="text-zinc-400">라이브 방송 중이면 자동 표시, 없으면 최신 영상 표시</span>
+            </li>
+            <li className="pl-4 border-l-2 border-zinc-700">
+              <strong className="text-white">빠른 링크</strong><br />
+              <span className="text-zinc-400">레기온원, 일정, 공지사항, 업데이트 내역 바로가기</span>
+            </li>
+            <li className="pl-4 border-l-2 border-zinc-700">
+              <strong className="text-white">외부 링크</strong><br />
+              <span className="text-zinc-400">인벤, 아이온2 디시, 히든큐브 바로가기</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* 레기온원 페이지 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-green-400 mb-4">레기온원 페이지 (/members)</h3>
+        <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+          <ul className="space-y-3 text-zinc-300">
+            <li className="pl-4 border-l-2 border-green-500/50">
+              <strong className="text-white">길드원 목록 조회</strong><br />
+              <span className="text-zinc-400">계급, 캐릭터명, 직업, 나이, 디스코드, 전투정보 표시</span>
+            </li>
+            <li className="pl-4 border-l-2 border-zinc-700">
+              <strong className="text-white">직업별 필터링</strong><br />
+              <span className="text-zinc-400">상단 직업 버튼으로 특정 직업만 필터링</span>
+            </li>
+            <li className="pl-4 border-l-2 border-zinc-700">
+              <strong className="text-white">본캐/부캐 표시</strong><br />
+              <span className="text-zinc-400">부캐의 경우 본캐 닉네임 함께 표시</span>
+            </li>
+            <li className="pl-4 border-l-2 border-zinc-700">
+              <strong className="text-white">aion2tool 연동</strong><br />
+              <span className="text-zinc-400">캐릭터명 클릭 시 aion2tool 상세 페이지로 이동</span>
+            </li>
+          </ul>
+        </div>
+        <div className="bg-zinc-700/30 rounded-lg p-3 text-sm text-zinc-400">
+          <strong className="text-zinc-300">전투정보 칼럼:</strong> 최고점수 / 현재점수 / 전투력 순서로 표시
+        </div>
+      </section>
+
+      {/* 일정 페이지 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">일정 페이지 (/schedule)</h3>
+
+        <div className="space-y-4">
+          {/* 일일/주간 탭 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <h4 className="text-white font-medium mb-3">일일/주간 탭</h4>
+            <ul className="space-y-2 text-zinc-300 text-sm">
+              <li>• <strong className="text-white">슈고 페스타</strong>: 매시 15분, 45분</li>
+              <li>• <strong className="text-white">시공의 균열</strong>: 2,5,8,11,14,17,20,23시</li>
+              <li>• <strong className="text-white">검은 구름 무역단</strong>: 화/목/토/일 00:00~24:00</li>
+              <li>• <strong className="text-white">주간 컨텐츠</strong>: 물질변환, 산들바람 상회, 루드라 등</li>
+            </ul>
+          </div>
+
+          {/* 필드보스 탭 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <h4 className="text-white font-medium mb-3">필드보스 탭 (핵심 기능)</h4>
+            <ul className="space-y-3 text-zinc-300">
+              <li className="pl-4 border-l-2 border-purple-500/50">
+                <strong className="text-white">실시간 타이머 공유</strong><br />
+                <span className="text-zinc-400">Firebase 연동으로 길드원 전체가 타이머 공유</span>
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                <strong className="text-white">처치 버튼</strong><br />
+                <span className="text-zinc-400">보스 처치 시 클릭 → 자동으로 리젠 타이머 시작</span>
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                <strong className="text-white">직접 시간 입력</strong><br />
+                <span className="text-zinc-400">[입력] 버튼으로 게임에서 본 남은 시간 직접 입력<br />
+                형식: H:MM:SS, MM:SS, MM (예: 1:23:45, 45:30, 30)</span>
+              </li>
+              <li className="pl-4 border-l-2 border-amber-500/50">
+                <strong className="text-amber-400">관심 보스 기능</strong><br />
+                <span className="text-zinc-400">⭐ 버튼으로 관심 보스 등록 → 황금 테두리 + 5분 전 추가 알림</span>
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                <strong className="text-white">점검 리셋</strong><br />
+                <span className="text-zinc-400">점검 종료 날짜+시간 입력 → 모든 보스 리젠 시간 자동 계산</span>
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                <strong className="text-white">지도 보기</strong><br />
+                <span className="text-zinc-400">마족/천족/어비스 진영별 필드보스 위치 지도</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* 알림 설정 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <h4 className="text-white font-medium mb-3">알림 설정</h4>
+            <ul className="space-y-2 text-zinc-300 text-sm">
+              <li>• <strong className="text-white">알림음 ON/OFF</strong>: 비프음 알림 토글</li>
+              <li>• <strong className="text-white">슈고 페스타 알림</strong>: 매시 14분, 44분에 1분 전 알림</li>
+              <li>• <strong className="text-white">시공의 균열 알림</strong>: 5분 전 알림</li>
+              <li>• <strong className="text-white">검은 구름 무역단 알림</strong>: 자정에 알림</li>
+              <li>• <strong className="text-white">나흐마 알림</strong>: 토/일 19:55에 알림</li>
+            </ul>
+          </div>
+
+          {/* 매뉴얼 탭 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <h4 className="text-white font-medium mb-3">매뉴얼 탭</h4>
+            <p className="text-zinc-400 text-sm">
+              필드보스 타이머 상세 사용법, 점검 리셋 사용법, 시간 입력 형식 등 자세한 가이드 제공
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 팁 페이지들 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-orange-400 mb-4">정보 페이지</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="text-white font-medium mb-2">외형 DB (/tips/appearance)</div>
+            <p className="text-zinc-400 text-sm">아이온2 외형 아이템 정보</p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="text-white font-medium mb-2">펫 DB (/tips/pets)</div>
+            <p className="text-zinc-400 text-sm">펫 종류, 스탯, 획득처 정보</p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="text-white font-medium mb-2">시즌2 (/season2)</div>
+            <p className="text-zinc-400 text-sm">시즌2 아르카나, 보스, 균열 정보</p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="text-white font-medium mb-2">업데이트 내역 (/updates)</div>
+            <p className="text-zinc-400 text-sm">사이트 변경 기록</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 앱 설치 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-blue-400 mb-4">앱처럼 사용하기 (PWA)</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <p className="text-zinc-300 mb-3">
+            홈 화면에 앱 아이콘을 추가하면 더 빠르고 편리하게 이용할 수 있습니다.
+          </p>
+          <ul className="space-y-2 text-zinc-400 text-sm">
+            <li>• <strong className="text-zinc-300">Android</strong>: Chrome → 메뉴(⋮) → 홈 화면에 추가</li>
+            <li>• <strong className="text-zinc-300">iOS</strong>: Safari → 공유(□↑) → 홈 화면에 추가</li>
+          </ul>
+          <p className="text-zinc-500 text-sm mt-3">
+            자세한 설치 방법은 &quot;앱 설치&quot; 탭을 참고하세요.
+          </p>
+        </div>
+      </section>
+
+      <div className="bg-zinc-800 rounded-lg p-6 text-center">
+        <p className="text-zinc-300 leading-relaxed">
+          문의 및 건의사항은<br />
+          <strong className="text-indigo-400">디스코드</strong>로 연락해주세요!
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function DiscordBotGuide() {
+  return (
+    <article className="text-zinc-200 leading-relaxed tracking-wide">
+      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
+        사계봇 사용 가이드
+      </h2>
+
+      <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4 mb-8">
+        <p className="text-indigo-300 font-medium text-center mb-2">
+          디스코드 사계봇 - 레기온 전용 봇
+        </p>
+        <p className="text-zinc-400 text-sm text-center">
+          인증, 전투력 조회, 파티 모집 등 다양한 기능을 디스코드에서 바로 사용
+        </p>
+      </div>
+
+      {/* 기본 사용법 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">기본 사용법</h3>
+        <div className="bg-zinc-800 rounded-lg p-4">
+          <p className="text-zinc-300 mb-3">
+            모든 명령어는 <strong className="text-indigo-400">/</strong> (슬래시)로 시작합니다.
+          </p>
+          <p className="text-zinc-400 text-sm">
+            디스코드 채팅창에 <strong className="text-white">/</strong>를 입력하면 사용 가능한 명령어 목록이 표시됩니다.
+          </p>
+        </div>
+      </section>
+
+      {/* 인증 시스템 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-green-400 mb-4">인증 시스템</h3>
+
+        <div className="space-y-4">
+          {/* /인증 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-green-400 font-mono">/인증</code>
+              <span className="text-zinc-500 text-sm">본캐 인증</span>
+            </div>
+            <p className="text-zinc-300 mb-2">게임 캐릭터를 디스코드 계정에 연결합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/인증 닉네임:도하</code>
+            </div>
+            <ul className="mt-3 space-y-1 text-zinc-400 text-sm">
+              <li>• 인증 후 디스코드 닉네임이 자동으로 변경됩니다</li>
+              <li>• 레기온원 정보와 연동되어 역할이 부여됩니다</li>
+            </ul>
+          </div>
+
+          {/* /부캐인증 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-green-400 font-mono">/부캐인증</code>
+              <span className="text-zinc-500 text-sm">부캐 등록</span>
+            </div>
+            <p className="text-zinc-300 mb-2">본캐 인증 후 부캐를 추가로 등록합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/부캐인증 닉네임:부캐닉</code>
+            </div>
+            <p className="text-zinc-500 text-sm mt-2">* 본캐 인증이 선행되어야 합니다</p>
+          </div>
+
+          {/* /닉변경 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-green-400 font-mono">/닉변경</code>
+              <span className="text-zinc-500 text-sm">닉네임 변경</span>
+            </div>
+            <p className="text-zinc-300 mb-2">게임 내 닉네임 변경 시 인증 정보를 업데이트합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/닉변경 새닉네임:새닉</code>
+            </div>
+          </div>
+
+          {/* /인증해제 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-red-400 font-mono">/인증해제</code>
+              <span className="text-zinc-500 text-sm">인증 삭제</span>
+            </div>
+            <p className="text-zinc-300">등록된 인증 정보를 삭제합니다.</p>
+          </div>
+
+          {/* /내정보 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-cyan-400 font-mono">/내정보</code>
+              <span className="text-zinc-500 text-sm">내 인증 정보 확인</span>
+            </div>
+            <p className="text-zinc-300">현재 등록된 본캐/부캐 정보를 확인합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 전투력 조회 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-blue-400 mb-4">전투력 조회</h3>
+
+        <div className="space-y-4">
+          {/* /아툴 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/아툴</code>
+              <span className="text-zinc-500 text-sm">aion2tool 링크</span>
+            </div>
+            <p className="text-zinc-300 mb-2">캐릭터의 aion2tool 상세 페이지 링크를 생성합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/아툴 닉네임:도하</code>
+            </div>
+          </div>
+
+          {/* /전투력 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/전투력</code>
+              <span className="text-zinc-500 text-sm">전투력 조회</span>
+            </div>
+            <p className="text-zinc-300 mb-2">캐릭터의 현재 전투력, 전투점수 등을 조회합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/전투력 닉네임:도하</code>
+            </div>
+            <p className="text-zinc-400 text-sm mt-2">aion2tool API를 통해 실시간 데이터를 가져옵니다.</p>
+          </div>
+
+          {/* /검색 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-blue-400 font-mono">/검색</code>
+              <span className="text-zinc-500 text-sm">캐릭터 검색</span>
+            </div>
+            <p className="text-zinc-300 mb-2">PlayNC 공식 API로 캐릭터를 검색합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/검색 닉네임:도하</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 데이터 수집 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-purple-400 mb-4">데이터 수집 (운영진 전용)</h3>
+
+        <div className="space-y-4">
+          {/* /수집 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-purple-400 font-mono">/수집</code>
+              <span className="text-zinc-500 text-sm">단일 캐릭터 수집</span>
+            </div>
+            <p className="text-zinc-300 mb-2">특정 캐릭터의 전투정보를 수집하여 구글 시트에 저장합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/수집 닉네임:도하</code>
+            </div>
+          </div>
+
+          {/* /통합수집 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-purple-400 font-mono">/통합수집</code>
+              <span className="text-zinc-500 text-sm">전체 레기온원 수집</span>
+            </div>
+            <p className="text-zinc-300 mb-2">레기온원 전체의 전투정보를 일괄 수집합니다.</p>
+            <div className="bg-red-500/10 border border-red-500/30 rounded p-2 mt-2">
+              <p className="text-red-300 text-sm">* 운영진 전용 명령어입니다</p>
+            </div>
+          </div>
+
+          {/* /동기화 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-purple-400 font-mono">/동기화</code>
+              <span className="text-zinc-500 text-sm">시트 동기화</span>
+            </div>
+            <p className="text-zinc-300">구글 시트 데이터를 최신 상태로 동기화합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 파티 모집 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-orange-400 mb-4">파티 모집</h3>
+
+        <div className="space-y-4">
+          {/* /파티 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-orange-400 font-mono">/파티</code>
+              <span className="text-zinc-500 text-sm">파티 모집 생성</span>
+            </div>
+            <p className="text-zinc-300 mb-2">파티 모집 게시물을 생성합니다.</p>
+            <div className="bg-zinc-700/50 rounded p-3 mt-2">
+              <p className="text-zinc-400 text-sm mb-1">사용 예시:</p>
+              <code className="text-indigo-300">/파티 컨텐츠:루드라 시간:22:00 메모:1~2넴</code>
+            </div>
+            <ul className="mt-3 space-y-1 text-zinc-400 text-sm">
+              <li>• 이모지 반응으로 참가 신청</li>
+              <li>• 역할(탱/힐/딜)별 자동 분류</li>
+              <li>• 인원 충족 시 알림</li>
+            </ul>
+          </div>
+
+          {/* /참가현황 */}
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <code className="bg-zinc-700 px-2 py-1 rounded text-orange-400 font-mono">/참가현황</code>
+              <span className="text-zinc-500 text-sm">참가 현황 확인</span>
+            </div>
+            <p className="text-zinc-300">현재 모집 중인 파티의 참가 현황을 확인합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 기타 명령어 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-zinc-400 mb-4">기타 명령어</h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <code className="bg-zinc-700 px-2 py-1 rounded text-zinc-300 font-mono">/핑</code>
+            <p className="text-zinc-400 text-sm mt-2">봇 응답 속도 테스트</p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <code className="bg-zinc-700 px-2 py-1 rounded text-zinc-300 font-mono">/사이트</code>
+            <p className="text-zinc-400 text-sm mt-2">사계 레기온 사이트 링크</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">자주 묻는 질문</h3>
+
+        <div className="space-y-3">
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <p className="text-white font-medium mb-2">Q. 명령어가 작동하지 않아요</p>
+            <p className="text-zinc-400 text-sm">
+              디스코드를 새로고침하거나 재접속해보세요. 명령어 목록이 갱신되지 않았을 수 있습니다.
+            </p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <p className="text-white font-medium mb-2">Q. 인증했는데 닉네임이 안 바뀌어요</p>
+            <p className="text-zinc-400 text-sm">
+              봇의 역할이 내 역할보다 낮으면 닉네임 변경이 불가합니다. 운영진에게 문의해주세요.
+            </p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
+            <p className="text-white font-medium mb-2">Q. 부캐 인증이 안 돼요</p>
+            <p className="text-zinc-400 text-sm">
+              본캐 인증이 먼저 되어 있어야 합니다. /내정보로 현재 인증 상태를 확인해보세요.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-zinc-800 rounded-lg p-6 text-center">
+        <p className="text-zinc-300 leading-relaxed">
+          사계봇 관련 문의는<br />
+          <strong className="text-indigo-400">디스코드 #봇-건의</strong> 채널을 이용해주세요!
+        </p>
+      </div>
     </article>
   );
 }
