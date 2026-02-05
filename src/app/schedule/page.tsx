@@ -1029,26 +1029,8 @@ function FieldBossContent() {
     restartingTimersRef.current.clear();
   };
 
-  // 타이머 시간 보정 (분 단위)
-  const adjustTimer = async (bossName: string, adjustMinutes: number) => {
-    const timer = timers.find(t => t.bossName === bossName);
-    if (!timer) return;
-
-    const newEndTime = timer.endTime + adjustMinutes * 60 * 1000;
-    // 과거 시간으로 설정되지 않도록 최소 1분 보장
-    const minEndTime = Date.now() + 60 * 1000;
-    const finalEndTime = Math.max(newEndTime, minEndTime);
-
-    try {
-      await updateBossTimer(bossName, finalEndTime);
-    } catch (error) {
-      console.error('타이머 보정 실패:', error);
-    }
-  };
-
   // 보정 모달 상태
   const [adjustModalBoss, setAdjustModalBoss] = useState<string | null>(null);
-  const [customAdjustMinutes, setCustomAdjustMinutes] = useState<string>('');
   const [customTimeInput, setCustomTimeInput] = useState<string>('');
 
   // 점검 리셋 상태
@@ -1105,36 +1087,6 @@ function FieldBossContent() {
     } catch (error) {
       console.error('타이머 시작 실패:', error);
       alert('타이머 시작에 실패했습니다.');
-    }
-  };
-
-  // 직접 시간 설정 (HH:MM 또는 HH:MM:SS 형식)
-  const setCustomTime = async (bossName: string, timeStr: string) => {
-    const timer = timers.find(t => t.bossName === bossName);
-    if (!timer) return;
-
-    // HH:MM 또는 HH:MM:SS 파싱
-    const parts = timeStr.split(':').map(p => parseInt(p));
-    if (parts.length < 2 || parts.some(isNaN)) {
-      alert('시간 형식: HH:MM 또는 HH:MM:SS');
-      return;
-    }
-
-    const [hours, minutes, seconds = 0] = parts;
-    const now = new Date();
-    const target = new Date();
-    target.setHours(hours, minutes, seconds, 0);
-
-    // 입력한 시간이 현재보다 과거면 내일로 설정
-    if (target.getTime() <= now.getTime()) {
-      target.setDate(target.getDate() + 1);
-    }
-
-    try {
-      await updateBossTimer(bossName, target.getTime());
-      setCustomTimeInput('');
-    } catch (error) {
-      console.error('시간 설정 실패:', error);
     }
   };
 
@@ -1383,79 +1335,36 @@ function FieldBossContent() {
                     </div>
                   </div>
 
-                  {/* 보정 패널 */}
+                  {/* 보정 패널 - 남은 시간 입력 */}
                   {isAdjusting && (
                     <div className="mt-3 pt-3 border-t border-zinc-700">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-zinc-400 text-xs">빠르게:</span>
-                        <button
-                          onClick={() => adjustTimer(timer.bossName, -5)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
-                        >
-                          -5분
-                        </button>
-                        <button
-                          onClick={() => adjustTimer(timer.bossName, -1)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
-                        >
-                          -1분
-                        </button>
-                        <span className="text-zinc-600">|</span>
-                        <span className="text-zinc-400 text-xs">느리게:</span>
-                        <button
-                          onClick={() => adjustTimer(timer.bossName, 1)}
-                          className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1 rounded"
-                        >
-                          +1분
-                        </button>
-                        <button
-                          onClick={() => adjustTimer(timer.bossName, 5)}
-                          className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1 rounded"
-                        >
-                          +5분
-                        </button>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-zinc-400 text-xs">보정:</span>
-                        <input
-                          type="number"
-                          value={customAdjustMinutes}
-                          onChange={(e) => setCustomAdjustMinutes(e.target.value)}
-                          placeholder="±분"
-                          className="w-16 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-xs text-white"
-                        />
-                        <button
-                          onClick={() => {
-                            const mins = parseInt(customAdjustMinutes);
-                            if (!isNaN(mins)) {
-                              adjustTimer(timer.bossName, mins);
-                              setCustomAdjustMinutes('');
-                            }
-                          }}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded"
-                        >
-                          적용
-                        </button>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-zinc-400 text-xs">시간 직접 설정:</span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-zinc-400 text-xs">남은 시간:</span>
                         <input
                           type="text"
                           value={customTimeInput}
                           onChange={(e) => setCustomTimeInput(e.target.value)}
-                          placeholder="14:30"
-                          className="w-20 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-xs text-white font-mono"
+                          placeholder="1:23:45"
+                          className="w-24 bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-sm text-white font-mono focus:border-cyan-500 focus:outline-none"
                         />
                         <button
                           onClick={() => {
                             if (customTimeInput) {
-                              setCustomTime(timer.bossName, customTimeInput);
+                              const remainingMs = parseRemainingTimeToMs(customTimeInput);
+                              if (remainingMs && remainingMs > 0) {
+                                updateBossTimer(timer.bossName, Date.now() + remainingMs, timer.respawnMinutes);
+                                setCustomTimeInput('');
+                                setAdjustModalBoss(null);
+                              } else {
+                                alert('시간 형식: H:MM:SS, MM:SS, 또는 MM');
+                              }
                             }
                           }}
-                          className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded"
+                          className="bg-cyan-500 hover:bg-cyan-600 text-zinc-900 font-bold text-xs px-3 py-1.5 rounded transition-colors"
                         >
                           설정
                         </button>
+                        <span className="text-zinc-500 text-xs">(H:MM:SS, MM:SS, MM)</span>
                       </div>
                     </div>
                   )}
