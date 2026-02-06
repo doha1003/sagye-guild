@@ -482,15 +482,28 @@ export default function Season2Page() {
 
               {/* 2/11 - 다음 업데이트 */}
               <div className="relative flex items-start gap-8 md:justify-center">
-                <div className="hidden md:block w-1/2 text-right pr-8" />
-                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                <div className="hidden md:block w-1/2 text-right pr-8">
+                  <div className="bg-purple-600/20 rounded-lg p-3 border border-purple-500/30">
+                    <div className="flex items-center gap-2 justify-end mb-2">
+                      <span className="text-purple-300 font-medium text-sm">균열 지대 + 시스템 개선</span>
+                      <span className="bg-purple-600/30 text-purple-400 text-[10px] font-bold px-1.5 py-0.5 rounded">NEXT</span>
+                    </div>
+                    <ul className="text-zinc-400 text-xs space-y-1 text-right">
+                      <li>• 신규 PvPvE 균열 지대</li>
+                      <li>• 토벌전 최소 기여도 도입</li>
+                      <li>• 어비스 PVP 포인트만 랭킹 반영</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950 animate-pulse">
                   <span className="text-[10px] font-bold text-white">11</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
-                  <div className="bg-purple-600/20 rounded-lg p-3 border border-purple-500/30">
+                  <span className="hidden md:inline text-purple-400 font-bold text-lg">2/11</span>
+                  <div className="md:hidden bg-purple-600/20 rounded-lg p-3 border border-purple-500/30">
                     <div className="flex items-center gap-2">
-                      <span className="text-purple-300 font-medium text-sm">어비스 균열 지대 (신규 PvPvE)</span>
-                      <span className="bg-purple-600/30 text-purple-400 text-[10px] font-bold px-1.5 py-0.5 rounded">D-6</span>
+                      <span className="text-purple-300 font-medium text-sm">균열 지대 + 시스템 개선</span>
+                      <span className="bg-purple-600/30 text-purple-400 text-[10px] font-bold px-1.5 py-0.5 rounded">NEXT</span>
                     </div>
                   </div>
                 </div>
@@ -629,14 +642,17 @@ export default function Season2Page() {
             </div>
 
             <div className="bg-gradient-to-br from-purple-600/20 to-zinc-900 border border-purple-500/30 rounded-xl p-6">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl mb-4">
-                🌀
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl">
+                  🌀
+                </div>
+                <span className="bg-purple-600/30 text-purple-400 text-xs font-bold px-2 py-1 rounded animate-pulse">D-5</span>
               </div>
               <h3 className="text-purple-400 font-bold text-xl mb-2">균열 지대</h3>
               <p className="text-zinc-300 text-sm mb-4">2월 11일 오픈</p>
               <ul className="text-zinc-400 text-sm space-y-2">
                 <li>• 신규 PvPvE 콘텐츠</li>
-                <li>• 균열에서의 대규모 전투</li>
+                <li>• 패배 측 마을에 시공의 균열 오픈</li>
                 <li>• 독점 보상 시스템</li>
               </ul>
             </div>
@@ -654,6 +670,13 @@ export default function Season2Page() {
                 <li>• 공명전 매칭 최적화</li>
                 <li>• 어비스 장비 세트효과 추가</li>
               </ul>
+              <div className="mt-3 pt-3 border-t border-cyan-500/20">
+                <p className="text-cyan-400 text-xs font-medium mb-2">2/11 추가 적용</p>
+                <ul className="text-zinc-400 text-sm space-y-1">
+                  <li>• <span className="text-yellow-400">PVP 포인트만 랭킹 반영</span></li>
+                  <li>• 토벌전 최소 기여도 필요</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -753,6 +776,57 @@ export default function Season2Page() {
         </div>
       </section>
 
+      {/* 시즌2 클래스 밸런스 */}
+      <section className="py-16 bg-zinc-900/30">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              ⚔️ 클래스 밸런스 조정
+            </h2>
+            <p className="text-zinc-400">2/3 라이브 발표 · 2~3주 간격 추가 조정 예정</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { name: '마도성', icon: '🔮', change: '상향', color: 'green', desc: '딜링 효율 개선' },
+              { name: '정령성', icon: '🌿', change: '상향', color: 'green', desc: '소환수 강화' },
+              { name: '살성', icon: '🗡️', change: '상향', color: 'green', desc: '암살 스킬 버프' },
+              { name: '치유성', icon: '💚', change: '상향', color: 'green', desc: '보호의 빛 피해 증폭 추가' },
+              { name: '궁성', icon: '🏹', change: '상향', color: 'green', desc: '원거리 딜링 개선' },
+              { name: '호법성', icon: '🛡️', change: '하향', color: 'red', desc: '밸런스 조정' },
+            ].map((cls, i) => (
+              <div
+                key={i}
+                className={`bg-zinc-800/50 border rounded-xl p-4 ${
+                  cls.change === '상향' ? 'border-green-500/30' : 'border-red-500/30'
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">{cls.icon}</span>
+                  <div className="flex-1">
+                    <span className="text-white font-bold">{cls.name}</span>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    cls.change === '상향'
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {cls.change}
+                  </span>
+                </div>
+                <p className="text-zinc-500 text-sm">{cls.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 p-4 bg-amber-900/20 rounded-xl border border-amber-500/30 text-center">
+            <p className="text-amber-400 text-sm">
+              💡 클래스 변경권 도입 재검토 중 (커뮤니티 반응 수렴 중)
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* 시즌2 주요 시스템 변경 */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4">
@@ -848,8 +922,8 @@ export default function Season2Page() {
               { icon: '🎫', title: '티켓 시스템 변경', desc: '원정/초월 티켓 차감 방식 개선', badge: '편의' },
               { icon: '🏆', title: '클래스별 랭킹', desc: '각성전/일일던전 클래스 랭킹 도입', badge: '신규' },
               { icon: '🛡️', title: '방어구 조율', desc: '방어구에 조율 옵션 추가', badge: '신규' },
-              { icon: '👊', title: '보스 패턴 완화', desc: '근거리 대상 패턴 부담 감소', badge: '밸런스' },
-              { icon: '💎', title: '영혼 각인 계승', desc: '장비 계승 시 영혼 각인 유지', badge: '예정' },
+              { icon: '⚡', title: '즉시완료권', desc: '일일던전/각성전/악몽 즉시 완료', badge: '신규' },
+              { icon: '💰', title: '거래소 개선', desc: '서버/월드 최저가 비교 기능', badge: '편의' },
               { icon: '📊', title: '통합 프리셋', desc: '타이틀, 아르카나 프리셋 포함', badge: '편의' },
             ].map((item, i) => (
               <div key={i} className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5 hover:border-zinc-600 transition-all">
@@ -939,7 +1013,7 @@ export default function Season2Page() {
               AION2 지켈 서버 · 마족
             </p>
             <p className="text-zinc-600 text-xs mt-2">
-              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.02.05
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.02.06
             </p>
           </div>
         </div>
