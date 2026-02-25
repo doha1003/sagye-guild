@@ -139,11 +139,11 @@ const NEW_DUNGEONS = [
     date: '2/25',
     type: '초월',
     name: '가라앉은 생명의 신전',
-    difficulty: '1~10단계',
+    difficulty: '1~4단계 (순차 해금)',
     boss: '가라앉은 에몬',
     desc: '수몰된 고대 신전의 비밀',
     color: 'orange',
-    status: 'upcoming',
+    status: 'live',
   },
   {
     date: '3/11',
@@ -163,6 +163,8 @@ const ARCANA_SETS = [
   { name: '신비', icon: '✨', effect: '마법 강화 · 정신력 증가', color: 'text-purple-400' },
   { name: '자유', icon: '🕊️', effect: '이동 속도 · 회피 특화', color: 'text-cyan-400' },
   { name: '일격', icon: '⚡', effect: '치명타 특화 · 폭딜', color: 'text-yellow-400' },
+  { name: '광분', icon: '🔥', effect: 'PVE 공격력 50 · 보스 피해 증폭 5%', color: 'text-orange-400', isNew: true },
+  { name: '순수', icon: '🩸', effect: 'PVE 방어력 500 · 치명타 피해 증폭 5%', color: 'text-pink-400', isNew: true },
 ];
 
 export default function Season2Page() {
@@ -247,7 +249,7 @@ export default function Season2Page() {
                 { label: '신규 원정', value: '2종', icon: '🏰', color: 'from-amber-500/20 to-amber-600/10' },
                 { label: '신규 토벌전', value: '2종', icon: '⚔️', color: 'from-red-500/20 to-red-600/10' },
                 { label: '신규 각성전', value: '2종', icon: '💀', color: 'from-purple-500/20 to-purple-600/10' },
-                { label: '신규 아르카나', value: '천칭', icon: '⚜️', color: 'from-cyan-500/20 to-cyan-600/10' },
+                { label: '신규 아르카나', value: '7종', icon: '⚜️', color: 'from-cyan-500/20 to-cyan-600/10' },
                 { label: '신규 초월', value: '1종', icon: '🔥', color: 'from-orange-500/20 to-orange-600/10' },
                 { label: '신규 성역', value: '1종', icon: '👑', color: 'from-yellow-500/20 to-yellow-600/10' },
               ].map((stat, i) => (
@@ -270,7 +272,7 @@ export default function Season2Page() {
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-gradient-to-r from-red-900/30 to-cyan-900/30 rounded-2xl p-6 md:p-8 border border-zinc-700">
             <div className="text-center mb-6">
-              <span className="bg-amber-500 text-zinc-900 text-xs font-bold px-3 py-1 rounded">시즌2 3차매칭</span>
+              <span className="bg-amber-500 text-zinc-900 text-xs font-bold px-3 py-1 rounded">시즌2 4차매칭</span>
               <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">서버 매칭 변경</h2>
               <p className="text-zinc-500 text-xs mt-2">2/25 업데이트 적용</p>
             </div>
@@ -291,22 +293,22 @@ export default function Season2Page() {
               {/* VS */}
               <div className="text-4xl md:text-5xl font-black text-zinc-600">VS</div>
 
-              {/* 네자칸 */}
+              {/* 아리엘 */}
               <div className="text-center flex-1">
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-cyan-600/30 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-cyan-500">
                   <span className="text-2xl md:text-3xl">😇</span>
                 </div>
-                <div className="text-cyan-400 font-bold text-lg md:text-xl">네자칸</div>
+                <div className="text-cyan-400 font-bold text-lg md:text-xl">아리엘</div>
                 <div className="text-zinc-500 text-sm">천족</div>
               </div>
             </div>
 
             <div className="text-center mt-6 space-y-2">
               <p className="text-zinc-400 text-sm">
-                3차 매칭으로 지켈 서버는 천족 <span className="text-cyan-400">네자칸</span> 서버와 매칭됩니다
+                4차 매칭으로 지켈 서버는 천족 <span className="text-cyan-400">아리엘</span> 서버와 매칭됩니다
               </p>
               <p className="text-zinc-600 text-xs">
-                1차 시엘 → 2차 이스라펠 → 3차 네자칸
+                1차 네자칸 → 2차 시엘 → 3차 바이젤 → 4차 아리엘
               </p>
             </div>
           </div>
@@ -514,31 +516,34 @@ export default function Season2Page() {
                 </div>
               </div>
 
-              {/* 2/25 - 대규모 업데이트 */}
+              {/* 2/25 - 100일 대규모 업데이트 LIVE */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8">
-                  <div className="bg-gradient-to-r from-orange-600/20 to-amber-600/20 rounded-lg p-3 border border-orange-500/30">
+                  <div className="bg-gradient-to-r from-orange-600/20 to-amber-600/20 rounded-lg p-3 border border-green-500/30">
                     <div className="flex items-center gap-2 justify-end mb-2">
                       <span className="text-orange-300 font-medium text-sm">100일 대규모 업데이트</span>
-                      <span className="bg-orange-600/30 text-orange-400 text-[10px] font-bold px-1.5 py-0.5 rounded animate-pulse">NEW!</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
                     </div>
                     <ul className="text-zinc-400 text-xs space-y-1 text-right">
                       <li>• 초월: 가라앉은 생명의 신전</li>
-                      <li>• 3차 서버 매칭 적용</li>
+                      <li>• 4차 서버 매칭 적용</li>
+                      <li>• 신규 아르카나: 광분/순수 + 천칭</li>
+                      <li>• 데바니온 마르쿠탄 추가</li>
+                      <li>• 일일 던전 즉시 완료권</li>
                       <li>• PvP 랭킹 포인트 감소 완화</li>
                       <li>• 100일 기념 이벤트</li>
                     </ul>
                   </div>
                 </div>
-                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950 animate-pulse">
-                  <span className="text-[10px] font-bold text-white">25</span>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">✓</span>
                 </div>
                 <div className="md:w-1/2 pl-12 md:pl-8">
                   <span className="hidden md:inline text-orange-400 font-bold text-lg">2/25</span>
-                  <div className="md:hidden bg-gradient-to-r from-orange-600/20 to-amber-600/20 rounded-lg p-3 mt-2 border border-orange-500/30">
+                  <div className="md:hidden bg-gradient-to-r from-orange-600/20 to-amber-600/20 rounded-lg p-3 mt-2 border border-green-500/30">
                     <div className="flex items-center gap-2">
                       <span className="text-orange-300 font-medium text-sm">100일 대규모 업데이트</span>
-                      <span className="bg-orange-600/30 text-orange-400 text-[10px] font-bold px-1.5 py-0.5 rounded animate-pulse">NEW!</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
                     </div>
                   </div>
                 </div>
@@ -618,7 +623,7 @@ export default function Season2Page() {
                   </div>
                   <p className="text-zinc-300 leading-relaxed">
                     기존 아르카나 시스템에 새로운 <span className="text-amber-400 font-medium">천칭 슬롯</span>이 추가됩니다.
-                    5종의 신규 아르카나 세트를 수집하고 조합하여 더욱 강력한 캐릭터를 만들어보세요.
+                    희귀/전승/유일 등급이 존재하며, <span className="text-amber-400 font-medium">조화로운 결정 (각인)</span>으로 연성하여 획득합니다.
                   </p>
                 </div>
 
@@ -627,15 +632,15 @@ export default function Season2Page() {
                   <ul className="text-zinc-400 text-sm space-y-2">
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
-                      시즌2 신규 던전 드롭
+                      초월 '가라앉은 생명의 신전'에서 조각 획득 → 물질 변환
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
-                      어비스 중층 보상
+                      광분/순수 세트: 신비로운 결정 (각인)으로 연성
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
-                      시즌 업적 보상
+                      아르카나 연성 재사용 시간 제거됨
                     </li>
                   </ul>
                 </div>
@@ -643,7 +648,7 @@ export default function Season2Page() {
 
               {/* 세트 목록 */}
               <div>
-                <h4 className="text-white font-semibold mb-4">신규 아르카나 세트 (5종)</h4>
+                <h4 className="text-white font-semibold mb-4">신규 아르카나 세트 (7종)</h4>
                 <div className="space-y-3">
                   {ARCANA_SETS.map((set, i) => (
                     <div
@@ -654,7 +659,12 @@ export default function Season2Page() {
                         {set.icon}
                       </div>
                       <div className="flex-1">
-                        <h5 className={`font-bold ${set.color}`}>{set.name}</h5>
+                        <div className="flex items-center gap-2">
+                          <h5 className={`font-bold ${set.color}`}>{set.name}</h5>
+                          {'isNew' in set && (set as { isNew?: boolean }).isNew && (
+                            <span className="bg-orange-600/30 text-orange-400 text-[10px] font-bold px-1.5 py-0.5 rounded">2/25 NEW</span>
+                          )}
+                        </div>
                         <p className="text-zinc-500 text-sm">{set.effect}</p>
                       </div>
                     </div>
@@ -726,6 +736,119 @@ export default function Season2Page() {
                   <li>• 토벌전 최소 기여도 필요</li>
                 </ul>
               </div>
+              <div className="mt-3 pt-3 border-t border-cyan-500/20">
+                <p className="text-orange-400 text-xs font-medium mb-2">2/25 추가 적용</p>
+                <ul className="text-zinc-400 text-sm space-y-1">
+                  <li>• <span className="text-green-400">PVP 사망 시 랭킹 포인트 하락 대폭 감소</span></li>
+                  <li>• 어비스 장비 세트 효과 상향 (5세트 12.5%, 8세트 15%, 12세트 20%)</li>
+                  <li>• 에레슈란타 하층/중층 최대 인원 축소</li>
+                  <li>• 보스 처치 시 사망 상태여도 기여도 보상 획득 가능</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2/25 100일 대규모 업데이트 */}
+      <section className="py-16 bg-gradient-to-b from-orange-950/20 to-zinc-950">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <span className="bg-green-600/30 text-green-400 text-xs font-bold px-3 py-1 rounded">2/25 LIVE</span>
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              🎉 100일 대규모 업데이트
+            </h2>
+            <p className="text-zinc-400">2026.02.25 정기점검 후 적용</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: '🔥', title: '초월: 가라앉은 생명의 신전', desc: '1~4단계 해금, 모든 단계 즉시 선택 가능', badge: '던전' },
+              { icon: '⚜️', title: '신규 아르카나 광분/순수', desc: '광분(공격력+보스피해), 순수(방어력+치명타)', badge: '아르카나' },
+              { icon: '⚖️', title: '아르카나 파츠 천칭', desc: '희귀/전승/유일 등급, 조화로운 결정으로 연성', badge: '아르카나' },
+              { icon: '📜', title: '데바니온 마르쿠탄', desc: '신규 데바니온 보드, 초월에서 재료 획득', badge: '신규' },
+              { icon: '🎫', title: '일일 던전 즉시 완료권', desc: '클리어 후 최대 36회 추가 보상 획득', badge: '신규' },
+              { icon: '⚔️', title: '전념의 룬 PVP 명중', desc: '강화 단계별 PVP 명중 30~500 추가', badge: '장비' },
+              { icon: '🛡️', title: '어비스 장비 세트 상향', desc: '5세트 12.5%, 8세트 15%, 12세트 20%', badge: '장비' },
+              { icon: '📉', title: 'PVP 손실 포인트 완화', desc: '사망 시 랭킹 포인트 하락 대폭 감소', badge: 'PVP' },
+              { icon: '🏰', title: '원정 탐험 보상 상향', desc: '탐험 장비 드롭률 정복의 50% 수준으로', badge: '던전' },
+              { icon: '🎹', title: '피아노 오브젝트', desc: '천족/마족 마을에 피아노 추가', badge: '재미' },
+              { icon: '🔄', title: '영혼 조율 개선', desc: '현재 스탯/스킬이 조율 결과에서 제외', badge: '편의' },
+              { icon: '🏆', title: '시즌 랭킹 보상', desc: '만신전 장식 추가 (시즌3 종료까지)', badge: '신규' },
+            ].map((item, i) => (
+              <div key={i} className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4 hover:border-zinc-600 transition-all">
+                <div className="flex items-start justify-between mb-2">
+                  <span className="text-2xl">{item.icon}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded ${
+                    item.badge === '신규' ? 'bg-cyan-500/20 text-cyan-400' :
+                    item.badge === '아르카나' ? 'bg-purple-500/20 text-purple-400' :
+                    item.badge === '던전' ? 'bg-orange-500/20 text-orange-400' :
+                    item.badge === '장비' ? 'bg-amber-500/20 text-amber-400' :
+                    item.badge === 'PVP' ? 'bg-red-500/20 text-red-400' :
+                    'bg-zinc-700 text-zinc-400'
+                  }`}>{item.badge}</span>
+                </div>
+                <h4 className="text-white font-bold text-sm mb-1">{item.title}</h4>
+                <p className="text-zinc-500 text-xs">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 2/25 이벤트 */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              🎁 100일 기념 이벤트
+            </h2>
+            <p className="text-zinc-400">2026.02.25 ~ 03.25 (이벤트별 상이)</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-br from-purple-900/20 to-zinc-900 rounded-xl p-6 border border-purple-500/30">
+              <h3 className="text-purple-400 font-bold text-lg mb-3">아르카나 선물 꾸러미</h3>
+              <p className="text-zinc-500 text-xs mb-3">~3/25 (구독 ~3/18)</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 활력/마력 아르카나 꾸러미 각 10만 키나</li>
+                <li>• 미션 완수로 패스 레벨업 (최대 20Lv)</li>
+                <li>• 희귀→전승→유일 아르카나 보상</li>
+                <li>• 20레벨 이후 반복 보상 지급</li>
+              </ul>
+            </div>
+
+            <div className="bg-gradient-to-br from-amber-900/20 to-zinc-900 rounded-xl p-6 border border-amber-500/30">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">14일 출석부: 백일잔치</h3>
+              <p className="text-zinc-500 text-xs mb-3">~3/18 정기점검 전</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 전투 강화 주문서, 포구스 구이, 생명의 결정</li>
+                <li>• 7일차: 영혼의 서 초기화</li>
+                <li>• 14일차: 영혼의 서 초기화 x2</li>
+                <li>• 원정/초월 도전권 선택 상자</li>
+              </ul>
+            </div>
+
+            <div className="bg-gradient-to-br from-cyan-900/20 to-zinc-900 rounded-xl p-6 border border-cyan-500/30">
+              <h3 className="text-cyan-400 font-bold text-lg mb-3">100일 기념 스페셜 선물</h3>
+              <p className="text-zinc-500 text-xs mb-3">~3/18 정기점검 전</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 100일 기념 선물 상자 100키나 (영혼의 서 초기화 x5 등)</li>
+                <li>• 함께한 100일 외형 세트 100키나</li>
+                <li>• 영혼의 서 500개, 즉시 완료권 10개 포함</li>
+              </ul>
+            </div>
+
+            <div className="bg-gradient-to-br from-pink-900/20 to-zinc-900 rounded-xl p-6 border border-pink-500/30">
+              <h3 className="text-pink-400 font-bold text-lg mb-3">데바 룩 체인지 위크</h3>
+              <p className="text-zinc-500 text-xs mb-3">~3/11 정기점검 전</p>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li>• 꾸미기 비용 50% 할인 (200큐나→100큐나)</li>
+                <li>• 염색/재질/패턴/패턴색상 변경</li>
+                <li>• 횟수 제한 없음</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -832,22 +955,22 @@ export default function Season2Page() {
             <h2 className="text-3xl font-bold text-white mb-4">
               ⚔️ 클래스 밸런스 조정
             </h2>
-            <p className="text-zinc-400">2/3 라이브 발표 · 2~3주 간격 추가 조정 예정</p>
+            <p className="text-zinc-400">2/25 업데이트 반영</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { name: '마도성', icon: '🔮', change: '상향', color: 'green', desc: '딜링 효율 개선' },
-              { name: '정령성', icon: '🌿', change: '상향', color: 'green', desc: '소환수 강화' },
-              { name: '살성', icon: '🗡️', change: '상향', color: 'green', desc: '암살 스킬 버프' },
-              { name: '치유성', icon: '💚', change: '상향', color: 'green', desc: '보호의 빛 피해 증폭 추가' },
-              { name: '궁성', icon: '🏹', change: '상향', color: 'green', desc: '원거리 딜링 개선' },
-              { name: '호법성', icon: '🛡️', change: '하향', color: 'red', desc: '밸런스 조정' },
+              { name: '살성', icon: '🗡️', change: '상향', color: 'green', desc: '독 바르기 지속시간 5초→10초' },
+              { name: '호법성', icon: '🛡️', change: '조정', color: 'yellow', desc: '차단의 권능 리워크, 마르쿠탄의 분노 쿨 60초→30초' },
+              { name: '치유성', icon: '💚', change: '상향', color: 'green', desc: '보호의 빛 피해 증폭 개선, 고통의 연쇄 버그 수정' },
+              { name: '정령성', icon: '🌿', change: '상향', color: 'green', desc: '흡인 3특화 보호막 추가, 정령 보호 방어력 상향' },
+              { name: '마도성', icon: '🔮', change: '수정', color: 'yellow', desc: '불의 장벽 스킬 취소 버그 수정' },
+              { name: '공통', icon: '⚔️', change: '변경', color: 'yellow', desc: '돌진 일격/방패 돌격 등 비행 중 사용 가능' },
             ].map((cls, i) => (
               <div
                 key={i}
                 className={`bg-zinc-800/50 border rounded-xl p-4 ${
-                  cls.change === '상향' ? 'border-green-500/30' : 'border-red-500/30'
+                  cls.change === '상향' ? 'border-green-500/30' : cls.change === '하향' ? 'border-red-500/30' : 'border-yellow-500/30'
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2">
@@ -858,7 +981,8 @@ export default function Season2Page() {
                   <span className={`text-xs px-2 py-1 rounded ${
                     cls.change === '상향'
                       ? 'bg-green-500/20 text-green-400'
-                      : 'bg-red-500/20 text-red-400'
+                      : cls.change === '하향' ? 'bg-red-500/20 text-red-400'
+                      : 'bg-yellow-500/20 text-yellow-400'
                   }`}>
                     {cls.change}
                   </span>
@@ -870,7 +994,7 @@ export default function Season2Page() {
 
           <div className="mt-6 p-4 bg-amber-900/20 rounded-xl border border-amber-500/30 text-center">
             <p className="text-amber-400 text-sm">
-              💡 클래스 변경권 도입 재검토 중 (커뮤니티 반응 수렴 중)
+              💡 파티 버프 효과가 맵 이동 시 해제되도록 변경 (자신 버프는 유지)
             </p>
           </div>
         </div>
@@ -1116,7 +1240,7 @@ export default function Season2Page() {
               AION2 지켈 서버 · 마족
             </p>
             <p className="text-zinc-600 text-xs mt-2">
-              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.02.24
+              정보 출처: NCSOFT 공식 발표 · 마지막 업데이트: 2026.02.25
             </p>
           </div>
         </div>
