@@ -37,6 +37,7 @@ type SortDir = 'asc' | 'desc';
 
 const GRADE_COLORS: Record<string, string> = {
   '일반': 'text-white',
+  '고급': 'text-green-400',
   '희귀': 'text-green-400',
   '전승': 'text-blue-400',
   '유일': 'text-yellow-400',
@@ -45,13 +46,14 @@ const GRADE_COLORS: Record<string, string> = {
 
 const GRADE_BG: Record<string, string> = {
   '일반': 'bg-zinc-700',
+  '고급': 'bg-green-900/60',
   '희귀': 'bg-green-900/60',
   '전승': 'bg-blue-900/60',
   '유일': 'bg-yellow-900/60',
   '영웅': 'bg-orange-900/60',
 };
 
-const GRADE_ORDER: Record<string, number> = { '일반': 0, '희귀': 1, '전승': 2, '유일': 3, '영웅': 4 };
+const GRADE_ORDER: Record<string, number> = { '일반': 0, '고급': 1, '희귀': 1, '전승': 2, '유일': 3, '영웅': 4 };
 const CATEGORY_TABS = ['전체', '갑옷', '대장', '세공', '연금', '요리'];
 const DEFAULT_FEE = 0.12;
 
@@ -504,7 +506,7 @@ export default function CraftPage() {
           <select className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
             value={grade} onChange={(e) => setGrade(e.target.value)}>
             <option value="전체">등급 전체</option>
-            {['일반', '희귀', '전승', '유일', '영웅'].map((g) => (
+            {['일반', '고급', '희귀', '전승', '유일', '영웅'].map((g) => (
               <option key={g} value={g}>{g}</option>
             ))}
           </select>

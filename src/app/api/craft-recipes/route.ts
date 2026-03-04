@@ -34,12 +34,6 @@ interface PriceEntry {
   trend: string;
 }
 
-function normalizeGrade(grade: string, name: string, category: string): string {
-  if (name.includes('기룡왕') || name.includes('기룡 패왕')) return '영웅';
-  if (category === '요리' && name.startsWith('달인의')) return '희귀';
-  if (name.startsWith('장인의') || grade === '고급') return '희귀';
-  return grade;
-}
 
 export async function GET(request: NextRequest) {
   const forceRefresh = request.nextUrl.searchParams.get('refresh') === 'true';
@@ -92,7 +86,7 @@ export async function GET(request: NextRequest) {
         recipeMap.set(id, {
           id,
           name,
-          grade: normalizeGrade(String(cells[2] || '').trim(), name, String(cells[3] || '').trim()),
+          grade: String(cells[2] || '').trim(),
           category: String(cells[3] || '').trim(),
           successRate: Number(cells[4]) || 0,
           hasProc: String(cells[5]).trim().toUpperCase() === 'Y',
