@@ -5,7 +5,7 @@ import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
 
 // 직업 정보 (8개 직업)
-const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성', '부캐'] as const;
+const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성'] as const;
 
 const CLASS_ICONS: Record<string, string> = {
   '검성': '🗡️',
@@ -41,6 +41,7 @@ export default function MembersPage() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [collectTime, setCollectTime] = useState<string>('');
+  const [charType, setCharType] = useState<'총합' | '본캐' | '부캐'>('총합');
   const [activeFilter, setActiveFilter] = useState<string>('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<GuildMember | null>(null);
@@ -84,26 +85,20 @@ export default function MembersPage() {
     fetchMembers();
   }, [fetchMembers]);
 
-  // 필터링
-  const filteredMembers = members.filter((m) => {
-    let matchesClass = false;
-    if (activeFilter === '전체') {
-      matchesClass = true;
-    } else if (activeFilter === '부캐') {
-      matchesClass = !!m.mainCharacter;
-    } else {
-      matchesClass = m.className === activeFilter;
-    }
+  // 캐릭터 유형 필터 (총합/본캐/부캐)
+  const charFiltered = charType === '본캐'
+    ? members.filter(m => !m.mainCharacter)
+    : charType === '부캐'
+    ? members.filter(m => !!m.mainCharacter)
+    : members;
+
+  // 직업 + 검색 필터
+  const filteredMembers = charFiltered.filter((m) => {
+    const matchesClass = activeFilter === '전체' || m.className === activeFilter;
     const matchesSearch = !searchQuery ||
       m.nickname.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesClass && matchesSearch;
   });
-
-  // 직업별 통계
-  const classStats = CLASSES.slice(1).map(cls => ({
-    name: cls,
-    count: members.filter(m => m.className === cls).length,
-  }));
 
   // 최고 전투점수 순 정렬 (현재 점수가 더 높으면 현재 점수 기준)
   const sortedMembers = [...filteredMembers].sort((a, b) => {
@@ -138,7 +133,7 @@ export default function MembersPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">레기온원 관리</h1>
-            <p className="text-zinc-400 mt-1">지켈 서버 · 마족 · {members.length}명</p>
+            <p className="text-zinc-400 mt-1">지켈 서버 · 마족 · {charFiltered.length}명</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
@@ -170,17 +165,27 @@ export default function MembersPage() {
           />
         </div>
 
+        {/* 총합/본캐/부캐 필터 */}
+        <div className="flex gap-1 mb-3">
+          {(['총합', '본캐', '부캐'] as const).map((f) => (
+            <button key={f}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                charType === f
+                  ? 'bg-amber-400 text-zinc-900'
+                  : 'bg-zinc-800 text-zinc-400 hover:text-white'
+              }`}
+              onClick={() => setCharType(f)}>
+              {f} ({f === '본캐' ? members.filter(m => !m.mainCharacter).length : f === '부캐' ? members.filter(m => !!m.mainCharacter).length : members.length})
+            </button>
+          ))}
+        </div>
+
         {/* 직업별 필터 */}
         <section className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
           {CLASSES.map((cls) => {
-            let count = 0;
-            if (cls === '전체') {
-              count = members.length;
-            } else if (cls === '부캐') {
-              count = members.filter(m => m.mainCharacter).length;
-            } else {
-              count = members.filter(m => m.className === cls).length;
-            }
+            const count = cls === '전체'
+              ? charFiltered.length
+              : charFiltered.filter(m => m.className === cls).length;
             return (
               <button
                 key={cls}
