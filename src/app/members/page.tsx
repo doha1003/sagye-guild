@@ -262,11 +262,6 @@ export default function MembersPage() {
                         ) : (
                           <span className="text-red-400 text-xs">디코✗</span>
                         )}
-                        {member.kakao === 'O' ? (
-                          <span className="text-yellow-400 text-xs">카톡✓</span>
-                        ) : (
-                          <span className="text-red-400 text-xs">카톡✗</span>
-                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-center bg-zinc-900 rounded-lg p-2">
@@ -306,7 +301,6 @@ export default function MembersPage() {
                       <th className="text-right p-3 font-medium">현재점수</th>
                       <th className="text-right p-3 font-medium">전투력</th>
                       <th className="text-center p-3 font-medium">디코</th>
-                      <th className="text-center p-3 font-medium">카톡</th>
                       <th className="text-center p-3 font-medium">아툴</th>
                     </tr>
                   </thead>
@@ -371,13 +365,6 @@ export default function MembersPage() {
                         <td className="p-3 text-center">
                           {member.discord === 'O' ? (
                             <span className="text-green-400">✓</span>
-                          ) : (
-                            <span className="text-red-400">✗</span>
-                          )}
-                        </td>
-                        <td className="p-3 text-center">
-                          {member.kakao === 'O' ? (
-                            <span className="text-yellow-400">✓</span>
                           ) : (
                             <span className="text-red-400">✗</span>
                           )}

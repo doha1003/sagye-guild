@@ -83,7 +83,6 @@ export default function Home() {
   const stats = {
     total: filtered.length,
     discord: mainInFiltered.filter(m => m.discord === 'O').length,
-    kakao: mainInFiltered.filter(m => m.kakao === 'O').length,
   };
 
   return (
@@ -241,16 +240,11 @@ export default function Home() {
               </div>
 
               {/* 소통 현황 */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-700">
+              <div className="pt-4 border-t border-zinc-700">
                 <div className="flex items-center justify-center gap-2 bg-zinc-900/50 rounded-lg p-3">
                   <span className="text-lg">💬</span>
                   <span className="text-white font-bold">{stats.discord}</span>
-                  <span className="text-zinc-400 text-sm">디스코드</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 bg-zinc-900/50 rounded-lg p-3">
-                  <span className="text-lg">💛</span>
-                  <span className="text-white font-bold">{stats.kakao}</span>
-                  <span className="text-zinc-400 text-sm">카카오톡</span>
+                  <span className="text-zinc-400 text-sm">디스코드 참여</span>
                 </div>
               </div>
             </>

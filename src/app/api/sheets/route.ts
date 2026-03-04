@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const SHEET_ID = '1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
 export async function GET(request: NextRequest) {
   const forceRefresh = request.nextUrl.searchParams.get('refresh') === 'true';
@@ -12,10 +13,32 @@ export async function GET(request: NextRequest) {
       ? `${SHEET_URL}&_t=${Date.now()}`
       : SHEET_URL;
 
-    const response = await fetch(urlWithTimestamp, {
-      cache: forceRefresh ? 'no-store' : 'default',
-      next: forceRefresh ? undefined : { revalidate: 30 },
-    });
+    const [response, csvRes] = await Promise.all([
+      fetch(urlWithTimestamp, {
+        cache: forceRefresh ? 'no-store' : 'default',
+        next: forceRefresh ? undefined : { revalidate: 30 },
+      }),
+      fetch(forceRefresh ? `${CSV_URL}&_t=${Date.now()}` : CSV_URL, {
+        cache: forceRefresh ? 'no-store' : 'default',
+        next: forceRefresh ? undefined : { revalidate: 30 },
+        redirect: 'follow',
+      }).catch(() => null),
+    ]);
+
+    // CSV에서 닉네임→나이 맵 구성 (gviz JSON이 텍스트 형식 숫자를 null로 반환하는 문제 보완)
+    const csvAgeMap = new Map<string, string>();
+    if (csvRes?.ok) {
+      try {
+        const csv = await csvRes.text();
+        const lines = csv.split('\n').slice(1); // 헤더 스킵
+        for (const line of lines) {
+          const cols = line.split(',');
+          const nickname = cols[1]?.trim();
+          const age = cols[3]?.trim();
+          if (nickname && age) csvAgeMap.set(nickname, age);
+        }
+      } catch { /* fallback: CSV 파싱 실패 시 무시 */ }
+    }
 
     const text = await response.text();
 
@@ -48,12 +71,14 @@ export async function GET(request: NextRequest) {
     const rawMembers = table.rows.map((row: { c: Array<{ v: string | number | null }> }, index: number) => {
       const cells = row.c.map((cell: { v: string | number | null } | null) => cell?.v ?? '');
 
+      const nickname = String(cells[1] || '').trim();
+      const ageRaw = cells[3] || csvAgeMap.get(nickname) || '';
       return {
         id: `member-${index}`,
         rank: cells[0] || '',           // A: 계급
-        nickname: cells[1] || '',       // B: 캐릭터명
+        nickname,                       // B: 캐릭터명
         className: cells[2] || '',      // C: 직업
-        age: cleanAge(cells[3]),        // D: 나이 (정리됨)
+        age: cleanAge(ageRaw),          // D: 나이 (gviz null이면 CSV에서 보충)
         discord: cells[4] || '',        // E: 디스코드
         kakao: cells[5] || '',          // F: 카카오톡
         maxCombatScore: cells[6] || 0,  // G: 최고 전투점수
