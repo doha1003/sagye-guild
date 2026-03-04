@@ -257,11 +257,11 @@ export default function CraftPage() {
         </button>
 
         {/* 아이템 헤더 */}
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
           <span className={`text-xs px-2 py-0.5 rounded ${GRADE_BG[selected.grade] || 'bg-zinc-700'} ${GRADE_COLORS[selected.grade] || ''}`}>
             {selected.grade}
           </span>
-          <h1 className={`text-xl font-bold ${GRADE_COLORS[selected.grade] || ''}`}>{selected.name}</h1>
+          <h1 className={`text-lg sm:text-xl font-bold ${GRADE_COLORS[selected.grade] || ''}`}>{selected.name}</h1>
           <span className="text-xs text-zinc-500">{selected.category}</span>
           {selected.hasProc && <span className="text-xs text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded">대박</span>}
         </div>
@@ -407,7 +407,48 @@ export default function CraftPage() {
           <div className="px-5 py-3 border-b border-zinc-700/50">
             <h2 className="text-sm font-semibold text-zinc-300">재료 ({selected.materials.length}종)</h2>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* 모바일: 카드 레이아웃 */}
+          <div className="md:hidden divide-y divide-zinc-700/30">
+            {calc.mats.map((m) => (
+              <div key={m.key} className="px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{m.name}</span>
+                  <span className="text-xs font-medium">{fmt(m.cost)} 키나</span>
+                </div>
+                {m.marketPrice !== null && (
+                  <div className="text-[10px] text-zinc-500">시세 {fmtShort(m.marketPrice)}</div>
+                )}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center justify-between bg-zinc-900/50 rounded px-2.5 py-1.5">
+                    <span className="text-[10px] text-zinc-500">필요</span>
+                    <span className="text-xs">{m.required}</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-zinc-900/50 rounded px-2.5 py-1.5">
+                    <span className="text-[10px] text-zinc-500">부족</span>
+                    <span className={`text-xs ${m.shortage > 0 ? 'text-amber-400' : 'text-zinc-500'}`}>{m.shortage}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-zinc-500 shrink-0">보유</span>
+                    <input type="text" inputMode="numeric"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-right text-xs"
+                      value={ownedMap[m.key] ?? ''} placeholder="0"
+                      onChange={(e) => setOwnedMap((p) => ({ ...p, [m.key]: e.target.value }))} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-zinc-500 shrink-0">단가</span>
+                    <input type="text" inputMode="numeric"
+                      className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-right text-xs"
+                      value={priceMap[m.key] ?? ''} placeholder={fmt(m.marketPrice ?? m.npcPrice)}
+                      onChange={(e) => setPriceMap((p) => ({ ...p, [m.key]: e.target.value }))} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 데스크탑: 테이블 */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs text-zinc-500 border-b border-zinc-700/50">
@@ -448,6 +489,7 @@ export default function CraftPage() {
               </tbody>
             </table>
           </div>
+
           <div className="px-5 py-3 bg-zinc-900/50 flex justify-between items-center">
             <span className="text-sm text-zinc-400">총 재료비</span>
             <span className="text-lg font-bold text-amber-400">{fmt(calc.totalCost)} 키나</span>
@@ -566,8 +608,8 @@ export default function CraftPage() {
                   {calc.expectedProfit > 0 ? '+' : ''}{fmt(calc.expectedProfit)} 키나
                 </span>
               </div>
-              <div className="bg-zinc-900/50 rounded-lg p-3 text-[11px] text-zinc-500 font-mono space-y-1">
-                <div>= ({(calc.normalChance * 100).toFixed(1)}% × {fmt(calc.normalProfit)}){selected.hasProc ? ` + (${(calc.procSuccessChance * 100).toFixed(1)}% × ${fmt(calc.procProfit)})` : ''} + ({(calc.failChance * 100).toFixed(1)}% × {fmt(calc.failLoss)})</div>
+              <div className="bg-zinc-900/50 rounded-lg p-3 text-[10px] sm:text-[11px] text-zinc-500 font-mono space-y-1 overflow-x-auto">
+                <div className="whitespace-nowrap">= ({(calc.normalChance * 100).toFixed(1)}% × {fmt(calc.normalProfit)}){selected.hasProc ? ` + (${(calc.procSuccessChance * 100).toFixed(1)}% × ${fmt(calc.procProfit)})` : ''} + ({(calc.failChance * 100).toFixed(1)}% × {fmt(calc.failLoss)})</div>
                 <div className="text-zinc-600">일반성공 확률×손익{selected.hasProc ? ' + 대박성공 확률×손익' : ''} + 실패 확률×손실</div>
               </div>
             </div>
@@ -618,9 +660,51 @@ export default function CraftPage() {
           <span className="self-center text-xs text-zinc-500 whitespace-nowrap">{filtered.length}건</span>
         </div>
 
-        {/* 아이템 테이블 */}
+        {/* 모바일 정렬 */}
+        <div className="flex gap-2 mb-3 md:hidden overflow-x-auto">
+          {([['grade', '등급'], ['successRate', '성공률'], ['craftCost', '제작비'], ['profit', '수익']] as [SortKey, string][]).map(([key, label]) => (
+            <button key={key}
+              className={`px-2.5 py-1 rounded text-xs whitespace-nowrap ${sortKey === key ? 'bg-amber-400/20 text-amber-400' : 'bg-zinc-800 text-zinc-500'}`}
+              onClick={() => toggleSort(key)}>
+              {label}{sortArrow(key)}
+            </button>
+          ))}
+        </div>
+
+        {/* 아이템 목록 */}
         <div className="bg-zinc-800/60 rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* 모바일: 카드 */}
+          <div className="md:hidden divide-y divide-zinc-700/30">
+            {filtered.map((r) => {
+              const cost = getCraftCost(r);
+              const profit = getExpectedProfit(r);
+              return (
+                <div key={r.id} className="px-4 py-3 active:bg-zinc-700/30" onClick={() => openDetail(r)}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${GRADE_BG[r.grade] || ''} ${GRADE_COLORS[r.grade] || ''}`}>{r.grade}</span>
+                    <span className={`font-medium text-sm ${GRADE_COLORS[r.grade] || ''}`}>{r.name}</span>
+                    {r.hasProc && <span className="text-[10px] text-amber-400">대박</span>}
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex gap-3 text-zinc-500">
+                      <span>{r.category}</span>
+                      {r.itemLevel ? <span>Lv{r.itemLevel}</span> : null}
+                      <span>성공 {r.successRate}%</span>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="text-zinc-400">{cost > 0 ? fmtShort(cost) : '-'}</span>
+                      <span className={`font-medium ${profit > 0 ? 'text-emerald-400' : profit < 0 ? 'text-red-400' : 'text-zinc-500'}`}>
+                        {(r.productPrice ?? 0) > 0 ? (profit > 0 ? '+' : '') + fmtShort(profit) : '-'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 데스크탑: 테이블 */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs text-zinc-500 border-b border-zinc-700">
