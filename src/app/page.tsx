@@ -30,6 +30,7 @@ export default function Home() {
   const [members, setMembers] = useState<GuildMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [visitors, setVisitors] = useState({ total: 0, today: 0 });
+  const [statFilter, setStatFilter] = useState<'총합' | '본캐' | '부캐'>('총합');
 
   useEffect(() => {
     fetch('/api/sheets')
@@ -60,19 +61,29 @@ export default function Home() {
     }
   }, []);
 
-  const getClassCount = (className: string) =>
-    members.filter(m => m.className === className).length;
+  const filtered = statFilter === '본캐'
+    ? members.filter(m => !m.mainCharacter)
+    : statFilter === '부캐'
+    ? members.filter(m => !!m.mainCharacter)
+    : members;
 
-  const membersWithPower = members.filter(m => m.combatPower && Number(m.combatPower) > 0);
+  const getClassCount = (className: string) =>
+    filtered.filter(m => m.className === className).length;
+
+  const membersWithPower = filtered.filter(m => m.combatPower && Number(m.combatPower) > 0);
   const totalPower = membersWithPower.reduce((sum, m) => sum + Number(m.combatPower || 0), 0);
   const avgPower = membersWithPower.length > 0 ? Math.round(totalPower / membersWithPower.length) : 0;
 
-  // 본캐만 집계 (부캐 제외)
-  const mainMembers = members.filter(m => !m.mainCharacter);
+  const membersWithScore = filtered.filter(m => m.combatScore && Number(m.combatScore) > 0);
+  const avgScore = membersWithScore.length > 0
+    ? Math.round(membersWithScore.reduce((sum, m) => sum + Number(m.combatScore || 0), 0) / membersWithScore.length)
+    : 0;
+
+  const mainInFiltered = statFilter === '부캐' ? filtered : filtered.filter(m => !m.mainCharacter);
   const stats = {
-    total: members.length,
-    discord: mainMembers.filter(m => m.discord === 'O').length,
-    kakao: mainMembers.filter(m => m.kakao === 'O').length,
+    total: filtered.length,
+    discord: mainInFiltered.filter(m => m.discord === 'O').length,
+    kakao: mainInFiltered.filter(m => m.kakao === 'O').length,
   };
 
   return (
@@ -183,8 +194,23 @@ export default function Home() {
             <p className="text-center text-zinc-400 py-4">로딩 중...</p>
           ) : (
             <>
+              {/* 필터 버튼 */}
+              <div className="flex gap-1 mb-4">
+                {(['총합', '본캐', '부캐'] as const).map((f) => (
+                  <button key={f}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      statFilter === f
+                        ? 'bg-amber-400 text-zinc-900'
+                        : 'bg-zinc-900/50 text-zinc-400 hover:text-white'
+                    }`}
+                    onClick={() => setStatFilter(f)}>
+                    {f}
+                  </button>
+                ))}
+              </div>
+
               {/* 주요 통계 */}
-              <div className="grid grid-cols-3 gap-3 mb-6 text-center">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 text-center">
                 <div className="bg-zinc-900/50 rounded-lg p-4">
                   <div className="text-2xl sm:text-3xl font-bold text-amber-400">{stats.total}</div>
                   <div className="text-zinc-400 text-sm mt-1">레기온원</div>
@@ -196,6 +222,10 @@ export default function Home() {
                 <div className="bg-zinc-900/50 rounded-lg p-4">
                   <div className="text-lg sm:text-xl font-bold text-white break-all">{totalPower.toLocaleString()}</div>
                   <div className="text-zinc-400 text-sm mt-1">총 전투력</div>
+                </div>
+                <div className="bg-zinc-900/50 rounded-lg p-4">
+                  <div className="text-xl sm:text-2xl font-bold text-cyan-400">{avgScore.toLocaleString()}</div>
+                  <div className="text-zinc-400 text-sm mt-1">평균 아툴</div>
                 </div>
               </div>
 

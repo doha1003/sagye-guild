@@ -10,7 +10,20 @@ interface Material {
   marketPrice: number | null;
 }
 
-interface CraftRecipe {
+interface InvenItemInfo {
+  grade?: string;
+  itemLevel?: number;
+  equipLevel?: number;
+  mainStat?: { option: string; value: string | number }[];
+  magicstoneCount?: number;
+  randomCount?: number;
+  godstoneCount?: number;
+  spiritstoneCount?: number;
+  invenCode?: number;
+  icon?: string;
+}
+
+interface CraftRecipe extends InvenItemInfo {
   id: number;
   name: string;
   grade: string;
@@ -23,6 +36,7 @@ interface CraftRecipe {
   materials: Material[];
   productPrice: number | null;
   procItemPrice: number | null;
+  procItemInfo?: InvenItemInfo;
 }
 
 interface ApiResponse {
@@ -251,6 +265,89 @@ export default function CraftPage() {
           <span className="text-xs text-zinc-500">{selected.category}</span>
           {selected.hasProc && <span className="text-xs text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded">대박</span>}
         </div>
+
+        {/* 완성품 정보 */}
+        {(selected.itemLevel || selected.mainStat) && (
+          <div className="bg-zinc-800/60 rounded-xl p-5 mb-4">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-3">완성품 정보</h2>
+            <div className="flex flex-wrap gap-4 text-sm mb-3">
+              {!!selected.itemLevel && (
+                <div><span className="text-xs text-zinc-500 block">아이템 Lv</span><span className="font-medium">{selected.itemLevel}</span></div>
+              )}
+              {!!selected.equipLevel && (
+                <div><span className="text-xs text-zinc-500 block">착용 Lv</span><span className="font-medium">{selected.equipLevel}</span></div>
+              )}
+              {!!selected.magicstoneCount && (
+                <div><span className="text-xs text-zinc-500 block">마석 슬롯</span><span className="font-medium text-purple-400">{selected.magicstoneCount}</span></div>
+              )}
+              {!!selected.randomCount && (
+                <div><span className="text-xs text-zinc-500 block">랜덤 옵션</span><span className="font-medium text-blue-400">{selected.randomCount}</span></div>
+              )}
+              {!!selected.godstoneCount && (
+                <div><span className="text-xs text-zinc-500 block">신석 슬롯</span><span className="font-medium text-yellow-400">{selected.godstoneCount}</span></div>
+              )}
+              {!!selected.spiritstoneCount && (
+                <div><span className="text-xs text-zinc-500 block">영혼석 슬롯</span><span className="font-medium text-cyan-400">{selected.spiritstoneCount}</span></div>
+              )}
+            </div>
+            {selected.mainStat && selected.mainStat.length > 0 && (
+              <div className="border-t border-zinc-700/50 pt-3">
+                <span className="text-xs text-zinc-500 block mb-2">기본 능력치</span>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                  {selected.mainStat.map((s, i) => (
+                    <div key={i} className="flex justify-between text-xs py-0.5">
+                      <span className="text-zinc-400">{s.option}</span>
+                      <span className="text-zinc-200">{s.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 대박 아이템 정보 */}
+        {selected.hasProc && selected.procItemInfo && (selected.procItemInfo.itemLevel || selected.procItemInfo.mainStat) && (
+          <div className="bg-amber-900/20 border border-amber-800/30 rounded-xl p-5 mb-4">
+            <h2 className="text-sm font-semibold text-amber-400 mb-3">대박 아이템: {selected.procItem}
+              {selected.procItemInfo.grade && (
+                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${GRADE_BG[selected.procItemInfo.grade] || ''} ${GRADE_COLORS[selected.procItemInfo.grade] || ''}`}>
+                  {selected.procItemInfo.grade}
+                </span>
+              )}
+            </h2>
+            <div className="flex flex-wrap gap-4 text-sm mb-3">
+              {!!selected.procItemInfo.itemLevel && (
+                <div><span className="text-xs text-zinc-500 block">아이템 Lv</span><span className="font-medium">{selected.procItemInfo.itemLevel}</span></div>
+              )}
+              {!!selected.procItemInfo.equipLevel && (
+                <div><span className="text-xs text-zinc-500 block">착용 Lv</span><span className="font-medium">{selected.procItemInfo.equipLevel}</span></div>
+              )}
+              {!!selected.procItemInfo.magicstoneCount && (
+                <div><span className="text-xs text-zinc-500 block">마석 슬롯</span><span className="font-medium text-purple-400">{selected.procItemInfo.magicstoneCount}</span></div>
+              )}
+              {!!selected.procItemInfo.randomCount && (
+                <div><span className="text-xs text-zinc-500 block">랜덤 옵션</span><span className="font-medium text-blue-400">{selected.procItemInfo.randomCount}</span></div>
+              )}
+              {!!selected.procItemInfo.godstoneCount && (
+                <div><span className="text-xs text-zinc-500 block">신석 슬롯</span><span className="font-medium text-yellow-400">{selected.procItemInfo.godstoneCount}</span></div>
+              )}
+            </div>
+            {selected.procItemInfo.mainStat && selected.procItemInfo.mainStat.length > 0 && (
+              <div className="border-t border-amber-800/30 pt-3">
+                <span className="text-xs text-zinc-500 block mb-2">기본 능력치</span>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                  {selected.procItemInfo.mainStat.map((s, i) => (
+                    <div key={i} className="flex justify-between text-xs py-0.5">
+                      <span className="text-zinc-400">{s.option}</span>
+                      <span className="text-zinc-200">{s.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 확률 설정 */}
         <div className="bg-zinc-800/60 rounded-xl p-5 mb-4">
@@ -533,6 +630,7 @@ export default function CraftPage() {
                   <th className="text-center px-3 py-3 w-16 cursor-pointer hover:text-zinc-300 select-none" onClick={() => toggleSort('grade')}>
                     등급{sortArrow('grade')}
                   </th>
+                  <th className="text-center px-2 py-3 w-12">Lv</th>
                   <th className="text-center px-3 py-3 w-16">분류</th>
                   <th className="text-right px-3 py-3 w-16 cursor-pointer hover:text-zinc-300 select-none" onClick={() => toggleSort('successRate')}>
                     성공률{sortArrow('successRate')}
@@ -561,6 +659,7 @@ export default function CraftPage() {
                           {r.grade}
                         </span>
                       </td>
+                      <td className="text-center px-2 py-3 text-xs text-zinc-500">{r.itemLevel || '-'}</td>
                       <td className="text-center px-3 py-3 text-xs text-zinc-400">{r.category}</td>
                       <td className="text-right px-3 py-3">{r.successRate}%</td>
                       <td className="text-right px-3 py-3 text-zinc-400">{cost > 0 ? fmtShort(cost) : '-'}</td>

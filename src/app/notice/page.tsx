@@ -287,8 +287,8 @@ function PartyRules() {
         </div>
         <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-5">
           <p className="text-zinc-500 text-xs mb-2 uppercase tracking-wider font-semibold">예시</p>
-          <p className="text-indigo-300">확클팟 3월 5일 수요일 루드라 막넴까지 2트 22:00~23:30 모집</p>
-          <p className="text-indigo-300 mt-1">학원팟 3월 8일 토요일 루드라 1~2넴 1트 16:00~17:00 모집</p>
+          <p className="text-indigo-300">3월5일 수요일 루드라 확클 막넴 2타임 22:00~23:30</p>
+          <p className="text-indigo-300 mt-1">3월8일 토요일 루드라 학원 1~2넴 1타임 16:00~17:00</p>
         </div>
       </div>
 
