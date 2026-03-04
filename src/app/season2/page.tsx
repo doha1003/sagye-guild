@@ -577,6 +577,35 @@ export default function Season2Page() {
                 </div>
               </div>
 
+              {/* 3/4 - 잠재력 강화 + 시즌2 연장 */}
+              <div className="relative flex items-start gap-8 md:justify-center">
+                <div className="hidden md:block w-1/2 text-right pr-8">
+                  <div className="bg-zinc-800/50 rounded-lg p-3 border border-green-500/30">
+                    <div className="flex items-center gap-2 justify-end mb-2">
+                      <span className="text-zinc-300 font-medium text-sm">잠재력 강화 + 시즌2 연장</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
+                    <ul className="text-zinc-400 text-xs space-y-1 text-right">
+                      <li>• 잠재력 강화 시스템 추가</li>
+                      <li>• 날개 프리셋 추가</li>
+                      <li>• 시즌2 종료일 4/8로 연장</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10 ring-4 ring-zinc-950">
+                  <span className="text-[10px] font-bold text-white">✓</span>
+                </div>
+                <div className="md:w-1/2 pl-12 md:pl-8">
+                  <span className="hidden md:inline text-zinc-400 font-bold text-lg">3/4</span>
+                  <div className="md:hidden bg-zinc-800/50 rounded-lg p-3 mt-2 border border-green-500/30">
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-300 font-medium text-sm">잠재력 강화 + 시즌2 연장</span>
+                      <span className="bg-green-600/30 text-green-400 text-[10px] font-bold px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* 3/11 - 성역 */}
               <div className="relative flex items-start gap-8 md:justify-center">
                 <div className="hidden md:block w-1/2 text-right pr-8" />
@@ -811,7 +840,7 @@ export default function Season2Page() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-gradient-to-br from-purple-900/20 to-zinc-900 rounded-xl p-6 border border-purple-500/30">
               <h3 className="text-purple-400 font-bold text-lg mb-3">아르카나 선물 꾸러미</h3>
-              <p className="text-zinc-500 text-xs mb-3">~3/25 (구독 ~3/18)</p>
+              <p className="text-zinc-500 text-xs mb-3">~4/8 (구독 ~4/1)</p>
               <ul className="text-zinc-400 text-sm space-y-2">
                 <li>• 활력/마력 아르카나 꾸러미 각 10만 키나</li>
                 <li>• 미션 완수로 패스 레벨업 (최대 20Lv)</li>
