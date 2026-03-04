@@ -1,14 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import AlertBar from '../components/AlertBar';
 
-type NoticeType = 'guild' | 'subguild' | 'ludra' | 'pwa' | 'siteGuide' | 'discordBot';
+const TOC = [
+  { id: 'guild', label: '레기온 규칙' },
+  { id: 'ludra', label: '파티 규칙' },
+  { id: 'pwa', label: '앱 설치' },
+  { id: 'siteGuide', label: '사이트 가이드' },
+  { id: 'discordBot', label: '사계봇 가이드' },
+];
 
 export default function NoticePage() {
-  const [activeTab, setActiveTab] = useState<NoticeType>('guild');
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -28,78 +39,26 @@ export default function NoticePage() {
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-white mb-6">공지사항</h1>
 
-        {/* 탭 버튼 */}
-        <div className="flex gap-2 mb-8 border-b border-zinc-700 overflow-x-auto pb-px scrollbar-hide">
-          <button
-            onClick={() => setActiveTab('guild')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'guild'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            레기온 규칙
-          </button>
-          <button
-            onClick={() => setActiveTab('subguild')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'subguild'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            부캐 가입
-          </button>
-          <button
-            onClick={() => setActiveTab('ludra')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'ludra'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            파티 규칙
-          </button>
-          <button
-            onClick={() => setActiveTab('pwa')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'pwa'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            앱 설치
-          </button>
-          <button
-            onClick={() => setActiveTab('siteGuide')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'siteGuide'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            사이트 가이드
-          </button>
-          <button
-            onClick={() => setActiveTab('discordBot')}
-            className={`px-4 py-3 font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-              activeTab === 'discordBot'
-                ? 'text-amber-400 border-amber-400'
-                : 'text-zinc-400 border-transparent hover:text-white'
-            }`}
-          >
-            사계봇 가이드
-          </button>
+        {/* 목차 */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+          {TOC.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollTo(item.id)}
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg text-sm font-medium whitespace-nowrap transition-colors border border-zinc-700"
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
 
-        {/* 공지 내용 */}
-        <div className="prose-custom">
-          {activeTab === 'guild' && <GuildRules />}
-          {activeTab === 'subguild' && <SubGuildRules />}
-          {activeTab === 'ludra' && <LudraRules />}
-          {activeTab === 'pwa' && <PWAGuide />}
-          {activeTab === 'siteGuide' && <SiteGuide />}
-          {activeTab === 'discordBot' && <DiscordBotGuide />}
+        {/* 전체 내용 */}
+        <div className="space-y-12">
+          <section id="guild"><GuildRules /></section>
+          <section id="ludra"><LudraRules /></section>
+          <section id="pwa"><PWAGuide /></section>
+          <section id="siteGuide"><SiteGuide /></section>
+          <section id="discordBot"><DiscordBotGuide /></section>
         </div>
 
         {/* 참여 링크 */}
@@ -231,6 +190,22 @@ function GuildRules() {
       </section>
 
       <section className="mb-8">
+        <h3 className="text-lg font-semibold text-white mb-4">7. 부캐 가입 안내</h3>
+        <p className="text-zinc-300 mb-3">
+          부캐도 사계 레기온에 함께 가입 가능합니다.
+        </p>
+        <ul className="space-y-2 text-zinc-300">
+          <li className="pl-4 border-l-2 border-zinc-700">
+            가입을 원하시면 군단장 <strong className="text-amber-400">텐구</strong>에게 게임 내 귓말 해주세요.
+          </li>
+          <li className="pl-4 border-l-2 border-red-500/50">
+            <strong className="text-white">가입 후 소개글(한마디)에 본캐 닉네임 기재 필수!</strong><br />
+            <span className="text-zinc-400">미기재 시 누구인지 확인이 어려워 사전 경고 없이 추방될 수 있습니다.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section className="mb-8">
         <h3 className="text-lg font-semibold text-white mb-4">8. 기타 운영 원칙</h3>
         <ul className="space-y-2 text-zinc-300">
           <li className="pl-4 border-l-2 border-zinc-700">레기온 내부 대화, 운영 관련 내용의 외부 공유는 삼가주시기 바랍니다.</li>
@@ -242,106 +217,6 @@ function GuildRules() {
         <p className="text-zinc-300 leading-relaxed">
           레기온은 단기 플레이가 아닌<br />
           <strong className="text-white">장기적으로 함께 재미있게 할 분들</strong>을 위한 공간입니다.
-        </p>
-      </div>
-    </article>
-  );
-}
-
-function SubGuildRules() {
-  return (
-    <article className="text-zinc-200 leading-relaxed tracking-wide">
-      <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
-        부캐 가입 안내
-      </h2>
-
-      <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-8">
-        <p className="text-green-300 font-medium text-center mb-2">
-          부캐도 사계 레기온에 바로 가입!
-        </p>
-        <p className="text-zinc-400 text-sm text-center">
-          레기온 인원이 128명으로 늘어나 부캐도 사계에 함께 가입합니다
-        </p>
-      </div>
-
-      <section className="mb-8">
-        <div className="bg-zinc-800 rounded-lg p-4 text-center">
-          <div className="text-3xl mb-2">🍂</div>
-          <div className="text-2xl font-bold text-amber-400">사계</div>
-          <div className="text-zinc-400 text-sm mt-1">본캐 + 부캐 통합 운영</div>
-          <div className="text-zinc-500 text-xs mt-2">최대 128명</div>
-        </div>
-        <div className="bg-zinc-700/30 border border-zinc-600 rounded-lg p-3 mt-4 text-center">
-          <p className="text-zinc-400 text-sm">
-            <span className="text-zinc-500 line-through">오계 (부캐 레기온)</span> → 해체됨
-          </p>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">부캐 가입 방법</h3>
-        <ul className="space-y-3 text-zinc-300">
-          <li className="pl-4 border-l-2 border-amber-500/50">
-            <strong className="text-white">본캐가 사계 레기온 소속</strong>이어야 합니다
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            게임 내 레기온 검색 → <strong className="text-amber-400">사계</strong> → 가입 신청
-          </li>
-        </ul>
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4 text-center">
-          <p className="text-zinc-400 text-sm mb-1">가입 비밀번호</p>
-          <p className="text-green-400 font-bold text-xl">Aion22</p>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-red-400 mb-4">필수 규칙</h3>
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-          <p className="text-red-300 font-medium text-center">
-            한마디에 본캐 닉네임 기재 필수!
-          </p>
-        </div>
-        <ul className="space-y-3 text-zinc-300">
-          <li className="pl-4 border-l-2 border-red-500/50">
-            <strong className="text-white">게임 내 &apos;한마디&apos;에 본캐 닉네임을 반드시 적어주세요</strong><br />
-            <span className="text-zinc-400">예시: 본캐 - 홍길동</span>
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            본캐 닉네임이 없으면 누구인지 확인이 어려워 관리가 불가능합니다
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            한마디 미기재 시 사전 경고 없이 추방될 수 있습니다
-          </li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">한마디 설정 방법</h3>
-        <div className="bg-zinc-800 rounded-lg p-4">
-          <ol className="space-y-2 text-zinc-300">
-            <li>1. 게임 내 <strong className="text-white">L</strong> 키 눌러서 레기온 창 열기</li>
-            <li>2. 레기온 탭에서 내 캐릭터 ID 옆 <strong className="text-white">아이콘</strong> 클릭</li>
-            <li>3. <strong className="text-white">본캐 닉네임</strong> 입력 후 저장</li>
-          </ol>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">운영 방침</h3>
-        <ul className="space-y-2 text-zinc-300">
-          <li className="pl-4 border-l-2 border-zinc-700">
-            부캐도 본캐와 동일한 레기온 규칙을 적용합니다
-          </li>
-          <li className="pl-4 border-l-2 border-zinc-700">
-            부캐로 인한 트러블 발생 시 본캐에도 제재가 적용될 수 있습니다
-          </li>
-        </ul>
-      </section>
-
-      <div className="bg-zinc-800 rounded-lg p-6 text-center mt-10">
-        <p className="text-zinc-300 leading-relaxed">
-          부캐도 결국 <strong className="text-white">같은 레기온원</strong>입니다.<br />
-          본캐와 동일하게 서로 존중하며 즐겁게 플레이해주세요!
         </p>
       </div>
     </article>
