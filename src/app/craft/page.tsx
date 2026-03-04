@@ -212,9 +212,9 @@ export default function CraftPage() {
       <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">사계 레기온</Link>
         <nav className="flex gap-4 text-sm">
-          <Link href="/members" className="text-zinc-400 hover:text-white">Members</Link>
-          <Link href="/schedule" className="text-zinc-400 hover:text-white">Schedule</Link>
-          <Link href="/craft" className="text-amber-400">Craft</Link>
+          <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
+          <Link href="/schedule" className="text-zinc-400 hover:text-white">일정</Link>
+          <Link href="/craft" className="text-amber-400">제작 계산기</Link>
         </nav>
       </div>
     </header>

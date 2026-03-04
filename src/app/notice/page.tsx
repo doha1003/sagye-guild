@@ -212,26 +212,22 @@ function GuildRules() {
       </section>
 
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">6. 루드라팟 운영 규칙</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">6. 루드라 파티 운영</h3>
+        <p className="text-zinc-300 mb-3">
+          레기온 루드라는 <strong className="text-white">확클팟 · 학원팟 · 트라이팟</strong> 3가지 유형으로 운영됩니다.
+        </p>
         <ul className="space-y-2 text-zinc-300">
-          <li className="pl-4 border-l-2 border-zinc-700">루드라팟 참여자는 플레이 가능 시간 공유 필수</li>
-          <li className="pl-4 border-l-2 border-zinc-700">개인 사정으로 참여가 어려운 경우 사전 공유 필수</li>
+          <li className="pl-4 border-l-2 border-green-500/50">
+            <strong className="text-green-400">확클팟</strong> — 클리어 경험이 있는 분들끼리 진행
+          </li>
+          <li className="pl-4 border-l-2 border-blue-500/50">
+            <strong className="text-blue-400">학원팟</strong> — 고점 분들이 기믹 알려주며 함께 진행 (군단장 텐구/텐겐에게 귓말)
+          </li>
           <li className="pl-4 border-l-2 border-zinc-700">
-            <span className="text-zinc-400">반복적인 무단 불참, 소통 부재 시, 파티 유지 또는 레기온 활동이 어려울 수 있습니다.</span>
+            <strong className="text-white">트라이팟</strong> — 처음부터 연습하는 파티
           </li>
         </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">7. 루드라 트라이 기본 마인드</h3>
-        <p className="text-zinc-300 mb-3">
-          레기온 내 루드라 트라이는 클리어가 목표가 아닌 <strong className="text-white">&apos;트라이(연습)&apos;</strong> 기준으로 진행합니다.
-        </p>
-        <ul className="space-y-2 text-zinc-400">
-          <li>• 트라이팟으로 못 깨도 됩니다. 기믹 연습, 패턴 숙지가 우선입니다.</li>
-          <li>• 실수, 전멸, 실패에 대해 개인에게 부담을 주거나 책임을 묻는 분위기는 지양합니다.</li>
-          <li>• 우리는 랭커 지향 레기온이 아닙니다. 기본은 재미있게 게임하자는 목적입니다.</li>
-        </ul>
+        <p className="text-zinc-400 text-sm mt-3">자세한 내용은 &apos;파티 규칙&apos; 탭을 참고하세요.</p>
       </section>
 
       <section className="mb-8">
@@ -501,56 +497,115 @@ function LudraRules() {
   return (
     <article className="text-zinc-200 leading-relaxed tracking-wide">
       <h2 className="text-xl font-bold text-white mb-6 pb-4 border-b border-zinc-700">
-        루드라 트라이팟 운영방식 안내 (4트 기준)
+        루드라 파티 운영 안내
       </h2>
 
-      <div className="bg-zinc-800 rounded-lg p-4 mb-8 text-center">
-        <p className="text-zinc-300">
-          루드라 공지가 <strong className="text-white">4트(4회 트라이)</strong> 기준으로 변경되었습니다
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-8">
+        <p className="text-amber-300 font-medium text-center mb-2">
+          루드라 파티는 3가지 유형으로 운영됩니다
+        </p>
+        <p className="text-zinc-400 text-sm text-center">
+          확클팟 · 학원팟 · 트라이팟
         </p>
       </div>
 
+      {/* 파티 유형 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">0. 기본 원칙</h3>
-        <p className="text-zinc-300 mb-3">
-          본 운영은 <strong className="text-white">&quot;클팟&quot;이 아닌 &quot;트라이팟&quot;</strong> 기준입니다.
-        </p>
-        <p className="text-zinc-400 mb-2">트라이 과정에서 예민한 반응/비난이 발생하면 파티 운영이 어렵습니다.</p>
-        <p className="text-zinc-300">트라이 분위기 유지가 최우선입니다.</p>
+        <h3 className="text-lg font-semibold text-white mb-4">1. 파티 유형 안내</h3>
+        <div className="space-y-4">
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">확클팟</span>
+              <span className="text-white font-medium">확정 클리어 파티</span>
+            </div>
+            <p className="text-zinc-300 mb-2">
+              루드라를 <strong className="text-white">1번이라도 클리어한 경험이 있는 분들</strong>끼리 진행하는 파티입니다.
+            </p>
+            <p className="text-zinc-400 text-sm mb-2">기믹을 알고 있는 상태에서 클리어를 목표로 진행합니다.</p>
+            <div className="bg-green-500/10 rounded p-3 mt-2">
+              <p className="text-green-300 text-sm">
+                <strong>클경이 없어도</strong> 참여하고 싶다면 해당 모집글 작성자에게 먼저 물어보세요!<br />
+                <span className="text-zinc-400">확클팟이지만 1~2명 정도는 학원팟처럼 데려갈 수 있습니다.</span>
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">학원팟</span>
+              <span className="text-white font-medium">기믹 교육 파티</span>
+            </div>
+            <p className="text-zinc-300 mb-2">
+              <strong className="text-white">고점 분들이 기믹을 알려주면서 함께 진행</strong>하는 파티입니다.
+            </p>
+            <p className="text-zinc-400 text-sm mb-3">루드라가 처음이거나 기믹이 아직 익숙하지 않은 분들을 위한 버스 형태의 파티입니다.</p>
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+              <p className="text-blue-300 font-medium text-center">
+                학원팟 참여를 원하시면 레기온 군단장<br />
+                <strong className="text-white text-lg">&quot;텐구&quot;</strong> 또는 <strong className="text-white text-lg">&quot;텐겐&quot;</strong>에게 게임 내 귓말 해주세요!
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-zinc-700/30 border border-zinc-600 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-zinc-600 text-white text-xs font-bold px-2 py-0.5 rounded">트라이팟</span>
+              <span className="text-white font-medium">연습 파티</span>
+            </div>
+            <p className="text-zinc-300 mb-2">
+              루드라를 <strong className="text-white">아예 모르는 분들끼리</strong> 처음부터 연습하는 파티입니다.
+            </p>
+            <p className="text-zinc-400 text-sm">클리어가 아닌 기믹 연습과 패턴 숙지가 목표입니다.</p>
+            <p className="text-zinc-500 text-sm mt-2">* 현재 8명 모집이 쉽지 않아 자주 진행되지는 않습니다.</p>
+          </div>
+        </div>
+
+        <div className="bg-zinc-800 rounded-lg p-4 mt-4 text-center">
+          <p className="text-zinc-300">
+            현재 주로 <strong className="text-green-400">확클팟</strong>과 <strong className="text-blue-400">학원팟</strong> 위주로 운영됩니다.
+          </p>
+        </div>
       </section>
 
+      {/* 기본 마인드 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">1. 실수했을 때는 "사랑합니다" 💕</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">2. 실수했을 때는 &quot;사랑합니다&quot;</h3>
         <div className="bg-pink-500/10 border border-pink-500/30 rounded-lg p-4 mb-4">
           <p className="text-pink-300 font-medium text-center text-lg">
-            "죄송합니다" ❌ → "사랑합니다" ⭕
+            &quot;죄송합니다&quot; ❌ → &quot;사랑합니다&quot; ⭕
           </p>
         </div>
         <p className="text-zinc-300 mb-2">
-          트라이 중 실수는 누구나 합니다. 하지만 매번 <strong className="text-white">"죄송합니다"</strong>라고 하면 분위기가 무거워져요.
+          트라이 중 실수는 누구나 합니다. 하지만 매번 <strong className="text-white">&quot;죄송합니다&quot;</strong>라고 하면 분위기가 무거워져요.
         </p>
         <p className="text-zinc-300">
-          우리 사계는 리트라이 뜰 때 <strong className="text-pink-300">"사랑합니다"</strong>라고 말하기로 했습니다. 가볍고 즐거운 분위기로 트라이해요!
+          우리 사계는 리트라이 뜰 때 <strong className="text-pink-300">&quot;사랑합니다&quot;</strong>라고 말하기로 했습니다. 가볍고 즐거운 분위기로 진행해요!
         </p>
       </section>
 
+      {/* 기본 원칙 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">2. 클리어 우선이신 분</h3>
-        <p className="text-zinc-300 mb-2">
-          <strong className="text-white">&quot;클리어&quot;가 최우선 목표</strong>이신 분은 공팟 이용을 부탁드립니다.
-        </p>
-        <p className="text-zinc-400">레기온팟은 트라이(연습/숙련) 중심으로 운영합니다.</p>
+        <h3 className="text-lg font-semibold text-white mb-4">3. 기본 원칙</h3>
+        <ul className="space-y-2 text-zinc-300">
+          <li className="pl-4 border-l-2 border-zinc-700">실수, 전멸, 실패에 대해 개인에게 부담을 주거나 책임을 묻는 분위기는 지양합니다.</li>
+          <li className="pl-4 border-l-2 border-zinc-700">우리는 랭커 지향 레기온이 아닙니다. 기본은 재미있게 게임하자는 목적입니다.</li>
+          <li className="pl-4 border-l-2 border-red-500/50">
+            <strong className="text-white">레기온팟 고정팟 운영은 진행하지 않습니다.</strong>
+            <span className="text-zinc-400 text-sm block mt-1">레기온은 신입이 들어와도 함께 즐길 수 있는 방향을 우선합니다.</span>
+          </li>
+        </ul>
       </section>
 
+      {/* 모집글 작성 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">3. 모집글 작성 방법</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">4. 모집글 작성 방법</h3>
         <p className="text-zinc-300 mb-4">
           디스코드 <strong className="text-indigo-400">#루드라-모집-게시판</strong> 채널에 모집글 작성 시 아래 항목을 <strong className="text-white">반드시 포함</strong>해 주세요.
         </p>
         <div className="bg-zinc-800 rounded-lg p-4 mb-4">
           <ul className="space-y-2 text-zinc-300">
-            <li>• <strong className="text-white">날짜</strong> (예: 1월 7일)</li>
-            <li>• <strong className="text-white">요일</strong> (예: 수요일)</li>
+            <li>• <strong className="text-white">파티 유형</strong> (확클팟 / 학원팟 / 트라이팟)</li>
+            <li>• <strong className="text-white">날짜 + 요일</strong> (예: 3월 5일 수요일)</li>
             <li>• <strong className="text-white">루드라 범위</strong> (1~2넴 / 막넴까지 등)</li>
             <li>• <strong className="text-white">시간</strong> (예: 22:30~23:30)</li>
             <li>• <strong className="text-white">트 수</strong> (1트 / 2트 등)</li>
@@ -558,51 +613,94 @@ function LudraRules() {
         </div>
         <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4">
           <p className="text-zinc-500 text-sm mb-2">모집글 예시:</p>
-          <p className="text-indigo-300 font-medium">1월 7일 수요일 루드라 1~2넴 1트 22:30~23:30 모집</p>
-          <p className="text-indigo-300 font-medium mt-1">1월 11일 토요일 루드라 막넴까지 2트 16:00~18:00 모집</p>
+          <p className="text-indigo-300 font-medium">확클팟 3월 5일 수요일 루드라 막넴까지 2트 22:00~23:30 모집</p>
+          <p className="text-indigo-300 font-medium mt-1">학원팟 3월 8일 토요일 루드라 1~2넴 1트 16:00~17:00 모집</p>
         </div>
       </section>
 
+      {/* 참가 체크 - 상세 설명 */}
       <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">4. 고정팟 운영 안내</h3>
-        <p className="text-zinc-300 mb-3 pl-4 border-l-2 border-red-500/50">
-          <strong className="text-white">레기온팟 고정팟 운영은 진행하지 않습니다.</strong>
-        </p>
-        <ul className="space-y-2 text-zinc-400">
-          <li>• 레기온 내 트러블 방지를 위해 고정팟 형태의 루드라 진행은 지양합니다.</li>
-          <li>• 고정팟 클리어를 원하시면 공팟/다른 방식으로 진행 부탁드립니다.</li>
-          <li>• 레기온은 신입이 들어와도 함께 즐길 수 있는 방향을 우선합니다.</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-lg font-semibold text-white mb-4">5. 참가 체크 방법</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">5. 참가 체크 방법 (이모지)</h3>
         <p className="text-zinc-300 mb-4">
-          디스코드 <strong className="text-indigo-400">#루드라-모집-게시판</strong> 채널에서 참가 체크는 <strong className="text-white">이모지로 통일</strong>합니다. (작성자 포함 필수)
+          디스코드 <strong className="text-indigo-400">#루드라-모집-게시판</strong> 채널에서 참가 체크는 <strong className="text-white">이모지 반응(리액션)으로 통일</strong>합니다.
         </p>
-        <div className="bg-zinc-800 rounded-lg p-4 space-y-3">
-          <div className="flex items-center gap-4">
-            <span className="text-2xl w-8">❤️</span>
-            <span className="text-zinc-300">빨강하트 : <strong className="text-white">치유</strong></span>
+
+        {/* 역할별 이모지 */}
+        <div className="bg-zinc-800 rounded-lg p-4 mb-4">
+          <p className="text-white font-medium mb-3">역할별 이모지</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-4">
+              <span className="text-2xl w-8">❤️</span>
+              <div>
+                <span className="text-white font-medium">빨강하트 = 치유</span>
+                <span className="text-zinc-500 text-sm ml-2">(치유성)</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-2xl w-8">🩵</span>
+              <div>
+                <span className="text-white font-medium">하늘하트 = 딜러</span>
+                <span className="text-zinc-500 text-sm ml-2">(살성/궁성/마도성/정령성 등)</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-2xl w-8">🖤</span>
+              <div>
+                <span className="text-white font-medium">검은하트 = 탱커</span>
+                <span className="text-zinc-500 text-sm ml-2">(검성/수호성)</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-2xl w-8">🩵</span>
-            <span className="text-zinc-300">하늘하트 : <strong className="text-white">딜러</strong></span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-2xl w-8">🖤</span>
-            <span className="text-zinc-300">검은하트 : <strong className="text-white">탱커</strong> (검성/수호 등)</span>
-          </div>
+        </div>
+
+        {/* 이모지 사용법 상세 */}
+        <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4 mb-4">
+          <p className="text-indigo-300 font-medium mb-3">이모지 반응 방법 (PC/모바일)</p>
+          <ol className="space-y-3 text-zinc-300">
+            <li className="flex gap-2">
+              <span className="text-indigo-400 font-bold shrink-0">1.</span>
+              <span><strong className="text-white">#루드라-모집-게시판</strong>에서 참여하고 싶은 모집글을 찾습니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-indigo-400 font-bold shrink-0">2.</span>
+              <span>해당 모집글에 <strong className="text-white">마우스를 올리면</strong> (모바일은 <strong className="text-white">길게 누르면</strong>) 이모지 추가 버튼이 나타납니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-indigo-400 font-bold shrink-0">3.</span>
+              <span>이모지 선택 창에서 <strong className="text-white">내 역할에 맞는 하트</strong>를 클릭합니다.<br />
+              <span className="text-zinc-400 text-sm">이미 다른 분이 같은 이모지를 달았다면, 해당 이모지를 클릭하면 숫자가 올라갑니다.</span></span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-indigo-400 font-bold shrink-0">4.</span>
+              <span>모집글 아래에 이모지와 숫자가 표시되면 참가 체크 완료!</span>
+            </li>
+          </ol>
+        </div>
+
+        {/* 주의사항 */}
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+          <p className="text-red-300 font-medium mb-2">주의사항</p>
+          <ul className="space-y-2 text-zinc-300 text-sm">
+            <li>• <strong className="text-white">모집글 작성자도</strong> 본인 역할 이모지를 반드시 달아주세요.</li>
+            <li>• 이모지를 잘못 달았을 경우 해당 이모지를 다시 클릭하면 취소됩니다.</li>
+            <li>• <strong className="text-red-300">인원이 다 찼으면 (8명) 추가 이모지를 달지 마세요.</strong> 다음 모집글을 새로 작성해 주세요.</li>
+          </ul>
         </div>
       </section>
 
+      {/* 출발 기준 */}
       <section className="bg-zinc-800 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4">출발 기준</h3>
         <p className="text-xl text-center text-white font-medium mb-4">
           치유 2 / 탱커 2 / 딜러 4
         </p>
-        <p className="text-zinc-400 text-sm">
-          인원이 찼으면 추가 이모지 체크는 하지 말아주시고, 다음 모집글을 새로 작성해 주세요. (출발 인원 혼선 방지)
+        <div className="flex justify-center gap-3 mb-4">
+          <span className="bg-zinc-700 rounded px-3 py-1 text-sm">❤️ × 2</span>
+          <span className="bg-zinc-700 rounded px-3 py-1 text-sm">🖤 × 2</span>
+          <span className="bg-zinc-700 rounded px-3 py-1 text-sm">🩵 × 4</span>
+        </div>
+        <p className="text-zinc-400 text-sm text-center">
+          총 8명이 모이면 출발합니다. 인원 혼선 방지를 위해 정원 초과 시 이모지를 달지 말아주세요.
         </p>
       </section>
     </article>
@@ -749,6 +847,10 @@ function SiteGuide() {
         <h3 className="text-lg font-semibold text-orange-400 mb-4">정보 페이지</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-zinc-800 rounded-lg p-4">
+            <div className="text-white font-medium mb-2">제작 계산기 (/craft)</div>
+            <p className="text-zinc-400 text-sm">제작 레시피 검색, 재료비·기대수익 계산</p>
+          </div>
+          <div className="bg-zinc-800 rounded-lg p-4">
             <div className="text-white font-medium mb-2">외형 DB (/tips/appearance)</div>
             <p className="text-zinc-400 text-sm">아이온2 외형 아이템 정보</p>
           </div>
@@ -758,7 +860,7 @@ function SiteGuide() {
           </div>
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="text-white font-medium mb-2">시즌2 (/season2)</div>
-            <p className="text-zinc-400 text-sm">시즌2 아르카나, 보스, 균열 정보</p>
+            <p className="text-zinc-400 text-sm">시즌2 타임라인, 아르카나, 보스 정보</p>
           </div>
           <div className="bg-zinc-800 rounded-lg p-4">
             <div className="text-white font-medium mb-2">업데이트 내역 (/updates)</div>
