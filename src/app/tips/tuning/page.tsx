@@ -75,16 +75,7 @@ const BRACELETS = [
   { name: '자유의 팔찌', option: '명중' },
 ];
 
-const PRIORITY_COLORS = [
-  'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  'bg-orange-500/15 text-orange-300 border-orange-500/25',
-  'bg-yellow-500/10 text-yellow-200 border-yellow-500/20',
-  'bg-zinc-500/10 text-zinc-300 border-zinc-600',
-  'bg-zinc-500/5 text-zinc-400 border-zinc-700',
-  'bg-zinc-500/5 text-zinc-500 border-zinc-700',
-  'bg-zinc-500/5 text-zinc-500 border-zinc-800',
-  'bg-zinc-500/5 text-zinc-600 border-zinc-800',
-];
+const CELL_STYLE = 'bg-zinc-700/30 text-zinc-200 border-zinc-600';
 
 export default function TuningPage() {
   const [selectedSlot, setSelectedSlot] = useState<SlotKey | null>(null);
@@ -131,7 +122,7 @@ export default function TuningPage() {
               </h2>
               <div className="space-y-2">
                 {SLOTS[selectedSlot].options.map((opt, idx) => (
-                  <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${PRIORITY_COLORS[idx]}`}>
+                  <div key={idx} className={`flex items-center gap-3 p-3 rounded-lg border ${CELL_STYLE}`}>
                     <span className="text-xs font-bold w-5 text-center">{idx + 1}</span>
                     <span className="font-medium">{opt}</span>
                   </div>
@@ -168,7 +159,7 @@ export default function TuningPage() {
                     return (
                       <td key={key} className="p-2 text-center border-b border-zinc-800">
                         {opt ? (
-                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${PRIORITY_COLORS[rowIdx]}`}>
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${CELL_STYLE}`}>
                             {opt}
                           </span>
                         ) : null}
