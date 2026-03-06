@@ -264,7 +264,7 @@ export default function Home() {
             <p className="text-zinc-500 text-sm mt-1">컨텐츠 일정</p>
           </Link>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Link href="/tips/appearance" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">👗</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">외형 정보</h3>
@@ -272,6 +272,10 @@ export default function Home() {
           <Link href="/tips/pets" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">🐾</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">펫 DB</h3>
+          </Link>
+          <Link href="/tips/tuning" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+            <div className="text-2xl mb-1">🔧</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">조율 팁</h3>
           </Link>
           <Link href="/craft" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">⚒️</div>
