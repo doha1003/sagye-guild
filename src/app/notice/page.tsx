@@ -8,7 +8,7 @@ const TOC = [
   { id: 'rules', label: '레기온 규칙', emoji: '📋' },
   { id: 'party', label: '파티 규칙', emoji: '⚔️' },
   { id: 'site', label: '사이트 가이드', emoji: '🌐' },
-  { id: 'bot', label: '사계봇 (디스코드)', emoji: '🤖' },
+  { id: 'bot', label: '레기온봇 (디스코드)', emoji: '🤖' },
 ];
 
 export default function NoticePage() {
@@ -25,7 +25,7 @@ export default function NoticePage() {
       <header className="border-b border-zinc-800/50 bg-zinc-950/90 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            사계 레기온
+            레기온관리
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
@@ -37,7 +37,7 @@ export default function NoticePage() {
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-extrabold text-white mb-2">공지사항</h1>
-        <p className="text-zinc-500 mb-8">사계 레기온 운영 규칙 및 가이드</p>
+        <p className="text-zinc-500 mb-8">레기온관리 운영 규칙 및 가이드</p>
 
         {/* 목차 */}
         <nav className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-12">
@@ -123,7 +123,7 @@ function GuildRules() {
           닉넴 / 년생 / 직업 → 디스코드 서버프로필 변경 필수
         </p>
         <p className="text-zinc-500 text-sm text-center">
-          디스코드 좌측 서버 목록에서 사계 서버 우클릭 → 서버 프로필 수정
+          디스코드 좌측 서버 목록에서 레기온 서버 우클릭 → 서버 프로필 수정
         </p>
       </div>
 
@@ -161,7 +161,7 @@ function GuildRules() {
         </RuleBlock>
 
         <RuleBlock num="6" title="부캐 가입">
-          <Li>부캐도 사계 레기온에 함께 가입 가능합니다.</Li>
+          <Li>부캐도 레기온에 함께 가입 가능합니다.</Li>
           <Li>가입 → 군단장 <span className="text-amber-400 font-semibold">텐구</span>에게 게임 내 귓말</Li>
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mt-2">
             <p className="text-red-300 font-semibold text-sm text-center">
@@ -397,7 +397,7 @@ function SiteGuide() {
         <div className="bg-zinc-900 border border-zinc-800/50 rounded-xl p-4 flex justify-center mb-6">
           <Image
             src="/images/pwa-install.jpg"
-            alt="사계 레기온 앱 설치 예시"
+            alt="레기온관리 앱 설치 예시"
             width={200}
             height={400}
             className="rounded-lg border border-zinc-700"
@@ -437,12 +437,12 @@ function SiteGuide() {
 }
 
 /* ============================================================
-   4. 사계봇 가이드 (디스코드 전용)
+   4. 레기온봇 가이드 (디스코드 전용)
    ============================================================ */
 function BotGuide() {
   return (
     <article className="text-zinc-300 leading-relaxed">
-      <SectionHeader number="SECTION 04" title="사계봇 사용 가이드" color="indigo" />
+      <SectionHeader number="SECTION 04" title="레기온봇 사용 가이드" color="indigo" />
 
       {/* 디스코드 전용 강조 */}
       <div className="bg-[#5865F2]/10 border border-[#5865F2]/30 rounded-xl p-5 mb-10">
@@ -451,7 +451,7 @@ function BotGuide() {
           <span className="text-[#5865F2] font-extrabold text-lg">Discord 전용 봇</span>
         </div>
         <p className="text-zinc-400 text-center text-sm">
-          사계봇은 <strong className="text-white">디스코드 서버</strong>에서만 사용 가능합니다.
+          레기온봇은 <strong className="text-white">디스코드 서버</strong>에서만 사용 가능합니다.
         </p>
         <p className="text-zinc-500 text-center text-sm mt-1">
           채팅창에 <code className="bg-zinc-800 text-indigo-400 px-1.5 py-0.5 rounded">/</code> 입력 → 명령어 목록 표시
@@ -489,7 +489,7 @@ function BotGuide() {
       <CmdSection title="기타" color="zinc">
         <div className="grid grid-cols-2 gap-3">
           <CmdCardSimple cmd="/핑" desc="봇 응답 속도 테스트" color="zinc" />
-          <CmdCardSimple cmd="/사이트" desc="사계 레기온 사이트 링크" color="zinc" />
+          <CmdCardSimple cmd="/사이트" desc="레기온관리 사이트 링크" color="zinc" />
         </div>
       </CmdSection>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import BossTimerNotifier from "./components/BossTimerNotifier";
+import PasswordGate from "./components/PasswordGate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,23 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "사계 레기온 - AION2 지켈",
-  description: "아이온2 지켈 서버 사계 레기온 관리 사이트",
+  title: "레기온관리 - AION2 지켈",
+  description: "아이온2 지켈 서버 레기온관리 사이트",
   metadataBase: new URL('https://sagye.kr'),
   manifest: '/manifest.json',
   themeColor: '#f59e0b',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: '사계 레기온',
+    title: '레기온관리',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
-    title: '사계 레기온',
-    description: '아이온2 지켈 서버 사계 레기온',
-    siteName: '사계 레기온',
+    title: '레기온관리',
+    description: '아이온2 지켈 서버 레기온관리',
+    siteName: '레기온관리',
     locale: 'ko_KR',
     type: 'website',
     images: [
@@ -39,14 +40,14 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: '사계 레기온 - AION2 지켈',
+        alt: '레기온관리 - AION2 지켈',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '사계 레기온',
-    description: '아이온2 지켈 서버 사계 레기온',
+    title: '레기온관리',
+    description: '아이온2 지켈 서버 레기온관리',
     images: ['/og-image.jpg'],
   },
   icons: {
@@ -70,8 +71,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900 text-white`}
       >
-        {children}
-        <BossTimerNotifier />
+        <PasswordGate>
+          {children}
+          <BossTimerNotifier />
+        </PasswordGate>
         <Analytics />
       </body>
     </html>

@@ -226,7 +226,7 @@ export default function CraftPage() {
   const Header = () => (
     <header className="border-b border-zinc-800">
       <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">사계 레기온</Link>
+        <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">레기온관리</Link>
         <nav className="flex gap-4 text-sm">
           <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
           <Link href="/schedule" className="text-zinc-400 hover:text-white">일정</Link>
