@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 
-const SITE_PASSWORD = '18AION';
 const STORAGE_KEY = 'site_authenticated';
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -19,15 +19,29 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
     setChecking(false);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (input === SITE_PASSWORD) {
-      sessionStorage.setItem(STORAGE_KEY, 'true');
-      setAuthenticated(true);
-      setError(false);
-    } else {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: input }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        sessionStorage.setItem(STORAGE_KEY, 'true');
+        setAuthenticated(true);
+        setError(false);
+      } else {
+        setError(true);
+        setInput('');
+      }
+    } catch {
       setError(true);
       setInput('');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,9 +79,10 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           )}
           <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-900 font-bold py-3 rounded-lg transition-colors"
+            disabled={loading}
+            className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-900 font-bold py-3 rounded-lg transition-colors disabled:opacity-50"
           >
-            입장
+            {loading ? '확인 중...' : '입장'}
           </button>
         </form>
       </div>
