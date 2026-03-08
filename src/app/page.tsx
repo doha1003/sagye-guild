@@ -98,14 +98,6 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-400">레기온관리</h1>
           <div className="flex items-center gap-4">
-            <a
-              href="https://discord.gg/KB5Ef2C37Z"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
-            >
-              Discord
-            </a>
             <span className="text-zinc-500 text-sm">AION2 지켈</span>
           </div>
         </div>
@@ -162,29 +154,6 @@ export default function Home() {
           </div>
         </Link>
 
-        {/* 참여 링크 */}
-        <section className="grid grid-cols-2 gap-4 mb-6">
-          <a
-            href="https://discord.gg/KB5Ef2C37Z"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-5 text-center transition-colors"
-          >
-            <div className="text-2xl mb-2">💬</div>
-            <div className="font-bold text-white">디스코드</div>
-            <div className="text-indigo-200 text-sm">참여하기</div>
-          </a>
-          <a
-            href="https://open.kakao.com/o/gr52NRmg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-yellow-500 hover:bg-yellow-400 rounded-xl p-5 text-center transition-colors"
-          >
-            <div className="text-2xl mb-2">💛</div>
-            <div className="font-bold text-zinc-900">카카오톡</div>
-            <div className="text-zinc-700 text-sm">참여코드: Aion222</div>
-          </a>
-        </section>
 
         {/* 레기온 통계 */}
         <section className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 mb-6">
@@ -238,14 +207,6 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* 소통 현황 */}
-              <div className="pt-4 border-t border-zinc-700">
-                <div className="flex items-center justify-center gap-2 bg-zinc-900/50 rounded-lg p-3">
-                  <span className="text-lg">💬</span>
-                  <span className="text-white font-bold">{stats.discord}</span>
-                  <span className="text-zinc-400 text-sm">디스코드 참여</span>
-                </div>
-              </div>
             </>
           )}
         </section>
