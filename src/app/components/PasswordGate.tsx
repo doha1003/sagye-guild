@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'site_authenticated';
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -12,8 +11,9 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(STORAGE_KEY);
-    if (saved === 'true') {
+    // 쿠키에 auth_token이 있으면 인증된 상태
+    const hasToken = document.cookie.split(';').some(c => c.trim().startsWith('auth_status='));
+    if (hasToken) {
       setAuthenticated(true);
     }
     setChecking(false);
@@ -30,7 +30,6 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
       });
       const data = await res.json();
       if (data.success) {
-        sessionStorage.setItem(STORAGE_KEY, 'true');
         setAuthenticated(true);
         setError(false);
       } else {
