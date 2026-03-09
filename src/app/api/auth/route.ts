@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { kv } from '@vercel/kv';
 
-const SITE_PASSWORD = process.env.SITE_PASSWORD || '18AION';
-const TOKEN_SECRET = process.env.TOKEN_SECRET || 'sagye-guild-secret-key-2026';
+const SITE_PASSWORD = process.env.SITE_PASSWORD!;
+const TOKEN_SECRET = process.env.TOKEN_SECRET!;
+
+const MAX_ATTEMPTS = 10;
+const WINDOW_SEC = 600; // 10분
+
+async function checkRateLimit(ip: string): Promise<boolean> {
+  try {
+    const key = `auth_rate:${ip}`;
+    const count = await kv.incr(key);
+    if (count === 1) await kv.expire(key, WINDOW_SEC);
+    return count <= MAX_ATTEMPTS;
+  } catch {
+    return true;
+  }
+}
 
 function generateToken(): string {
   const payload = `authenticated:${Date.now()}`;
@@ -25,6 +40,11 @@ function verifyToken(token: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    if (!(await checkRateLimit(ip))) {
+      return NextResponse.json({ success: false, message: '너무 많은 시도입니다. 잠시 후 다시 시도해주세요.' }, { status: 429 });
+    }
+
     const { password } = await request.json();
 
     if (password === SITE_PASSWORD) {

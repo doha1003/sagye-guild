@@ -15,21 +15,29 @@ function isBot(userAgent: string | null): boolean {
   return BOT_PATTERNS.test(userAgent);
 }
 
-function verifyTokenSimple(token: string): boolean {
+async function verifyTokenSimple(token: string): Promise<boolean> {
   try {
     const [payloadB64, hmac] = token.split('.');
     if (!payloadB64 || !hmac) return false;
     const payload = Buffer.from(payloadB64, 'base64').toString();
     if (!payload.startsWith('authenticated:')) return false;
-    // HMAC 검증은 서버 사이드에서만 가능하므로 형식 체크만 수행
-    // 실제 HMAC 검증은 토큰 발급 시 서버에서 처리됨
-    return hmac.length === 64; // SHA-256 hex length
+
+    const secret = process.env.TOKEN_SECRET;
+    if (!secret) return false;
+
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
+    const expected = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+    return hmac === expected;
   } catch {
     return false;
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 공개 경로는 통과
@@ -46,7 +54,7 @@ export function middleware(request: NextRequest) {
 
     // API 호출 시 인증 토큰 체크
     const token = request.cookies.get('auth_token')?.value;
-    if (!token || !verifyTokenSimple(token)) {
+    if (!token || !(await verifyTokenSimple(token))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   }

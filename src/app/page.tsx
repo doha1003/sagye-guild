@@ -275,7 +275,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-zinc-500 mb-3 text-center">AION2 바로가기</h3>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+            <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
               {[
                 { href: 'https://www.youtube.com/@AION2', icon: '▶️', label: '유튜브' },
                 { href: 'https://aion2.plaync.com/ko-kr/board/notice/list', icon: '📢', label: '공지' },
@@ -285,6 +285,8 @@ export default function Home() {
                 { href: 'https://tc-imba.com/?map=World_L_A', icon: '🗺️', label: '히든큐브' },
                 { href: 'https://aion2.inven.co.kr/', icon: '📰', label: '인벤' },
                 { href: 'https://gall.dcinside.com/mgallery/board/lists/?id=aion2', icon: '💬', label: '디시' },
+                { href: 'https://www.itemmania.com/sell/list.html?search_game=5799', icon: '🛒', label: '아이템매니아' },
+                { href: 'https://www.barotem.com/product/lists/3839?page=1&sell=sell&display=1&orderby=1', icon: '💰', label: '바로템' },
               ].map((item) => (
                 <a
                   key={item.label}

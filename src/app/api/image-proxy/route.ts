@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch image' }, { status: response.status });
     }
 
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const rawType = response.headers.get('content-type') || 'image/jpeg';
+    const contentType = rawType.startsWith('image/') ? rawType : 'image/jpeg';
     const buffer = await response.arrayBuffer();
 
     return new NextResponse(buffer, {

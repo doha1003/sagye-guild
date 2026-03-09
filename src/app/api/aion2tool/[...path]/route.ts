@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const AION2TOOL_BASE_URL = 'https://www.aion2tool.com';
 
+const ALLOWED_PREFIXES = ['api/character/', 'api/item/'];
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
   const pathString = path.join('/');
+
+  if (!ALLOWED_PREFIXES.some(p => pathString.startsWith(p))) {
+    return NextResponse.json({ error: 'Path not allowed' }, { status: 403 });
+  }
   const searchParams = request.nextUrl.searchParams.toString();
   const url = `${AION2TOOL_BASE_URL}/${pathString}${searchParams ? `?${searchParams}` : ''}`;
 
