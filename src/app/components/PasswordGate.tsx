@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
@@ -9,6 +10,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // 쿠키에 auth_token이 있으면 인증된 상태
@@ -32,6 +34,9 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
       if (data.success) {
         setAuthenticated(true);
         setError(false);
+        if (data.redirect) {
+          router.push(data.redirect);
+        }
       } else {
         setError(true);
         setInput('');

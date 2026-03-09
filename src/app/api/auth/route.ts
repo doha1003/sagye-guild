@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { kv } from '@vercel/kv';
 
 const SITE_PASSWORD = process.env.SITE_PASSWORD!;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 const TOKEN_SECRET = process.env.TOKEN_SECRET!;
 
 const MAX_ATTEMPTS = 10;
@@ -47,9 +48,12 @@ export async function POST(request: NextRequest) {
 
     const { password } = await request.json();
 
-    if (password === SITE_PASSWORD) {
+    const isAdmin = password === ADMIN_PASSWORD;
+    const isUser = password === SITE_PASSWORD;
+
+    if (isAdmin || isUser) {
       const token = generateToken();
-      const response = NextResponse.json({ success: true });
+      const response = NextResponse.json({ success: true, redirect: isAdmin ? '/admin' : null });
       response.cookies.set('auth_token', token, {
         httpOnly: true,
         secure: true,
