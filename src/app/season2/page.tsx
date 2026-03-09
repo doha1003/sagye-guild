@@ -200,7 +200,7 @@ export default function Season2Page() {
         <div className="relative max-w-6xl mx-auto px-4 py-16 w-full">
           <Link href="/" className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 group">
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            <span>레기온관리</span>
+            <span>접속중 레기온</span>
           </Link>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -286,7 +286,7 @@ export default function Season2Page() {
                 <div className="text-red-400 font-bold text-lg md:text-xl">지켈</div>
                 <div className="text-zinc-500 text-sm">마족</div>
                 <div className="mt-2 bg-amber-500/20 text-amber-400 text-xs font-bold px-2 py-1 rounded inline-block">
-                  레기온관리
+                  접속중 레기온
                 </div>
               </div>
 
@@ -1243,7 +1243,7 @@ export default function Season2Page() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <Link href="/" className="text-amber-400 hover:text-amber-300 font-bold text-xl">
-              레기온관리
+              접속중 레기온
             </Link>
             <div className="flex items-center gap-6">
               <a

@@ -16,23 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "레기온관리 - AION2 지켈",
-  description: "아이온2 지켈 서버 레기온관리 사이트",
+  title: "접속중 레기온 - AION2 지켈",
+  description: "아이온2 지켈 서버 접속중 레기온 사이트",
   metadataBase: new URL('https://sagye.kr'),
   manifest: '/manifest.json',
   themeColor: '#f59e0b',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: '레기온관리',
+    title: '접속중 레기온',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
-    title: '레기온관리',
-    description: '아이온2 지켈 서버 레기온관리',
-    siteName: '레기온관리',
+    title: '접속중 레기온',
+    description: '아이온2 지켈 서버 접속중 레기온',
+    siteName: '접속중 레기온',
     locale: 'ko_KR',
     type: 'website',
     images: [
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: '레기온관리 - AION2 지켈',
+        alt: '접속중 레기온 - AION2 지켈',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '레기온관리',
-    description: '아이온2 지켈 서버 레기온관리',
+    title: '접속중 레기온',
+    description: '아이온2 지켈 서버 접속중 레기온',
     images: ['/og-image.jpg'],
   },
   icons: {

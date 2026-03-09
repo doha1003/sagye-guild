@@ -6,7 +6,7 @@ export default function TermsPage() {
       <header className="border-b border-zinc-800 bg-zinc-900 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            레기온관리
+            접속중 레기온
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
@@ -22,7 +22,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">1. 서비스 소개</h2>
             <p className="text-zinc-400">
-              본 사이트는 AION2 게임 내 &quot;레기온관리&quot; 길드원들을 위한 비공식 커뮤니티 사이트입니다.
+              본 사이트는 AION2 게임 내 &quot;접속중 레기온&quot; 길드원들을 위한 비공식 커뮤니티 사이트입니다.
               엔씨소프트(NCSOFT) 또는 AION2 공식 서비스와는 무관한 팬 사이트입니다.
             </p>
           </section>
@@ -68,7 +68,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white mb-3">5. 문의</h2>
             <p className="text-zinc-400">
-              사이트 관련 문의는 레기온관리 디스코드를 통해 연락해 주세요.
+              사이트 관련 문의는 접속중 레기온 디스코드를 통해 연락해 주세요.
             </p>
           </section>
         </div>

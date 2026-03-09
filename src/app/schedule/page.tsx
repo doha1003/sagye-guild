@@ -43,7 +43,7 @@ export default function SchedulePage() {
       <header className="border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            레기온관리
+            접속중 레기온
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
@@ -140,7 +140,7 @@ export default function SchedulePage() {
 
       <footer className="border-t border-zinc-800 mt-12">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center text-zinc-500 text-sm">
-          <p>레기온관리 · AION2 지켈 서버 (마족)</p>
+          <p>접속중 레기온 · AION2 지켈 서버 (마족)</p>
           <p className="text-xs text-zinc-600 mt-2">
             <Link href="/updates" className="hover:text-zinc-400">업데이트 내역</Link>
           </p>

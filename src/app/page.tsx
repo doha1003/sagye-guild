@@ -96,7 +96,7 @@ export default function Home() {
       {/* 헤더 */}
       <header className="border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-amber-400">레기온관리</h1>
+          <h1 className="text-2xl font-bold text-amber-400">접속중 레기온</h1>
           <div className="flex items-center gap-4">
             <span className="text-zinc-500 text-sm">AION2 지켈</span>
           </div>
@@ -129,7 +129,7 @@ export default function Home() {
         {/* 타이틀 */}
         <section className="text-center mb-10">
           <h2 className="text-4xl font-bold mb-2">
-            <span className="text-amber-400">레기온관리</span>
+            <span className="text-amber-400">접속중 레기온</span>
           </h2>
           <p className="text-zinc-400">지켈 서버 · 마족</p>
         </section>
@@ -300,7 +300,7 @@ export default function Home() {
             </div>
           </div>
           <div className="text-center text-zinc-500 text-sm">
-            <p>레기온관리 · AION2 지켈 서버 (마족)</p>
+            <p>접속중 레기온 · AION2 지켈 서버 (마족)</p>
             <p className="text-xs text-zinc-600 mt-2">
               AION2 오픈 2025.11.19 · 사이트 개설 2026.01.06
             </p>
@@ -312,7 +312,7 @@ export default function Home() {
               {' · '}
               <Link href="/terms" className="hover:text-zinc-500">이용약관</Link>
               {' · '}
-              <span>© 2026 레기온관리</span>
+              <span>© 2026 접속중 레기온</span>
             </p>
           </div>
         </div>

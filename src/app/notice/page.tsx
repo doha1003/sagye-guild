@@ -25,7 +25,7 @@ export default function NoticePage() {
       <header className="border-b border-zinc-800/50 bg-zinc-950/90 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-amber-400 hover:text-amber-300">
-            레기온관리
+            접속중 레기온
           </Link>
           <nav className="flex gap-4 text-sm">
             <Link href="/members" className="text-zinc-400 hover:text-white">레기온원</Link>
@@ -37,7 +37,7 @@ export default function NoticePage() {
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-extrabold text-white mb-2">공지사항</h1>
-        <p className="text-zinc-500 mb-8">레기온관리 운영 규칙 및 가이드</p>
+        <p className="text-zinc-500 mb-8">접속중 레기온 운영 규칙 및 가이드</p>
 
         {/* 목차 */}
         <nav className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-12">
@@ -397,7 +397,7 @@ function SiteGuide() {
         <div className="bg-zinc-900 border border-zinc-800/50 rounded-xl p-4 flex justify-center mb-6">
           <Image
             src="/images/pwa-install.jpg"
-            alt="레기온관리 앱 설치 예시"
+            alt="접속중 레기온 앱 설치 예시"
             width={200}
             height={400}
             className="rounded-lg border border-zinc-700"
@@ -489,7 +489,7 @@ function BotGuide() {
       <CmdSection title="기타" color="zinc">
         <div className="grid grid-cols-2 gap-3">
           <CmdCardSimple cmd="/핑" desc="봇 응답 속도 테스트" color="zinc" />
-          <CmdCardSimple cmd="/사이트" desc="레기온관리 사이트 링크" color="zinc" />
+          <CmdCardSimple cmd="/사이트" desc="접속중 레기온 사이트 링크" color="zinc" />
         </div>
       </CmdSection>
 
