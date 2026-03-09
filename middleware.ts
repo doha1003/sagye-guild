@@ -70,6 +70,15 @@ export async function middleware(request: NextRequest) {
     return new NextResponse('Access denied', { status: 403 });
   }
 
+  // 페이지 요청 시 유효하지 않은 토큰이면 쿠키 삭제 (재로그인 유도)
+  const token = request.cookies.get('auth_token')?.value;
+  if (token && !(await verifyTokenSimple(token))) {
+    const response = NextResponse.next();
+    response.cookies.delete('auth_token');
+    response.cookies.delete('auth_status');
+    return response;
+  }
+
   return NextResponse.next();
 }
 
