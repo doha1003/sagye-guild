@@ -155,6 +155,29 @@ export default function Home() {
         </Link>
 
 
+        {/* 소통 참여 */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <a
+            href="https://discord.gg/ukWwsQbA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#5865F2] hover:bg-[#4752C4] rounded-xl p-5 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💬</div>
+            <div className="font-semibold text-white">디스코드 참여</div>
+          </a>
+          <a
+            href="https://open.kakao.com/o/gsMtbrki"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#FEE500] hover:bg-[#F5DC00] rounded-xl p-5 text-center transition-colors"
+          >
+            <div className="text-2xl mb-1">💛</div>
+            <div className="font-semibold text-zinc-900">카카오톡 참여</div>
+            <div className="text-xs text-zinc-700 mt-0.5">참여코드: 18aion</div>
+          </a>
+        </div>
+
         {/* 레기온 통계 */}
         <section className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 mb-6">
           {loading ? (

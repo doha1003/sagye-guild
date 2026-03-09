@@ -64,7 +64,7 @@ export default function NoticePage() {
         {/* 참여 링크 */}
         <div className="grid grid-cols-2 gap-4 mt-16 pt-8 border-t border-zinc-800/50">
           <a
-            href="https://discord.gg/KB5Ef2C37Z"
+            href="https://discord.gg/ukWwsQbA"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#5865F2] hover:bg-[#4752C4] rounded-xl p-5 text-center transition-colors"
@@ -73,14 +73,14 @@ export default function NoticePage() {
             <div className="font-semibold text-white">디스코드 참여</div>
           </a>
           <a
-            href="https://open.kakao.com/o/gr52NRmg"
+            href="https://open.kakao.com/o/gsMtbrki"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#FEE500] hover:bg-[#F5DC00] rounded-xl p-5 text-center transition-colors"
           >
             <div className="text-2xl mb-1">💛</div>
             <div className="font-semibold text-zinc-900">카카오톡 참여</div>
-            <div className="text-xs text-zinc-700 mt-0.5">참여코드: Aion222</div>
+            <div className="text-xs text-zinc-700 mt-0.5">참여코드: 18aion</div>
           </a>
         </div>
       </main>

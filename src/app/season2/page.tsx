@@ -1247,7 +1247,7 @@ export default function Season2Page() {
             </Link>
             <div className="flex items-center gap-6">
               <a
-                href="https://discord.gg/KB5Ef2C37Z"
+                href="https://discord.gg/ukWwsQbA"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-400 hover:text-indigo-300 text-sm"
@@ -1255,7 +1255,7 @@ export default function Season2Page() {
                 Discord
               </a>
               <a
-                href="https://open.kakao.com/o/gr52NRmg"
+                href="https://open.kakao.com/o/gsMtbrki"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-yellow-400 hover:text-yellow-300 text-sm"
