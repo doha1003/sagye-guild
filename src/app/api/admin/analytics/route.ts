@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
+import { kv } from '@vercel/kv';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 const GA_PROPERTY_ID = process.env.GA_PROPERTY_ID!;
@@ -11,8 +12,19 @@ function getAnalyticsClient() {
 
 export async function POST(request: NextRequest) {
   try {
+    // admin_token 쿠키 또는 비밀번호로 인증
+    const adminToken = request.cookies.get('admin_token')?.value;
     const { password } = await request.json();
-    if (password !== ADMIN_PASSWORD) {
+
+    if (!adminToken && password !== ADMIN_PASSWORD) {
+      // rate limit
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+      const key = `admin_rate:${ip}`;
+      const count = await kv.incr(key).catch(() => 0);
+      if (count === 1) await kv.expire(key, 600).catch(() => {});
+      if (count > 5) {
+        return NextResponse.json({ error: 'Too many attempts' }, { status: 429 });
+      }
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

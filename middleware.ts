@@ -31,7 +31,12 @@ async function verifyTokenSimple(token: string): Promise<boolean> {
     );
     const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
     const expected = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
-    return hmac === expected;
+    if (hmac.length !== expected.length) return false;
+    let result = 0;
+    for (let i = 0; i < hmac.length; i++) {
+      result |= hmac.charCodeAt(i) ^ expected.charCodeAt(i);
+    }
+    return result === 0;
   } catch {
     return false;
   }

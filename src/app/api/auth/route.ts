@@ -33,7 +33,8 @@ function verifyToken(token: string): boolean {
     const payload = Buffer.from(payloadB64, 'base64').toString();
     if (!payload.startsWith('authenticated:')) return false;
     const expected = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('hex');
-    return hmac === expected;
+    if (hmac.length !== expected.length) return false;
+    return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(expected));
   } catch {
     return false;
   }
@@ -60,13 +61,21 @@ export async function POST(request: NextRequest) {
         sameSite: 'strict',
         path: '/',
       });
-      // 클라이언트에서 인증 상태 확인용 (값 자체는 의미 없음)
       response.cookies.set('auth_status', '1', {
         httpOnly: false,
         secure: true,
         sameSite: 'strict',
         path: '/',
       });
+      if (isAdmin) {
+        const adminToken = crypto.createHmac('sha256', TOKEN_SECRET).update(`admin:${Date.now()}`).digest('hex');
+        response.cookies.set('admin_token', adminToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict',
+          path: '/',
+        });
+      }
       return response;
     }
 
