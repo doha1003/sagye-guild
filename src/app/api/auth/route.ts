@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
         secure: true,
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24, // 24시간
       });
       // 클라이언트에서 인증 상태 확인용 (값 자체는 의미 없음)
       response.cookies.set('auth_status', '1', {
@@ -63,7 +62,6 @@ export async function POST(request: NextRequest) {
         secure: true,
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24,
       });
       return response;
     }
