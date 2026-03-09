@@ -143,14 +143,6 @@ export default function MembersPage() {
             >
               {loading ? '로딩...' : '⟳ 새로고침'}
             </button>
-            <a
-              href="https://docs.google.com/spreadsheets/d/1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo/edit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs sm:text-sm bg-zinc-700 hover:bg-zinc-600 text-white px-3 sm:px-4 py-2 rounded-lg"
-            >
-              📝 시트
-            </a>
           </div>
         </div>
 

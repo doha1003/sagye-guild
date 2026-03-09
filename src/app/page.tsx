@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AlertBar from './components/AlertBar';
 import YouTubeLive from './components/YouTubeLive';
@@ -31,6 +32,20 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [visitors, setVisitors] = useState({ total: 0, today: 0 });
   const [statFilter, setStatFilter] = useState<'총합' | '본캐' | '부캐'>('총합');
+  const tapCount = useRef(0);
+  const tapTimer = useRef<NodeJS.Timeout>(undefined);
+  const router = useRouter();
+
+  const handleLogoClick = () => {
+    tapCount.current++;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    if (tapCount.current >= 5) {
+      tapCount.current = 0;
+      router.push('/admin');
+      return;
+    }
+    tapTimer.current = setTimeout(() => { tapCount.current = 0; }, 2000);
+  };
 
   useEffect(() => {
     fetch('/api/sheets')
@@ -96,7 +111,7 @@ export default function Home() {
       {/* 헤더 */}
       <header className="border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-amber-400">접속중 레기온</h1>
+          <h1 className="text-2xl font-bold text-amber-400 select-none cursor-default" onClick={handleLogoClick}>접속중 레기온</h1>
           <div className="flex items-center gap-4">
             <span className="text-zinc-500 text-sm">AION2 지켈</span>
           </div>

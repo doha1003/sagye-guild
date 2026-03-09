@@ -114,9 +114,19 @@ export default function AdminPage() {
       <header className="border-b border-zinc-800 bg-zinc-900/80 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-amber-400">관리자 대시보드</h1>
-          <button onClick={refresh} className="text-sm text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg">
-            {loading ? '로딩...' : '새로고침'}
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://docs.google.com/spreadsheets/d/1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-green-400 hover:text-green-300 bg-green-900/30 border border-green-700/50 px-3 py-1.5 rounded-lg"
+            >
+              구글시트
+            </a>
+            <button onClick={refresh} className="text-sm text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg">
+              {loading ? '로딩...' : '새로고침'}
+            </button>
+          </div>
         </div>
       </header>
 
