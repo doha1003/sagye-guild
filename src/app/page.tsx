@@ -285,7 +285,7 @@ export default function Home() {
                 { href: 'https://tc-imba.com/?map=World_L_A', icon: '🗺️', label: '히든큐브' },
                 { href: 'https://aion2.inven.co.kr/', icon: '📰', label: '인벤' },
                 { href: 'https://gall.dcinside.com/mgallery/board/lists/?id=aion2', icon: '💬', label: '디시' },
-                { href: 'https://www.itemmania.com/sell/list.html?search_game=5799', icon: '🛒', label: '아이템매니아' },
+                { href: 'https://www.itemmania.com/sell/list.html?search_game=5799', icon: '🛒', label: '매니아' },
                 { href: 'https://www.barotem.com/product/lists/3839?page=1&sell=sell&display=1&orderby=1', icon: '💰', label: '바로템' },
               ].map((item) => (
                 <a
