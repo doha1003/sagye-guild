@@ -3,8 +3,8 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 프로젝트 개요
-- **목적**: 아이온2 지켈 서버 사계 레기온 관리 사이트
-- **기능**: 레기온원 관리, 일정표, 파티 매칭
+- **목적**: 아이온2 지켈 서버 접속중 레기온 사이트
+- **기능**: 레기온원 관리, 일정표, 제작 계산기, 관리자 대시보드
 - **서버**: 지켈 (마족)
 
 ## 기술 스택

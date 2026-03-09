@@ -50,6 +50,8 @@ export default function YouTubeLive() {
 
     if (isInLiveHours()) {
       checkLive();
+    } else {
+      setLoading(false);
     }
 
     // 다음 체크 시간까지 남은 ms 계산 (매시 29분, 59분 / 12시~22시만)

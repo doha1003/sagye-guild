@@ -52,7 +52,7 @@ type SortDir = 'asc' | 'desc';
 const GRADE_COLORS: Record<string, string> = {
   '일반': 'text-white',
   '고급': 'text-green-400',
-  '희귀': 'text-green-400',
+  '희귀': 'text-cyan-400',
   '전승': 'text-blue-400',
   '유일': 'text-yellow-400',
   '영웅': 'text-orange-400',
@@ -61,7 +61,7 @@ const GRADE_COLORS: Record<string, string> = {
 const GRADE_BG: Record<string, string> = {
   '일반': 'bg-zinc-700',
   '고급': 'bg-green-900/60',
-  '희귀': 'bg-green-900/60',
+  '희귀': 'bg-cyan-900/60',
   '전승': 'bg-blue-900/60',
   '유일': 'bg-yellow-900/60',
   '영웅': 'bg-orange-900/60',

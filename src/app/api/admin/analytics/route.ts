@@ -12,11 +12,9 @@ function getAnalyticsClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    // admin_token 쿠키 또는 비밀번호로 인증
-    const adminToken = request.cookies.get('admin_token')?.value;
     const { password } = await request.json();
 
-    if (!adminToken && password !== ADMIN_PASSWORD) {
+    if (password !== ADMIN_PASSWORD) {
       // rate limit
       const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
       const key = `admin_rate:${ip}`;

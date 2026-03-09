@@ -67,15 +67,6 @@ export async function POST(request: NextRequest) {
         sameSite: 'strict',
         path: '/',
       });
-      if (isAdmin) {
-        const adminToken = crypto.createHmac('sha256', TOKEN_SECRET).update(`admin:${Date.now()}`).digest('hex');
-        response.cookies.set('admin_token', adminToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'strict',
-          path: '/',
-        });
-      }
       return response;
     }
 

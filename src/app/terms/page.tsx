@@ -58,11 +58,21 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-white mb-3">4. 개인정보</h2>
-            <p className="text-zinc-400">
-              본 사이트는 별도의 회원가입이나 로그인 기능이 없으며, 개인정보를 수집하지 않습니다.
-              방문자 수 집계를 위해 익명의 방문 횟수만 기록됩니다.
-            </p>
+            <h2 className="text-lg font-semibold text-white mb-3">4. 개인정보 및 데이터 수집</h2>
+            <ul className="space-y-2 text-zinc-400">
+              <li className="pl-4 border-l-2 border-zinc-700">
+                본 사이트는 길드원 전용 비밀번호 인증 방식을 사용하며, 별도의 회원가입은 없습니다.
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                방문자 수 집계를 위해 익명의 방문 횟수가 기록됩니다.
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                서비스 개선을 위해 Google Analytics를 통한 익명 통계(페이지 조회, 기기 유형, 지역)가 수집됩니다.
+              </li>
+              <li className="pl-4 border-l-2 border-zinc-700">
+                수집된 데이터는 개인을 식별할 수 없으며, 사이트 운영 목적으로만 사용됩니다.
+              </li>
+            </ul>
           </section>
 
           <section>
@@ -75,7 +85,7 @@ export default function TermsPage() {
 
         <div className="mt-12 pt-8 border-t border-zinc-800 text-center">
           <p className="text-zinc-500 text-sm">
-            최종 수정일: 2026년 1월 20일
+            최종 수정일: 2026년 3월 9일
           </p>
           <Link href="/" className="text-amber-400 hover:text-amber-300 text-sm mt-2 inline-block">
             ← 메인으로 돌아가기

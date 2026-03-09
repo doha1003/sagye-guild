@@ -131,10 +131,10 @@ export default function Home() {
               <span className="text-2xl">🔥</span>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-cyan-300">시즌2 시작</span>
-                  <span className="bg-cyan-500 text-white text-xs font-bold px-2 py-0.5 rounded">1/21</span>
+                  <span className="font-bold text-cyan-300">시즌2 진행중</span>
+                  <span className="bg-cyan-500 text-white text-xs font-bold px-2 py-0.5 rounded">D+{Math.floor((Date.now() - new Date('2026-01-21').getTime()) / 86400000)}</span>
                 </div>
-                <span className="text-zinc-400 text-sm">신규 던전 · 어비스 개편 · 랭킹 초기화</span>
+                <span className="text-zinc-400 text-sm">시즌2 정보 · 타임라인 · 신규 컨텐츠</span>
               </div>
             </div>
             <span className="text-cyan-400 text-xl group-hover:translate-x-1 transition-transform">→</span>

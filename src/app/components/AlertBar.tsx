@@ -137,9 +137,9 @@ export default function AlertBar() {
     }
 
     if (daysUntil === 0) {
-      return (19 - hour) * 3600 + (60 - minute) * 60 + (60 - second);
+      return (20 - hour - 1) * 3600 + (60 - minute) * 60 + (60 - second);
     }
-    return daysUntil * 86400 + (19 - hour) * 3600 + (60 - minute) * 60 + (60 - second);
+    return (daysUntil - 1) * 86400 + (24 - hour + 19) * 3600 + (60 - minute) * 60 + (60 - second);
   };
 
   // 초를 포맷
