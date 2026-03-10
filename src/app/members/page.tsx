@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
+import { trackClick } from '@/lib/analytics';
 
 // 직업 정보 (8개 직업)
 const CLASSES = ['전체', '검성', '수호성', '살성', '궁성', '정령성', '마도성', '치유성', '호법성'] as const;
@@ -137,7 +138,7 @@ export default function MembersPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
-              onClick={() => fetchMembers(true)}
+              onClick={() => { fetchMembers(true); trackClick('새로고침', '/members'); }}
               disabled={loading}
               className="text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-3 sm:px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -181,7 +182,7 @@ export default function MembersPage() {
             return (
               <button
                 key={cls}
-                onClick={() => setActiveFilter(cls)}
+                onClick={() => { setActiveFilter(cls); trackClick(`직업필터_${cls}`, '/members'); }}
                 className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   activeFilter === cls
                     ? 'bg-amber-500 text-zinc-900'

@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const [
       realtimeRes, todayRes, pagesRes, deviceRes, cityRes, weeklyRes,
-      deviceDetailRes, sessionDetailRes, referralRes,
+      deviceDetailRes, sessionDetailRes, referralRes, buttonClickRes,
     ] = await Promise.all([
       // 실시간 접속자
       client.runRealtimeReport({
@@ -122,6 +122,21 @@ export async function POST(request: NextRequest) {
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 20,
       }),
+      // 버튼 클릭 이벤트
+      client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensionFilter: {
+          filter: {
+            fieldName: 'eventName',
+            stringFilter: { value: 'button_click' },
+          },
+        },
+        dimensions: [{ name: 'customEvent:button_name' }, { name: 'pagePath' }],
+        metrics: [{ name: 'eventCount' }],
+        orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+        limit: 30,
+      }),
     ]);
 
     const realtime = Number(realtimeRes[0]?.rows?.[0]?.metricValues?.[0]?.value || 0);
@@ -181,9 +196,15 @@ export async function POST(request: NextRequest) {
       pageViews: Number(row.metricValues?.[1]?.value || 0),
     }));
 
+    const buttonClicks = (buttonClickRes[0]?.rows || []).map(row => ({
+      buttonName: row.dimensionValues?.[0]?.value || '',
+      pagePath: row.dimensionValues?.[1]?.value || '',
+      count: Number(row.metricValues?.[0]?.value || 0),
+    }));
+
     return NextResponse.json({
       realtime, today, pages, devices, cities, weekly,
-      deviceDetails, sessionDetails, referrals,
+      deviceDetails, sessionDetails, referrals, buttonClicks,
     });
   } catch (error) {
     console.error('Analytics API error:', error);

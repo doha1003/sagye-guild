@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AlertBar from './components/AlertBar';
 import YouTubeLive from './components/YouTubeLive';
+import { trackClick } from '@/lib/analytics';
 
 interface GuildMember {
   className: string;
@@ -176,6 +177,7 @@ export default function Home() {
             href="https://discord.gg/XJUrkxc9Cm"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick('디스코드 참여')}
             className="bg-[#5865F2] hover:bg-[#4752C4] rounded-xl p-5 text-center transition-colors"
           >
             <div className="text-2xl mb-1">💬</div>
@@ -185,6 +187,7 @@ export default function Home() {
             href="https://open.kakao.com/o/gsMtbrki"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick('카카오톡 참여')}
             className="bg-[#FEE500] hover:bg-[#F5DC00] rounded-xl p-5 text-center transition-colors"
           >
             <div className="text-2xl mb-1">💛</div>
@@ -251,31 +254,31 @@ export default function Home() {
 
         {/* 메뉴 버튼 */}
         <div className="grid grid-cols-2 gap-3 mb-3">
-          <Link href="/members" className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/members" onClick={() => trackClick('레기온원')} className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-3xl mb-2">👥</div>
             <h3 className="font-bold text-white group-hover:text-amber-400">레기온원</h3>
             <p className="text-zinc-500 text-sm mt-1">멤버 관리</p>
           </Link>
-          <Link href="/schedule" className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/schedule" onClick={() => trackClick('일정표')} className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-3xl mb-2">📅</div>
             <h3 className="font-bold text-white group-hover:text-amber-400">일정표</h3>
             <p className="text-zinc-500 text-sm mt-1">컨텐츠 일정</p>
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Link href="/tips/appearance" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/tips/appearance" onClick={() => trackClick('외형 정보')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">👗</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">외형 정보</h3>
           </Link>
-          <Link href="/tips/pets" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/tips/pets" onClick={() => trackClick('펫 DB')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">🐾</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">펫 DB</h3>
           </Link>
-          <Link href="/tips/tuning" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/tips/tuning" onClick={() => trackClick('조율 팁')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">🔧</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">조율 팁</h3>
           </Link>
-          <Link href="/craft" className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+          <Link href="/craft" onClick={() => trackClick('제작 계산기')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">⚒️</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">제작 계산기</h3>
           </Link>

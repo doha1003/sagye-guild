@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { trackClick } from '@/lib/analytics';
 
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
@@ -24,6 +25,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    trackClick('로그인');
     try {
       const res = await fetch('/api/auth', {
         method: 'POST',

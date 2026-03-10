@@ -12,6 +12,7 @@ interface AnalyticsData {
   deviceDetails: { device: string; brand: string; os: string; browser: string; users: number }[];
   sessionDetails: { city: string; device: string; brand: string; page: string; users: number; avgDuration: number }[];
   referrals: { source: string; medium: string; users: number; pageViews: number }[];
+  buttonClicks: { buttonName: string; pagePath: string; count: number }[];
 }
 
 type DateRange = 'today' | '7days' | '30days';
@@ -471,6 +472,32 @@ export default function AdminPage() {
               </div>
             ))}
             {data.referrals.length === 0 && <p className="text-zinc-500 text-sm">데이터 없음</p>}
+          </div>
+        </section>
+
+        {/* 버튼 클릭 현황 */}
+        <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
+          <h2 className="font-bold text-white mb-4">버튼 클릭 현황</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-zinc-400 border-b border-zinc-700">
+                  <th className="text-left py-2 pr-4">버튼</th>
+                  <th className="text-left py-2 pr-4">페이지</th>
+                  <th className="text-right py-2">클릭 수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(data.buttonClicks || []).map((b, i) => (
+                  <tr key={i} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                    <td className="py-2 pr-4 text-white font-medium">{b.buttonName || '(알 수 없음)'}</td>
+                    <td className="py-2 pr-4 text-zinc-300">{PAGE_NAMES[b.pagePath] || b.pagePath}</td>
+                    <td className="py-2 text-right text-amber-400">{b.count}회</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {(!data.buttonClicks || data.buttonClicks.length === 0) && <p className="text-zinc-500 text-sm mt-2">데이터 없음</p>}
           </div>
         </section>
 

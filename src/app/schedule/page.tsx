@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import AlertBar from '../components/AlertBar';
+import { trackClick } from '@/lib/analytics';
 import { subscribeToBossTimers, setBossTimer, removeBossTimer, updateBossTimer, BossTimer as FirebaseBossTimer } from '@/lib/firebase';
 
 interface BossTimer {
@@ -69,7 +70,7 @@ export default function SchedulePage() {
                 <span className="text-green-400 text-sm font-medium">허용됨 ✓</span>
               ) : (
                 <button
-                  onClick={requestNotificationPermission}
+                  onClick={() => { requestNotificationPermission(); trackClick('알림 허용', '/schedule'); }}
                   className="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-900 font-bold px-3 py-1.5 rounded-lg transition-colors"
                 >
                   알림 허용하기
@@ -94,7 +95,7 @@ export default function SchedulePage() {
         {/* 탭 3개 */}
         <div className="flex gap-1.5 sm:gap-2 mb-6">
           <button
-            onClick={() => setActiveTab('schedule')}
+            onClick={() => { setActiveTab('schedule'); trackClick('일정_일일주간', '/schedule'); }}
             className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
               activeTab === 'schedule'
                 ? 'bg-amber-500 text-zinc-900'
@@ -104,7 +105,7 @@ export default function SchedulePage() {
             일일/주간
           </button>
           <button
-            onClick={() => setActiveTab('boss')}
+            onClick={() => { setActiveTab('boss'); trackClick('일정_필드보스', '/schedule'); }}
             className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors relative ${
               activeTab === 'boss'
                 ? 'bg-amber-500 text-zinc-900'
