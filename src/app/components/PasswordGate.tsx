@@ -60,19 +60,17 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-sky-200 via-sky-100 to-blue-200 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-6">
           <img
             src="/logo.png"
             alt="접속중 레기온"
-            className="w-40 h-40 object-contain rounded-2xl shadow-lg shadow-amber-500/20 mb-4"
+            className="w-44 h-44 object-contain drop-shadow-xl mb-6"
           />
-          <h1 className="text-2xl font-bold text-amber-400">접속중 레기온</h1>
-          <p className="text-zinc-500 text-xs mt-1">AION2 지켈 서버</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-zinc-800/80 backdrop-blur border border-zinc-700/50 rounded-2xl p-6 shadow-xl">
+        <form onSubmit={handleSubmit} className="bg-white/40 backdrop-blur-md border border-white/50 rounded-2xl p-6 shadow-xl">
           <input
             type="password"
             value={input}
@@ -82,15 +80,15 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
             }}
             placeholder="비밀번호를 입력하세요"
             autoFocus
-            className="w-full bg-zinc-900/80 border border-zinc-600 text-white rounded-xl px-4 py-3 mb-3 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 placeholder-zinc-600 transition-all"
+            className="w-full bg-white/60 border border-sky-200 text-zinc-800 rounded-xl px-4 py-3 mb-3 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/50 placeholder-zinc-400 transition-all"
           />
           {error && (
-            <p className="text-red-400 text-sm mb-3">비밀번호가 올바르지 않습니다.</p>
+            <p className="text-red-500 text-sm mb-3">비밀번호가 올바르지 않습니다.</p>
           )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-900 font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-amber-500/25"
+            className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-sky-500/30"
           >
             {loading ? '확인 중...' : '입장'}
           </button>
