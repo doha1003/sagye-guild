@@ -1,6 +1,6 @@
 {
-  "name": "접속중 레기온",
-  "short_name": "접속중 레기온",
+  "name": "접속중",
+  "short_name": "접속중",
   "description": "아이온2 지켈 서버 접속중 레기온 사이트",
   "start_url": "/",
   "display": "standalone",
