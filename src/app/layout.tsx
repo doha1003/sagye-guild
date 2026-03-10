@@ -43,8 +43,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/og-image.png',
-        width: 512,
-        height: 512,
+        width: 1200,
+        height: 630,
         alt: '접속중 레기온 - AION2 지켈',
       },
     ],
