@@ -81,7 +81,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
             className="w-full bg-white/60 border border-sky-200 text-zinc-800 rounded-xl px-4 py-3 mb-3 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/50 placeholder-zinc-400 transition-all"
           />
           {error && (
-            <p className="text-red-500 text-sm mb-3">비밀번호가 올바르지 않습니다.</p>
+            <p className="text-red-500 text-sm mb-3 text-center">비밀번호가 올바르지 않습니다.</p>
           )}
           <button
             type="submit"
