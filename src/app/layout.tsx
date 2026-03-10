@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.png?v=2',
         width: 1200,
         height: 630,
         alt: '접속중 레기온 - AION2 지켈',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '접속중 레기온',
     description: '아이온2 지켈 서버 접속중 레기온',
-    images: ['/og-image.png'],
+    images: ['/og-image.png?v=2'],
   },
   icons: {
     icon: [
