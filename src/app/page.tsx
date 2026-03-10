@@ -122,13 +122,10 @@ export default function Home() {
 
       {/* 메인 */}
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
-        {/* 타이틀 */}
-        <section className="text-center mb-10">
-          <h2 className="text-4xl font-bold mb-2">
-            <span className="text-amber-400">접속중 레기온</span>
-          </h2>
-          <p className="text-zinc-400">지켈 서버 · 마족</p>
-        </section>
+        {/* 로고 */}
+        <div className="flex justify-center mb-8">
+          <img src="/logo.png" alt="접속중 레기온" className="w-48 sm:w-56 drop-shadow-xl" />
+        </div>
 
         {/* 레기온 통계 */}
         <section className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 mb-6">
