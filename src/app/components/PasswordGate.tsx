@@ -88,7 +88,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-sky-500/30"
+            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-zinc-900 font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-amber-500/30"
           >
             {loading ? '확인 중...' : '입장'}
           </button>
