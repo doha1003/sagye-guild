@@ -264,7 +264,10 @@ export default function AdminPage() {
     <div className="min-h-screen bg-zinc-950">
       <header className="border-b border-zinc-800 bg-zinc-900/80 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-amber-400">관리자 대시보드</h1>
+          <div className="flex items-center gap-3">
+            <a href="/" className="text-zinc-400 hover:text-white text-lg">←</a>
+            <h1 className="text-xl font-bold text-amber-400">관리자 대시보드</h1>
+          </div>
           <div className="flex items-center gap-2">
             <a
               href="https://docs.google.com/spreadsheets/d/1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo"
