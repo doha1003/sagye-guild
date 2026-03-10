@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   title: "접속중 레기온 - AION2 지켈",
   description: "아이온2 지켈 서버 접속중 레기온 사이트",
   metadataBase: new URL('https://sagye.kr'),
+  robots: { index: false, follow: false },
   manifest: '/manifest.json',
   themeColor: '#f59e0b',
   appleWebApp: {
