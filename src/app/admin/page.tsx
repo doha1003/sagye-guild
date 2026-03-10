@@ -13,6 +13,8 @@ interface AnalyticsData {
   sessionDetails: { city: string; device: string; brand: string; page: string; users: number; avgDuration: number }[];
   referrals: { source: string; medium: string; users: number; pageViews: number }[];
   buttonClicks: { buttonName: string; pagePath: string; count: number }[];
+  referralDetails: { source: string; medium: string; channelGroup: string; landingPage: string; users: number; pageViews: number }[];
+  searchLandings: { source: string; pagePath: string; users: number }[];
 }
 
 type DateRange = 'today' | '7days' | '30days';
@@ -58,9 +60,9 @@ function notSet(v: string) {
   return v === '(not set)' || v === '(not provided)';
 }
 
-function PasswordSection({ adminPassword }: { adminPassword: string }) {
-  const [siteForm, setSiteForm] = useState({ newPassword: '', confirm: '' });
-  const [adminForm, setAdminForm] = useState({ newPassword: '', confirm: '' });
+function PasswordSection() {
+  const [siteForm, setSiteForm] = useState({ adminPassword: '', newPassword: '', confirm: '' });
+  const [adminForm, setAdminForm] = useState({ adminPassword: '', newPassword: '', confirm: '' });
   const [siteMsg, setSiteMsg] = useState({ text: '', ok: false });
   const [adminMsg, setAdminMsg] = useState({ text: '', ok: false });
   const [submitting, setSubmitting] = useState(false);
@@ -70,7 +72,7 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
     const setMsg = type === 'site' ? setSiteMsg : setAdminMsg;
     const setForm = type === 'site' ? setSiteForm : setAdminForm;
 
-    if (!form.newPassword || !form.confirm) {
+    if (!form.adminPassword || !form.newPassword || !form.confirm) {
       setMsg({ text: '모든 항목을 입력해주세요.', ok: false });
       return;
     }
@@ -89,12 +91,12 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
       const res = await fetch('/api/admin/password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminPassword, type, newPassword: form.newPassword }),
+        body: JSON.stringify({ adminPassword: form.adminPassword, type, newPassword: form.newPassword }),
       });
       const data = await res.json();
       if (res.ok) {
         setMsg({ text: `${type === 'site' ? '사이트' : '관리자'} 비밀번호가 변경되었습니다.`, ok: true });
-        setForm({ newPassword: '', confirm: '' });
+        setForm({ adminPassword: '', newPassword: '', confirm: '' });
       } else {
         setMsg({ text: data.error || '변경에 실패했습니다.', ok: false });
       }
@@ -114,6 +116,13 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
           <div className="space-y-2">
             <input
               type="password"
+              placeholder="현재 관리자 비밀번호"
+              value={siteForm.adminPassword}
+              onChange={e => setSiteForm(f => ({ ...f, adminPassword: e.target.value }))}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
+            />
+            <input
+              type="password"
               placeholder="새 비밀번호"
               value={siteForm.newPassword}
               onChange={e => setSiteForm(f => ({ ...f, newPassword: e.target.value }))}
@@ -129,7 +138,7 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
             {siteMsg.text && <p className={`text-sm ${siteMsg.ok ? 'text-green-400' : 'text-red-400'}`}>{siteMsg.text}</p>}
             <button
               onClick={() => handleChange('site')}
-              disabled={submitting}
+              disabled={submitting || !siteForm.adminPassword}
               className="w-full bg-zinc-700 hover:bg-zinc-600 text-white text-sm py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {submitting ? '변경 중...' : '변경'}
@@ -140,6 +149,13 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
         <div>
           <h3 className="text-amber-400 text-sm font-bold mb-3">관리자 비밀번호 변경</h3>
           <div className="space-y-2">
+            <input
+              type="password"
+              placeholder="현재 관리자 비밀번호"
+              value={adminForm.adminPassword}
+              onChange={e => setAdminForm(f => ({ ...f, adminPassword: e.target.value }))}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
+            />
             <input
               type="password"
               placeholder="새 비밀번호"
@@ -157,7 +173,7 @@ function PasswordSection({ adminPassword }: { adminPassword: string }) {
             {adminMsg.text && <p className={`text-sm ${adminMsg.ok ? 'text-green-400' : 'text-red-400'}`}>{adminMsg.text}</p>}
             <button
               onClick={() => handleChange('admin')}
-              disabled={submitting}
+              disabled={submitting || !adminForm.adminPassword}
               className="w-full bg-zinc-700 hover:bg-zinc-600 text-white text-sm py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {submitting ? '변경 중...' : '변경'}
@@ -455,7 +471,7 @@ export default function AdminPage() {
         {/* 유입 경로 */}
         <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
           <h2 className="font-bold text-white mb-4">유입 경로</h2>
-          <div className="space-y-2">
+          <div className="space-y-2 mb-6">
             {data.referrals.map((r, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
@@ -473,7 +489,59 @@ export default function AdminPage() {
             ))}
             {data.referrals.length === 0 && <p className="text-zinc-500 text-sm">데이터 없음</p>}
           </div>
+
+          {(data.referralDetails || []).length > 0 && (
+            <>
+              <h3 className="text-amber-400 text-sm font-bold mb-3">채널별 랜딩 페이지 상세</h3>
+              <div className="overflow-x-auto max-h-64 overflow-y-auto">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-zinc-800">
+                    <tr className="text-zinc-400 border-b border-zinc-700">
+                      <th className="text-left py-2 pr-4">채널</th>
+                      <th className="text-left py-2 pr-4">소스</th>
+                      <th className="text-left py-2 pr-4">랜딩 페이지</th>
+                      <th className="text-right py-2 pr-4">방문자</th>
+                      <th className="text-right py-2">페이지뷰</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.referralDetails.map((r, i) => (
+                      <tr key={i} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                        <td className="py-2 pr-4 text-zinc-300">{notSet(r.channelGroup) ? '-' : r.channelGroup}</td>
+                        <td className="py-2 pr-4 text-white">
+                          {notSet(r.source) ? '직접' : r.source}
+                          {!notSet(r.medium) && <span className="text-zinc-500 ml-1">/ {r.medium}</span>}
+                        </td>
+                        <td className="py-2 pr-4 text-zinc-300">{PAGE_NAMES[r.landingPage] || r.landingPage}</td>
+                        <td className="py-2 pr-4 text-right text-amber-400">{r.users}명</td>
+                        <td className="py-2 text-right text-zinc-400">{r.pageViews}뷰</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </section>
+
+        {/* 검색 유입 */}
+        {(data.searchLandings || []).length > 0 && (
+          <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
+            <h2 className="font-bold text-white mb-4">검색 유입</h2>
+            <div className="space-y-2">
+              {data.searchLandings.map((s, i) => (
+                <div key={i} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-500 w-5">{i + 1}</span>
+                    <span className="text-white">{notSet(s.source) ? '알 수 없음' : s.source}</span>
+                    <span className="text-zinc-500">{PAGE_NAMES[s.pagePath] || s.pagePath}</span>
+                  </div>
+                  <span className="text-amber-400">{s.users}명</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 버튼 클릭 현황 */}
         <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
@@ -501,7 +569,7 @@ export default function AdminPage() {
           </div>
         </section>
 
-        <PasswordSection adminPassword={password} />
+        <PasswordSection />
       </main>
     </div>
   );

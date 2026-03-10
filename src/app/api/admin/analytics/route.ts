@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       try { return await fn(); } catch { return [{ rows: [] }]; }
     };
 
-    const [deviceDetailRes, sessionDetailRes, referralRes, buttonClickRes] = await Promise.all([
+    const [deviceDetailRes, sessionDetailRes, referralRes, buttonClickRes, referralDetailRes, searchLandingRes] = await Promise.all([
       safeReport(() => client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
@@ -135,6 +135,33 @@ export async function POST(request: NextRequest) {
         metrics: [{ name: 'eventCount' }],
         orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
         limit: 30,
+      })),
+      safeReport(() => client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensions: [
+          { name: 'sessionSource' },
+          { name: 'sessionMedium' },
+          { name: 'sessionDefaultChannelGroup' },
+          { name: 'landingPagePlusQueryString' },
+        ],
+        metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 30,
+      })),
+      safeReport(() => client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensionFilter: {
+          filter: {
+            fieldName: 'sessionDefaultChannelGroup',
+            stringFilter: { value: 'Organic Search' },
+          },
+        },
+        dimensions: [{ name: 'sessionSource' }, { name: 'pagePath' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 20,
       })),
     ]);
 
@@ -203,9 +230,25 @@ export async function POST(request: NextRequest) {
       count: Number(row.metricValues?.[0]?.value || 0),
     }));
 
+    const referralDetails = mapRows(referralDetailRes, row => ({
+      source: row.dimensionValues?.[0]?.value || '',
+      medium: row.dimensionValues?.[1]?.value || '',
+      channelGroup: row.dimensionValues?.[2]?.value || '',
+      landingPage: row.dimensionValues?.[3]?.value || '',
+      users: Number(row.metricValues?.[0]?.value || 0),
+      pageViews: Number(row.metricValues?.[1]?.value || 0),
+    }));
+
+    const searchLandings = mapRows(searchLandingRes, row => ({
+      source: row.dimensionValues?.[0]?.value || '',
+      pagePath: row.dimensionValues?.[1]?.value || '',
+      users: Number(row.metricValues?.[0]?.value || 0),
+    }));
+
     return NextResponse.json({
       realtime, today, pages, devices, cities, weekly,
       deviceDetails, sessionDetails, referrals, buttonClicks,
+      referralDetails, searchLandings,
     });
   } catch (error) {
     console.error('Analytics API error:', error);
