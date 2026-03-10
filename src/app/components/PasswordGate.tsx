@@ -64,9 +64,9 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-6">
           <img
-            src="/og-image.png"
+            src="/logo.png"
             alt="접속중 레기온"
-            className="w-48 h-48 object-cover rounded-2xl shadow-lg shadow-amber-500/20 mb-4"
+            className="w-40 h-40 object-contain rounded-2xl shadow-lg shadow-amber-500/20 mb-4"
           />
           <h1 className="text-2xl font-bold text-amber-400">접속중 레기온</h1>
           <p className="text-zinc-500 text-xs mt-1">AION2 지켈 서버</p>
