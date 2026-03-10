@@ -123,8 +123,8 @@ export default function Home() {
       {/* 메인 */}
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
         {/* 로고 */}
-        <div className="flex justify-center mb-8">
-          <img src="/logo.png" alt="접속중 레기온" className="w-full max-h-48 sm:max-h-56 object-contain drop-shadow-xl" />
+        <div className="mb-8">
+          <img src="/og-image.png" alt="접속중 레기온" className="w-full rounded-xl drop-shadow-xl" />
         </div>
 
         {/* 레기온 통계 */}
