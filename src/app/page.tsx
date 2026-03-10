@@ -153,20 +153,20 @@ export default function Home() {
         {/* 공지사항 */}
         <Link
           href="/notice"
-          className="block bg-gradient-to-r from-amber-500/10 to-red-500/10 rounded-xl border border-amber-500/30 p-5 mb-6 hover:from-amber-500/20 hover:to-red-500/20 hover:border-amber-500/50 transition-all group"
+          className="block bg-gradient-to-r from-red-600 to-amber-500 rounded-xl p-[2px] mb-6 group hover:shadow-lg hover:shadow-red-500/20 transition-all"
         >
-          <div className="flex items-center justify-between">
+          <div className="bg-zinc-900 rounded-[10px] px-5 py-4 flex items-center justify-between group-hover:bg-zinc-900/80 transition-colors">
             <div className="flex items-center gap-4">
               <span className="text-3xl">📢</span>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-amber-300 text-lg">레기온 공지사항</span>
-                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded animate-pulse">필독</span>
+                  <span className="font-bold text-white text-lg">레기온 공지사항</span>
+                  <span className="bg-red-500 text-white text-sm font-extrabold px-3 py-1 rounded-md animate-pulse shadow-md shadow-red-500/30">필독</span>
                 </div>
-                <span className="text-zinc-400">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
+                <span className="text-zinc-400 text-sm">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
               </div>
             </div>
-            <span className="text-amber-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
+            <span className="text-red-400 text-2xl group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </Link>
 
