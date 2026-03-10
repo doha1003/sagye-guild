@@ -194,14 +194,14 @@ export default function YouTubeLive() {
           onClick={() => setExpanded(!expanded)}
           className="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-800 transition-colors"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-red-500">▶</span>
-            <span className="text-zinc-300 text-sm font-medium">AION2 공식 영상</span>
-            {latestVideo && (
-              <span className="text-zinc-500 text-xs truncate max-w-[150px] sm:max-w-[250px]">
-                {latestVideo.title}
-              </span>
-            )}
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-red-500 shrink-0">▶</span>
+            <div className="min-w-0">
+              <span className="text-zinc-300 text-sm font-medium">AION2 공식 영상</span>
+              {latestVideo && (
+                <p className="text-zinc-500 text-xs truncate">{latestVideo.title}</p>
+              )}
+            </div>
           </div>
           <span className="text-zinc-500 text-lg">{expanded ? '▲' : '▼'}</span>
         </button>

@@ -122,26 +122,6 @@ export default function Home() {
 
       {/* 메인 */}
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
-        {/* 시즌2 배너 */}
-        <Link
-          href="/season2"
-          className="block bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 border border-cyan-500/30 rounded-xl p-4 mb-6 hover:from-cyan-600/30 hover:to-indigo-600/30 transition-all group"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🔥</span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-cyan-300">시즌2 진행중</span>
-                  <span className="bg-cyan-500 text-white text-xs font-bold px-2 py-0.5 rounded">D+{Math.floor((Date.now() - new Date('2026-01-21').getTime()) / 86400000)}</span>
-                </div>
-                <span className="text-zinc-400 text-sm">시즌2 정보 · 타임라인 · 신규 컨텐츠</span>
-              </div>
-            </div>
-            <span className="text-cyan-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
-          </div>
-        </Link>
-
         {/* 타이틀 */}
         <section className="text-center mb-10">
           <h2 className="text-4xl font-bold mb-2">
@@ -149,27 +129,6 @@ export default function Home() {
           </h2>
           <p className="text-zinc-400">지켈 서버 · 마족</p>
         </section>
-
-        {/* 공지사항 */}
-        <Link
-          href="/notice"
-          className="block bg-gradient-to-r from-red-600 to-amber-500 rounded-xl p-[2px] mb-6 group hover:shadow-lg hover:shadow-red-500/20 transition-all"
-        >
-          <div className="bg-zinc-900 rounded-[10px] px-5 py-4 flex items-center justify-between group-hover:bg-zinc-900/80 transition-colors">
-            <div className="flex items-center gap-4">
-              <span className="text-3xl">📢</span>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-white text-lg">레기온 공지사항</span>
-                  <span className="bg-red-500 text-white text-sm font-extrabold px-3 py-1 rounded-md animate-pulse shadow-md shadow-red-500/30">필독</span>
-                </div>
-                <span className="text-zinc-400 text-sm">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
-              </div>
-            </div>
-            <span className="text-red-400 text-2xl group-hover:translate-x-1 transition-transform">→</span>
-          </div>
-        </Link>
-
 
         {/* 레기온 통계 */}
         <section className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 mb-6">
@@ -227,6 +186,26 @@ export default function Home() {
           )}
         </section>
 
+        {/* 공지사항 */}
+        <Link
+          href="/notice"
+          className="block bg-gradient-to-r from-red-600 to-amber-500 rounded-xl p-[2px] mb-6 group hover:shadow-lg hover:shadow-red-500/20 transition-all"
+        >
+          <div className="bg-zinc-900 rounded-[10px] px-5 py-4 flex items-center justify-between group-hover:bg-zinc-900/80 transition-colors">
+            <div className="flex items-center gap-4">
+              <span className="text-3xl">📢</span>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-bold text-white text-lg">레기온 공지사항</span>
+                  <span className="bg-red-500 text-white text-sm font-extrabold px-3 py-1 rounded-md animate-pulse shadow-md shadow-red-500/30">필독</span>
+                </div>
+                <span className="text-zinc-400 text-sm">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
+              </div>
+            </div>
+            <span className="text-red-400 text-2xl group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </Link>
+
         {/* 메뉴 버튼 */}
         <div className="grid grid-cols-2 gap-3 mb-3">
           <Link href="/members" onClick={() => trackClick('레기온원')} className="bg-zinc-800/50 rounded-xl p-6 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
@@ -258,6 +237,26 @@ export default function Home() {
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">제작 계산기</h3>
           </Link>
         </div>
+
+        {/* 시즌2 배너 */}
+        <Link
+          href="/season2"
+          className="block bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 border border-cyan-500/30 rounded-xl p-4 mt-6 mb-3 hover:from-cyan-600/30 hover:to-indigo-600/30 transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-cyan-300">시즌2 진행중</span>
+                  <span className="bg-cyan-500 text-white text-xs font-bold px-2 py-0.5 rounded">D+{Math.floor((Date.now() - new Date('2026-01-21').getTime()) / 86400000)}</span>
+                </div>
+                <span className="text-zinc-400 text-sm">시즌2 정보 · 타임라인 · 신규 컨텐츠</span>
+              </div>
+            </div>
+            <span className="text-cyan-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </Link>
 
         {/* AION2 공식 라이브 방송 */}
         <YouTubeLive />
