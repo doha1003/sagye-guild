@@ -32,16 +32,14 @@ export async function POST(request: NextRequest) {
     const rangeStart = startDate || '7daysAgo';
     const rangeEnd = endDate || 'today';
 
+    // 기본 6개 report (기존 기능)
     const [
       realtimeRes, todayRes, pagesRes, deviceRes, cityRes, weeklyRes,
-      deviceDetailRes, sessionDetailRes, referralRes, buttonClickRes,
     ] = await Promise.all([
-      // 실시간 접속자
       client.runRealtimeReport({
         property: `properties/${propertyId}`,
         metrics: [{ name: 'activeUsers' }],
       }),
-      // 오늘 방문자
       client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: 'today', endDate: 'today' }],
@@ -52,7 +50,6 @@ export async function POST(request: NextRequest) {
           { name: 'newUsers' },
         ],
       }),
-      // 인기 페이지
       client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
@@ -61,14 +58,12 @@ export async function POST(request: NextRequest) {
         orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
         limit: 10,
       }),
-      // 기기 비율
       client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'deviceCategory' }],
         metrics: [{ name: 'activeUsers' }],
       }),
-      // 도시별
       client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
@@ -77,7 +72,6 @@ export async function POST(request: NextRequest) {
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 10,
       }),
-      // 일별 방문자
       client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
@@ -85,8 +79,16 @@ export async function POST(request: NextRequest) {
         metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
         orderBys: [{ dimension: { dimensionName: 'date' }, desc: false }],
       }),
-      // 기기 상세 (제조사, OS, 브라우저)
-      client.runReport({
+    ]);
+
+    // 추가 report (실패해도 기본 데이터는 반환)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const safeReport = async (fn: () => Promise<any[]>): Promise<any[]> => {
+      try { return await fn(); } catch { return [{ rows: [] }]; }
+    };
+
+    const [deviceDetailRes, sessionDetailRes, referralRes, buttonClickRes] = await Promise.all([
+      safeReport(() => client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [
@@ -98,9 +100,8 @@ export async function POST(request: NextRequest) {
         metrics: [{ name: 'activeUsers' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 30,
-      }),
-      // 세션 상세 (도시+기기+제조사+페이지)
-      client.runReport({
+      })),
+      safeReport(() => client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [
@@ -112,18 +113,16 @@ export async function POST(request: NextRequest) {
         metrics: [{ name: 'activeUsers' }, { name: 'averageSessionDuration' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 50,
-      }),
-      // 유입 경로
-      client.runReport({
+      })),
+      safeReport(() => client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
         metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 20,
-      }),
-      // 버튼 클릭 이벤트
-      client.runReport({
+      })),
+      safeReport(() => client.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensionFilter: {
@@ -136,7 +135,7 @@ export async function POST(request: NextRequest) {
         metrics: [{ name: 'eventCount' }],
         orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
         limit: 30,
-      }),
+      })),
     ]);
 
     const realtime = Number(realtimeRes[0]?.rows?.[0]?.metricValues?.[0]?.value || 0);
@@ -172,7 +171,9 @@ export async function POST(request: NextRequest) {
       pageViews: Number(row.metricValues?.[1]?.value || 0),
     }));
 
-    const deviceDetails = (deviceDetailRes[0]?.rows || []).map(row => ({
+    const mapRows = (res: any[], fn: (row: any) => any) => (res[0]?.rows || []).map(fn);
+
+    const deviceDetails = mapRows(deviceDetailRes, row => ({
       device: row.dimensionValues?.[0]?.value || '',
       brand: row.dimensionValues?.[1]?.value || '',
       os: row.dimensionValues?.[2]?.value || '',
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
       users: Number(row.metricValues?.[0]?.value || 0),
     }));
 
-    const sessionDetails = (sessionDetailRes[0]?.rows || []).map(row => ({
+    const sessionDetails = mapRows(sessionDetailRes, row => ({
       city: row.dimensionValues?.[0]?.value || '',
       device: row.dimensionValues?.[1]?.value || '',
       brand: row.dimensionValues?.[2]?.value || '',
@@ -189,14 +190,14 @@ export async function POST(request: NextRequest) {
       avgDuration: Math.round(Number(row.metricValues?.[1]?.value || 0)),
     }));
 
-    const referrals = (referralRes[0]?.rows || []).map(row => ({
+    const referrals = mapRows(referralRes, row => ({
       source: row.dimensionValues?.[0]?.value || '',
       medium: row.dimensionValues?.[1]?.value || '',
       users: Number(row.metricValues?.[0]?.value || 0),
       pageViews: Number(row.metricValues?.[1]?.value || 0),
     }));
 
-    const buttonClicks = (buttonClickRes[0]?.rows || []).map(row => ({
+    const buttonClicks = mapRows(buttonClickRes, row => ({
       buttonName: row.dimensionValues?.[0]?.value || '',
       pagePath: row.dimensionValues?.[1]?.value || '',
       count: Number(row.metricValues?.[0]?.value || 0),
