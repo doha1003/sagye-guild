@@ -111,7 +111,7 @@ export default function Home() {
 
       {/* 헤더 */}
       <header className="border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-amber-400 select-none cursor-default" onClick={handleLogoClick}>접속중 레기온</h1>
           <div className="flex items-center gap-4">
             <span className="text-zinc-500 text-sm">AION2 지켈</span>
@@ -121,7 +121,7 @@ export default function Home() {
       <AlertBar />
 
       {/* 메인 */}
-      <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
+      <main className="max-w-2xl mx-auto px-4 py-8 flex-1 relative z-10">
         {/* 로고 */}
         <div className="mb-8">
           <img src="/logo.png" alt="접속중 레기온" className="w-full rounded-xl drop-shadow-xl" />
@@ -286,7 +286,7 @@ export default function Home() {
 
       {/* 푸터 */}
       <footer className="border-t border-zinc-800 bg-zinc-900/80 mt-auto relative z-10">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-zinc-500 mb-3 text-center">AION2 바로가기</h3>
             <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 sm:gap-2">
