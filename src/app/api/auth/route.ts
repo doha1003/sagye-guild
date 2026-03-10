@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { kv } from '@vercel/kv';
+import { verifyAdminPassword, verifySitePassword } from '@/lib/firebase-server';
 
-const SITE_PASSWORD = process.env.SITE_PASSWORD!;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 const TOKEN_SECRET = process.env.TOKEN_SECRET!;
 
 const MAX_ATTEMPTS = 10;
@@ -53,8 +52,10 @@ export async function POST(request: NextRequest) {
 
     const { password } = await request.json();
 
-    const isAdmin = password === ADMIN_PASSWORD;
-    const isUser = password === SITE_PASSWORD;
+    const [isAdmin, isUser] = await Promise.all([
+      verifyAdminPassword(password),
+      verifySitePassword(password),
+    ]);
 
     if (isAdmin || isUser) {
       const token = generateToken();

@@ -13,7 +13,7 @@ const PROTECTED_PATHS = [
 
 const PUBLIC_API_PATHS = ['/api/auth', '/api/visitors'];
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtectedPage = PROTECTED_PATHS.some(p => pathname.startsWith(p));

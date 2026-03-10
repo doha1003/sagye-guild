@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import { kv } from '@vercel/kv';
+import { verifyAdminPassword } from '@/lib/firebase-server';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 const GA_PROPERTY_ID = process.env.GA_PROPERTY_ID!;
 
 function getAnalyticsClient() {
@@ -12,10 +12,10 @@ function getAnalyticsClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    const { password, startDate, endDate } = await request.json();
 
-    if (password !== ADMIN_PASSWORD) {
-      // rate limit
+    const isAdmin = await verifyAdminPassword(password);
+    if (!isAdmin) {
       const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
       const key = `admin_rate:${ip}`;
       const count = await kv.incr(key).catch(() => 0);
@@ -29,7 +29,13 @@ export async function POST(request: NextRequest) {
     const client = getAnalyticsClient();
     const propertyId = GA_PROPERTY_ID;
 
-    const [realtimeRes, todayRes, pagesRes, deviceRes, cityRes, weeklyRes] = await Promise.all([
+    const rangeStart = startDate || '7daysAgo';
+    const rangeEnd = endDate || 'today';
+
+    const [
+      realtimeRes, todayRes, pagesRes, deviceRes, cityRes, weeklyRes,
+      deviceDetailRes, sessionDetailRes, referralRes,
+    ] = await Promise.all([
       // 실시간 접속자
       client.runRealtimeReport({
         property: `properties/${propertyId}`,
@@ -46,38 +52,75 @@ export async function POST(request: NextRequest) {
           { name: 'newUsers' },
         ],
       }),
-      // 인기 페이지 (오늘)
+      // 인기 페이지
       client.runReport({
         property: `properties/${propertyId}`,
-        dateRanges: [{ startDate: 'today', endDate: 'today' }],
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'pagePath' }],
-        metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+        metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }, { name: 'averageSessionDuration' }],
         orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
         limit: 10,
       }),
-      // 기기 비율 (7일)
+      // 기기 비율
       client.runReport({
         property: `properties/${propertyId}`,
-        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'deviceCategory' }],
         metrics: [{ name: 'activeUsers' }],
       }),
-      // 도시별 (7일)
+      // 도시별
       client.runReport({
         property: `properties/${propertyId}`,
-        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'city' }],
         metrics: [{ name: 'activeUsers' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 10,
       }),
-      // 일별 방문자 (7일)
+      // 일별 방문자
       client.runReport({
         property: `properties/${propertyId}`,
-        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
         dimensions: [{ name: 'date' }],
         metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
         orderBys: [{ dimension: { dimensionName: 'date' }, desc: false }],
+      }),
+      // 기기 상세 (제조사, OS, 브라우저)
+      client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensions: [
+          { name: 'deviceCategory' },
+          { name: 'mobileDeviceBranding' },
+          { name: 'operatingSystem' },
+          { name: 'browser' },
+        ],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 30,
+      }),
+      // 세션 상세 (도시+기기+제조사+페이지)
+      client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensions: [
+          { name: 'city' },
+          { name: 'deviceCategory' },
+          { name: 'mobileDeviceBranding' },
+          { name: 'pagePath' },
+        ],
+        metrics: [{ name: 'activeUsers' }, { name: 'averageSessionDuration' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 50,
+      }),
+      // 유입 경로
+      client.runReport({
+        property: `properties/${propertyId}`,
+        dateRanges: [{ startDate: rangeStart, endDate: rangeEnd }],
+        dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
+        metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 20,
       }),
     ]);
 
@@ -95,6 +138,7 @@ export async function POST(request: NextRequest) {
       path: row.dimensionValues?.[0]?.value || '',
       views: Number(row.metricValues?.[0]?.value || 0),
       users: Number(row.metricValues?.[1]?.value || 0),
+      avgDuration: Math.round(Number(row.metricValues?.[2]?.value || 0)),
     }));
 
     const devices = (deviceRes[0]?.rows || []).map(row => ({
@@ -113,7 +157,34 @@ export async function POST(request: NextRequest) {
       pageViews: Number(row.metricValues?.[1]?.value || 0),
     }));
 
-    return NextResponse.json({ realtime, today, pages, devices, cities, weekly });
+    const deviceDetails = (deviceDetailRes[0]?.rows || []).map(row => ({
+      device: row.dimensionValues?.[0]?.value || '',
+      brand: row.dimensionValues?.[1]?.value || '',
+      os: row.dimensionValues?.[2]?.value || '',
+      browser: row.dimensionValues?.[3]?.value || '',
+      users: Number(row.metricValues?.[0]?.value || 0),
+    }));
+
+    const sessionDetails = (sessionDetailRes[0]?.rows || []).map(row => ({
+      city: row.dimensionValues?.[0]?.value || '',
+      device: row.dimensionValues?.[1]?.value || '',
+      brand: row.dimensionValues?.[2]?.value || '',
+      page: row.dimensionValues?.[3]?.value || '',
+      users: Number(row.metricValues?.[0]?.value || 0),
+      avgDuration: Math.round(Number(row.metricValues?.[1]?.value || 0)),
+    }));
+
+    const referrals = (referralRes[0]?.rows || []).map(row => ({
+      source: row.dimensionValues?.[0]?.value || '',
+      medium: row.dimensionValues?.[1]?.value || '',
+      users: Number(row.metricValues?.[0]?.value || 0),
+      pageViews: Number(row.metricValues?.[1]?.value || 0),
+    }));
+
+    return NextResponse.json({
+      realtime, today, pages, devices, cities, weekly,
+      deviceDetails, sessionDetails, referrals,
+    });
   } catch (error) {
     console.error('Analytics API error:', error);
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
