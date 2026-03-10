@@ -199,7 +199,7 @@ export default function Home() {
                   <span className="font-bold text-white text-lg">레기온 공지사항</span>
                   <span className="bg-red-500 text-white text-sm font-extrabold px-3 py-1 rounded-md animate-pulse shadow-md shadow-red-500/30">필독</span>
                 </div>
-                <span className="text-zinc-400 text-sm">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
+                <span className="text-zinc-400 text-sm">규칙 · 파티 · 사이트 가이드 · 봇 사용법</span>
               </div>
             </div>
             <span className="text-red-400 text-2xl group-hover:translate-x-1 transition-transform">→</span>
