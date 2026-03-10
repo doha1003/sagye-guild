@@ -289,7 +289,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-zinc-500 mb-3 text-center">AION2 바로가기</h3>
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
+            <div className="grid grid-cols-5 gap-1.5">
               {[
                 { href: 'https://www.youtube.com/@AION2', icon: '▶️', label: '유튜브' },
                 { href: 'https://aion2.plaync.com/ko-kr/board/notice/list', icon: '📢', label: '공지' },
