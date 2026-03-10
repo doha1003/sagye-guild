@@ -124,7 +124,7 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-4 py-8 flex-1 relative z-10">
         {/* 로고 */}
         <div className="flex justify-center mb-8">
-          <img src="/logo.png" alt="접속중 레기온" className="w-full max-w-xs drop-shadow-xl" />
+          <img src="/logo.png" alt="접속중 레기온" className="w-full max-h-48 sm:max-h-56 object-contain drop-shadow-xl" />
         </div>
 
         {/* 레기온 통계 */}
