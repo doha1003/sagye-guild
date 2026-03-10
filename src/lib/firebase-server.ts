@@ -31,17 +31,25 @@ export async function getStoredPassword(type: 'site' | 'admin') {
 }
 
 export async function verifyAdminPassword(password: string) {
-  const stored = await getStoredPassword('admin');
-  if (stored && stored.hash) {
-    return verifyPassword(password, stored);
+  try {
+    const stored = await getStoredPassword('admin');
+    if (stored && stored.hash) {
+      return verifyPassword(password, stored);
+    }
+  } catch {
+    // Firebase 실패 시 환경변수 폴백
   }
   return password === process.env.ADMIN_PASSWORD;
 }
 
 export async function verifySitePassword(password: string) {
-  const stored = await getStoredPassword('site');
-  if (stored && stored.hash) {
-    return verifyPassword(password, stored);
+  try {
+    const stored = await getStoredPassword('site');
+    if (stored && stored.hash) {
+      return verifyPassword(password, stored);
+    }
+  } catch {
+    // Firebase 실패 시 환경변수 폴백
   }
   return password === process.env.SITE_PASSWORD;
 }
