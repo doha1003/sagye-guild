@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   description: "아이온2 지켈 서버 접속중 레기온 사이트",
   metadataBase: new URL('https://sagye.kr'),
   robots: { index: false, follow: false },
+  verification: { google: 'f1IDkVOWfUFBJiPqmCNoVgQlERqbf3iOMbAa6hn8LUk' },
   manifest: '/manifest.json',
   themeColor: '#f59e0b',
   appleWebApp: {
