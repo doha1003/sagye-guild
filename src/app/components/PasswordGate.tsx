@@ -66,7 +66,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           <img
             src="/logo.png"
             alt="접속중 레기온"
-            className="w-44 h-44 object-contain drop-shadow-xl mb-6"
+            className="w-full max-w-sm object-contain drop-shadow-xl mb-6"
           />
         </div>
 
