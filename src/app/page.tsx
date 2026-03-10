@@ -153,20 +153,20 @@ export default function Home() {
         {/* 공지사항 */}
         <Link
           href="/notice"
-          className="block bg-zinc-800/50 rounded-xl border border-zinc-700 p-5 mb-6 hover:bg-zinc-800 hover:border-zinc-600 transition-all group"
+          className="block bg-gradient-to-r from-amber-500/10 to-red-500/10 rounded-xl border border-amber-500/30 p-5 mb-6 hover:from-amber-500/20 hover:to-red-500/20 hover:border-amber-500/50 transition-all group"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="text-3xl">📢</span>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-white text-lg">공지사항</span>
-                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">필독</span>
+                  <span className="font-bold text-amber-300 text-lg">레기온 공지사항</span>
+                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded animate-pulse">필독</span>
                 </div>
-                <span className="text-zinc-400">레기온 규칙 · 파티 규칙</span>
+                <span className="text-zinc-400">레기온 규칙 · 파티 규칙 · 사이트 가이드</span>
               </div>
             </div>
-            <span className="text-zinc-500 text-xl group-hover:text-zinc-300 transition-colors">→</span>
+            <span className="text-amber-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </Link>
 
