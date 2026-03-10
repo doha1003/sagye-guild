@@ -61,14 +61,12 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-200 via-sky-100 to-blue-200 flex flex-col items-center justify-center px-4">
+      <img
+        src="/logo.png"
+        alt="접속중 레기온"
+        className="w-72 sm:w-80 object-contain drop-shadow-xl mb-6"
+      />
       <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center mb-6">
-          <img
-            src="/logo.png"
-            alt="접속중 레기온"
-            className="w-full max-w-sm object-contain drop-shadow-xl mb-6"
-          />
-        </div>
 
         <form onSubmit={handleSubmit} className="bg-white/40 backdrop-blur-md border border-white/50 rounded-2xl p-6 shadow-xl">
           <input
