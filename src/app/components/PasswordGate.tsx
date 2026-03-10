@@ -60,15 +60,19 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-zinc-900 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-amber-400 mb-2">접속중 레기온</h1>
-          <p className="text-zinc-500 text-sm">AION2 지켈 서버</p>
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src="/og-image.png"
+            alt="접속중 레기온"
+            className="w-48 h-48 object-cover rounded-2xl shadow-lg shadow-amber-500/20 mb-4"
+          />
+          <h1 className="text-2xl font-bold text-amber-400">접속중 레기온</h1>
+          <p className="text-zinc-500 text-xs mt-1">AION2 지켈 서버</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-zinc-800 border border-zinc-700 rounded-xl p-6">
-          <label className="block text-zinc-400 text-sm mb-2">비밀번호를 입력하세요</label>
+        <form onSubmit={handleSubmit} className="bg-zinc-800/80 backdrop-blur border border-zinc-700/50 rounded-2xl p-6 shadow-xl">
           <input
             type="password"
             value={input}
@@ -76,9 +80,9 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
               setInput(e.target.value);
               setError(false);
             }}
-            placeholder="비밀번호"
+            placeholder="비밀번호를 입력하세요"
             autoFocus
-            className="w-full bg-zinc-900 border border-zinc-600 text-white rounded-lg px-4 py-3 mb-3 focus:outline-none focus:border-amber-500 placeholder-zinc-600"
+            className="w-full bg-zinc-900/80 border border-zinc-600 text-white rounded-xl px-4 py-3 mb-3 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 placeholder-zinc-600 transition-all"
           />
           {error && (
             <p className="text-red-400 text-sm mb-3">비밀번호가 올바르지 않습니다.</p>
@@ -86,7 +90,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-900 font-bold py-3 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-900 font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-amber-500/25"
           >
             {loading ? '확인 중...' : '입장'}
           </button>
