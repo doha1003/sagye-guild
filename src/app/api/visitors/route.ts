@@ -1,5 +1,5 @@
 import { kv } from '@vercel/kv';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // 오늘 날짜 키 생성 (KST 기준)
 function getTodayKey(): string {
@@ -33,8 +33,26 @@ export async function GET() {
 }
 
 // POST: 방문자 수 증가
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rateKey = `visitor_rate:${ip}`;
+
+    try {
+      const count = await kv.incr(rateKey);
+      if (count === 1) await kv.expire(rateKey, 60);
+      if (count > 1) {
+        const todayKey = getTodayKey();
+        const [total, today] = await Promise.all([
+          kv.get<number>('visitors:total') || 0,
+          kv.get<number>(todayKey) || 0,
+        ]);
+        return NextResponse.json({ total: total || 0, today: today || 0 });
+      }
+    } catch {
+      // rate limit 실패 시 카운트 허용
+    }
+
     const todayKey = getTodayKey();
 
     const [total, today] = await Promise.all([

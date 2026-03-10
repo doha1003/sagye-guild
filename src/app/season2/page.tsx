@@ -1247,7 +1247,7 @@ export default function Season2Page() {
             </Link>
             <div className="flex items-center gap-6">
               <a
-                href="https://discord.gg/ukWwsQbA"
+                href="https://discord.gg/XJUrkxc9Cm"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-400 hover:text-indigo-300 text-sm"

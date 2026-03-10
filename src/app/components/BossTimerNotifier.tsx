@@ -28,7 +28,14 @@ export default function BossTimerNotifier() {
 
       // 설정 로드
       const savedSettings = localStorage.getItem('personalAlertSettings');
-      const settings = savedSettings ? JSON.parse(savedSettings) : {};
+      let settings: Record<string, boolean> = {};
+      if (savedSettings) {
+        try {
+          settings = JSON.parse(savedSettings);
+        } catch {
+          // ignore
+        }
+      }
 
       // 슈고 페스타 (1분 전)
       if (settings.shugoFesta) {

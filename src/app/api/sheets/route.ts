@@ -4,6 +4,36 @@ const SHEET_ID = '1wbEUQNy9ShybtKkZRlUAsr-CcyY5LDRYOxWL6a0dMTo';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
+function parseCSVLine(line: string): string[] {
+  const fields: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        fields.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
 export async function GET(request: NextRequest) {
   const forceRefresh = request.nextUrl.searchParams.get('refresh') === 'true';
 
@@ -32,7 +62,7 @@ export async function GET(request: NextRequest) {
         const csv = await csvRes.text();
         const lines = csv.split('\n').slice(1); // 헤더 스킵
         for (const line of lines) {
-          const cols = line.split(',');
+          const cols = parseCSVLine(line);
           const nickname = cols[1]?.trim();
           const age = cols[3]?.trim();
           if (nickname && age) csvAgeMap.set(nickname, age);

@@ -34,10 +34,19 @@ src/app/
 │   ├── plaync/[...path]/   # PlayNC API 프록시
 │   ├── aion2tool/[...path]/ # aion2tool API 프록시
 │   ├── sheets/             # 구글 시트 연동
-│   └── character/[nickname]/ # 캐릭터 실시간 데이터
+│   ├── character/[nickname]/ # 캐릭터 실시간 데이터
+│   ├── craft-recipes/      # 제작 레시피 API
+│   ├── visitors/           # 방문자 통계
+│   └── youtube-live/       # 유튜브 라이브 연동
+├── admin/                  # 관리자 대시보드
 ├── members/                # 레기온원 관리 페이지
-├── schedule/               # 일정표 (예정)
-├── party/                  # 파티 매칭 (예정)
+├── schedule/               # 일정표
+├── craft/                  # 제작 계산기
+├── notice/                 # 공지사항
+├── season2/                # 시즌2 정보
+├── tips/                   # 팁 모음
+├── updates/                # 업데이트 내역
+├── components/             # 공통 컴포넌트
 ├── types.ts               # 공통 타입
 └── page.tsx               # 메인 페이지
 ```

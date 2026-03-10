@@ -26,12 +26,16 @@ function generateToken(): string {
   return `${Buffer.from(payload).toString('base64')}.${hmac}`;
 }
 
+const TOKEN_MAX_AGE = 24 * 60 * 60 * 1000; // 24시간
+
 function verifyToken(token: string): boolean {
   try {
     const [payloadB64, hmac] = token.split('.');
     if (!payloadB64 || !hmac) return false;
     const payload = Buffer.from(payloadB64, 'base64').toString();
     if (!payload.startsWith('authenticated:')) return false;
+    const timestamp = Number(payload.split(':')[1]);
+    if (!timestamp || Date.now() - timestamp > TOKEN_MAX_AGE) return false;
     const expected = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('hex');
     if (hmac.length !== expected.length) return false;
     return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(expected));

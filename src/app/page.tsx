@@ -173,7 +173,7 @@ export default function Home() {
         {/* 소통 참여 */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <a
-            href="https://discord.gg/ukWwsQbA"
+            href="https://discord.gg/XJUrkxc9Cm"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#5865F2] hover:bg-[#4752C4] rounded-xl p-5 text-center transition-colors"

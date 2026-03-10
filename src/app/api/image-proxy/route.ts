@@ -5,10 +5,15 @@ export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get('url');
-  const size = request.nextUrl.searchParams.get('size') || '300'; // 기본 300px
+  const sizeParam = request.nextUrl.searchParams.get('size') || '300'; // 기본 300px
+  const size = Number(sizeParam);
 
   if (!url) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
+  }
+
+  if (!Number.isInteger(size) || size <= 0 || size > 2000) {
+    return NextResponse.json({ error: 'Invalid size parameter' }, { status: 400 });
   }
 
   // 허용된 도메인만 프록시
@@ -21,7 +26,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 });
     }
     // 인벤 이미지 리사이즈 파라미터 추가
-    finalUrl = `${url}?MW=${size}`;
+    const separator = parsedUrl.search ? '&' : '?';
+    finalUrl = `${url}${separator}MW=${size}`;
   } catch {
     return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
   }

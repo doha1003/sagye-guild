@@ -64,7 +64,7 @@ export default function NoticePage() {
         {/* 참여 링크 */}
         <div className="grid grid-cols-2 gap-4 mt-16 pt-8 border-t border-zinc-800/50">
           <a
-            href="https://discord.gg/ukWwsQbA"
+            href="https://discord.gg/XJUrkxc9Cm"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#5865F2] hover:bg-[#4752C4] rounded-xl p-5 text-center transition-colors"

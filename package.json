@@ -15,9 +15,7 @@
     "firebase": "^12.8.0",
     "googleapis": "^169.0.0",
     "next": "16.1.1",
-    "next-auth": "^4.24.13",
     "next-pwa": "^5.6.0",
-    "playwright": "^1.57.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -30,6 +28,7 @@
     "eslint-config-next": "16.1.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4",
+    "playwright": "^1.57.0",
     "typescript": "^5"
   }
 }

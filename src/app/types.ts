@@ -14,6 +14,7 @@ export type ClassId = keyof typeof CLASSES;
 export type Role = 'tank' | 'dps' | 'healer' | 'support';
 
 // 서버 정보 (지켈 = 마족 서버)
+// PlayNC API 서버 ID: 2011, aion2tool.com 서버 ID: 2002
 export const SERVERS = {
   2011: '지켈',
 } as const;
