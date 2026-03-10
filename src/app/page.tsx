@@ -289,7 +289,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-zinc-500 mb-3 text-center">AION2 바로가기</h3>
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 sm:gap-2">
+            <div className="flex flex-wrap justify-center gap-1.5">
               {[
                 { href: 'https://www.youtube.com/@AION2', icon: '▶️', label: '유튜브' },
                 { href: 'https://aion2.plaync.com/ko-kr/board/notice/list', icon: '📢', label: '공지' },
@@ -307,10 +307,10 @@ export default function Home() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg p-2 text-center transition-colors"
+                  className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg px-3 py-1.5 text-center transition-colors inline-flex items-center gap-1.5"
                 >
-                  <div className="text-lg">{item.icon}</div>
-                  <div className="text-xs text-zinc-400">{item.label}</div>
+                  <span className="text-sm">{item.icon}</span>
+                  <span className="text-xs text-zinc-400">{item.label}</span>
                 </a>
               ))}
             </div>
