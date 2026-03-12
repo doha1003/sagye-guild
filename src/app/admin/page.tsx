@@ -1,6 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface TrackEvent {
+  type: 'pageview' | 'auth' | 'leave';
+  page: string;
+  timestamp: number;
+  duration?: number;
+  referrer?: string;
+}
+
+interface VisitorSession {
+  id: string;
+  ip: string;
+  city: string;
+  region: string;
+  country: string;
+  device: string;
+  os: string;
+  browser: string;
+  authenticated: boolean;
+  firstSeen: number;
+  lastSeen: number;
+  events: TrackEvent[];
+}
 
 interface AnalyticsData {
   realtime: number;
@@ -15,9 +38,10 @@ interface AnalyticsData {
   buttonClicks: { buttonName: string; pagePath: string; count: number }[];
   referralDetails: { source: string; medium: string; channelGroup: string; landingPage: string; users: number; pageViews: number }[];
   searchLandings: { source: string; pagePath: string; users: number }[];
+  kvStats?: { total: number; today: number; daily: { date: string; visitors: number }[] };
 }
 
-type DateRange = 'today' | '7days' | '30days';
+type DateRange = 'today' | '7days' | '30days' | 'custom';
 
 const PAGE_NAMES: Record<string, string> = {
   '/': '메인',
@@ -39,11 +63,87 @@ const DEVICE_NAMES: Record<string, string> = {
   tablet: '태블릿',
 };
 
-const DATE_RANGE_CONFIG: Record<DateRange, { label: string; startDate: string; endDate: string }> = {
+const DATE_RANGE_CONFIG: Record<string, { label: string; startDate: string; endDate: string }> = {
   today: { label: '오늘', startDate: 'today', endDate: 'today' },
   '7days': { label: '7일', startDate: '7daysAgo', endDate: 'today' },
   '30days': { label: '30일', startDate: '30daysAgo', endDate: 'today' },
 };
+
+function getKSTDate(offset = 0) {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000 + offset * 24 * 60 * 60 * 1000);
+  return `${kst.getUTCFullYear()}-${String(kst.getUTCMonth() + 1).padStart(2, '0')}-${String(kst.getUTCDate()).padStart(2, '0')}`;
+}
+
+function formatTime(ts: number) {
+  const d = new Date(ts);
+  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+  return `${String(kst.getUTCHours()).padStart(2, '0')}:${String(kst.getUTCMinutes()).padStart(2, '0')}:${String(kst.getUTCSeconds()).padStart(2, '0')}`;
+}
+
+function VisitorTimeline({ session }: { session: VisitorSession }) {
+  const [open, setOpen] = useState(false);
+  const totalDuration = session.events
+    .filter(e => e.type === 'leave' && e.duration)
+    .reduce((sum, e) => sum + (e.duration || 0), 0);
+  const pages = session.events.filter(e => e.type === 'pageview').map(e => e.page);
+  const uniquePages = [...new Set(pages)];
+
+  return (
+    <div className="border border-zinc-700 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-3 hover:bg-zinc-800/50 transition-colors text-left"
+      >
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className={`w-2 h-2 rounded-full ${session.authenticated ? 'bg-green-400' : 'bg-red-400'}`} />
+          <span className="text-white font-medium text-sm">
+            {session.city || '알 수 없음'}{session.region ? `, ${session.region}` : ''}
+          </span>
+          <span className="text-zinc-500 text-xs">{session.ip}</span>
+          <span className="text-zinc-500 text-xs">
+            {DEVICE_NAMES[session.device] || session.device} · {session.os} · {session.browser}
+          </span>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs text-zinc-400">{uniquePages.length}p · {formatDuration(totalDuration)}</span>
+          <span className="text-xs text-zinc-500">{formatTime(session.firstSeen)}</span>
+          <span className="text-zinc-500">{open ? '▲' : '▼'}</span>
+        </div>
+      </button>
+      {open && (
+        <div className="border-t border-zinc-700 p-3 bg-zinc-900/50">
+          <div className="space-y-1.5">
+            {session.events.map((ev, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs">
+                <span className="text-zinc-500 w-16 shrink-0">{formatTime(ev.timestamp)}</span>
+                {ev.type === 'pageview' && (
+                  <>
+                    <span className="text-blue-400">→</span>
+                    <span className="text-white">{PAGE_NAMES[ev.page] || ev.page}</span>
+                    {ev.referrer && <span className="text-zinc-600">({ev.referrer})</span>}
+                  </>
+                )}
+                {ev.type === 'auth' && (
+                  <span className="text-green-400">비밀번호 인증 성공</span>
+                )}
+                {ev.type === 'leave' && (
+                  <>
+                    <span className="text-zinc-500">←</span>
+                    <span className="text-zinc-400">{PAGE_NAMES[ev.page] || ev.page}</span>
+                    {ev.duration !== undefined && (
+                      <span className="text-amber-400">{formatDuration(ev.duration)} 체류</span>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function formatDuration(sec: number) {
   const m = Math.floor(sec / 60);
@@ -192,6 +292,27 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dateRange, setDateRange] = useState<DateRange>('7days');
+  const [sessions, setSessions] = useState<VisitorSession[]>([]);
+  const [sessionsDate, setSessionsDate] = useState(getKSTDate());
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
+
+  const fetchSessions = async (pw: string, date: string) => {
+    setSessionsLoading(true);
+    try {
+      const res = await fetch('/api/admin/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, date }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setSessions(result.sessions || []);
+      }
+    } catch { /* ignore */ }
+    setSessionsLoading(false);
+  };
 
   const fetchData = async (pw: string, range?: DateRange) => {
     setLoading(true);
@@ -211,6 +332,7 @@ export default function AdminPage() {
       const result = await res.json();
       setData(result);
       setAuthenticated(true);
+      fetchSessions(pw, sessionsDate);
     } catch (e) {
       setError(e instanceof Error ? e.message : '오류가 발생했습니다.');
     } finally {
@@ -286,11 +408,11 @@ export default function AdminPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {/* 날짜 범위 선택 */}
-        <div className="flex gap-2">
-          {(Object.entries(DATE_RANGE_CONFIG) as [DateRange, typeof DATE_RANGE_CONFIG[DateRange]][]).map(([key, cfg]) => (
+        <div className="flex flex-wrap gap-2 items-center">
+          {(Object.entries(DATE_RANGE_CONFIG) as [string, { label: string }][]).map(([key, cfg]) => (
             <button
               key={key}
-              onClick={() => handleDateRange(key)}
+              onClick={() => handleDateRange(key as DateRange)}
               disabled={loading}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 dateRange === key
@@ -301,6 +423,41 @@ export default function AdminPage() {
               {cfg.label}
             </button>
           ))}
+          <div className="flex items-center gap-1 ml-2">
+            <input
+              type="date"
+              value={customStart}
+              onChange={e => setCustomStart(e.target.value)}
+              className="bg-zinc-800 border border-zinc-700 text-white text-sm rounded-lg px-2 py-1.5 focus:outline-none focus:border-amber-500"
+            />
+            <span className="text-zinc-500">~</span>
+            <input
+              type="date"
+              value={customEnd}
+              onChange={e => setCustomEnd(e.target.value)}
+              className="bg-zinc-800 border border-zinc-700 text-white text-sm rounded-lg px-2 py-1.5 focus:outline-none focus:border-amber-500"
+            />
+            <button
+              onClick={() => {
+                if (customStart && customEnd) {
+                  setDateRange('custom');
+                  setLoading(true);
+                  setError('');
+                  fetch('/api/admin/analytics', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, startDate: customStart, endDate: customEnd }),
+                  }).then(r => r.json()).then(result => {
+                    setData(result);
+                  }).catch(() => setError('조회 실패')).finally(() => setLoading(false));
+                }
+              }}
+              disabled={loading || !customStart || !customEnd}
+              className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white text-sm rounded-lg disabled:opacity-50"
+            >
+              조회
+            </button>
+          </div>
         </div>
 
         {/* 실시간 + 오늘 요약 */}
@@ -327,9 +484,59 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* 자체 카운터 (Vercel KV) */}
+        {data.kvStats && (
+          <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-white">자체 카운터 (광고차단 무관)</h2>
+              <span className="text-xs text-zinc-500">IP 기반 집계</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-blue-400">{data.kvStats.today}</div>
+                <div className="text-zinc-400 text-xs mt-1">오늘 방문자</div>
+              </div>
+              <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-blue-400">{data.kvStats.total.toLocaleString()}</div>
+                <div className="text-zinc-400 text-xs mt-1">누적 방문자</div>
+              </div>
+            </div>
+            {data.kvStats.daily.length > 1 && (() => {
+              const maxKv = Math.max(...data.kvStats!.daily.map(d => d.visitors), 1);
+              return (
+                <div>
+                  <div className="text-sm text-zinc-400 mb-2">일별 추이 (최근 {data.kvStats!.daily.length}일)</div>
+                  <div className="flex items-end gap-1 h-24">
+                    {data.kvStats!.daily.map(day => (
+                      <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
+                        <div className="text-xs text-zinc-400">{day.visitors}</div>
+                        <div
+                          className="w-full bg-blue-500/70 rounded-t"
+                          style={{ height: `${(day.visitors / maxKv) * 100}%`, minHeight: 4 }}
+                        />
+                        <div className="text-xs text-zinc-500">{day.date.slice(5)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+            {data.kvStats.today !== data.today.users && (
+              <div className="mt-3 text-xs text-zinc-500 border-t border-zinc-700 pt-3">
+                GA4 오늘: {data.today.users}명 vs 자체: {data.kvStats.today}명
+                {data.kvStats.today > data.today.users && (
+                  <span className="text-amber-400 ml-1">
+                    (차이 {data.kvStats.today - data.today.users}명 = 광고차단 추정)
+                  </span>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* 추이 차트 */}
         <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
-          <h2 className="font-bold text-white mb-4">방문 추이</h2>
+          <h2 className="font-bold text-white mb-4">방문 추이 (GA4)</h2>
           <div className="flex items-end gap-1 h-32">
             {data.weekly.map(day => (
               <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
@@ -570,6 +777,57 @@ export default function AdminPage() {
             </table>
             {(!data.buttonClicks || data.buttonClicks.length === 0) && <p className="text-zinc-500 text-sm mt-2">데이터 없음</p>}
           </div>
+        </section>
+
+        {/* 개별 방문자 추적 */}
+        <section className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h2 className="font-bold text-white">개별 방문자 추적</h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => { const d = getKSTDate(-1); setSessionsDate(d); fetchSessions(password, d); }}
+                className="text-xs bg-zinc-700 hover:bg-zinc-600 text-white px-2 py-1 rounded"
+              >
+                어제
+              </button>
+              <button
+                onClick={() => { const d = getKSTDate(); setSessionsDate(d); fetchSessions(password, d); }}
+                className="text-xs bg-zinc-700 hover:bg-zinc-600 text-white px-2 py-1 rounded"
+              >
+                오늘
+              </button>
+              <input
+                type="date"
+                value={sessionsDate}
+                onChange={e => { setSessionsDate(e.target.value); fetchSessions(password, e.target.value); }}
+                className="bg-zinc-800 border border-zinc-700 text-white text-sm rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500"
+              />
+              <button
+                onClick={() => fetchSessions(password, sessionsDate)}
+                disabled={sessionsLoading}
+                className="text-xs bg-zinc-700 hover:bg-zinc-600 text-white px-2 py-1 rounded disabled:opacity-50"
+              >
+                {sessionsLoading ? '...' : '새로고침'}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 mb-4 text-sm">
+            <span className="text-zinc-400">{sessionsDate}</span>
+            <span className="text-white font-bold">{sessions.length}명 방문</span>
+            <span className="text-green-400">{sessions.filter(s => s.authenticated).length}명 인증</span>
+            <span className="text-red-400">{sessions.filter(s => !s.authenticated).length}명 미인증</span>
+          </div>
+
+          {sessions.length > 0 ? (
+            <div className="space-y-2 max-h-[600px] overflow-y-auto">
+              {sessions.map(session => (
+                <VisitorTimeline key={session.id} session={session} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-zinc-500 text-sm">{sessionsLoading ? '로딩 중...' : '데이터 없음 (추적 시작 이후 데이터가 쌓입니다)'}</p>
+          )}
         </section>
 
         <PasswordSection />

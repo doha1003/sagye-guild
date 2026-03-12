@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackClick } from '@/lib/analytics';
+import { trackAuth } from './Tracker';
 
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
@@ -36,6 +37,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
       if (data.success) {
         setAuthenticated(true);
         setError(false);
+        trackAuth();
         if (data.redirect) {
           router.push(data.redirect);
         }

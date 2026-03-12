@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import BossTimerNotifier from "./components/BossTimerNotifier";
 import PasswordGate from "./components/PasswordGate";
+import Tracker from "./components/Tracker";
 import "./globals.css";
 
 const GA_ID = 'G-34ZGYN24W0';
@@ -85,6 +86,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-900 text-white`}
       >
+        <Tracker />
         <PasswordGate>
           {children}
           <BossTimerNotifier />

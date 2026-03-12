@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
       kv.incr(todayKey),
     ]);
 
-    // 오늘 키는 48시간 후 자동 만료 (정리용)
-    await kv.expire(todayKey, 60 * 60 * 48);
+    // 오늘 키는 90일 후 자동 만료
+    await kv.expire(todayKey, 60 * 60 * 24 * 90);
 
     return NextResponse.json({
       total,

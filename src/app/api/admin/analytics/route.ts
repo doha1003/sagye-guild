@@ -245,10 +245,25 @@ export async function POST(request: NextRequest) {
       users: Number(row.metricValues?.[0]?.value || 0),
     }));
 
+    // Vercel KV 자체 카운터 데이터 조회
+    const now = new Date();
+    const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const kvDailyData: { date: string; visitors: number }[] = [];
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(kst.getTime() - i * 24 * 60 * 60 * 1000);
+      const key = `visitors:${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+      const val = await kv.get<number>(key);
+      if (val) kvDailyData.push({ date: key.replace('visitors:', ''), visitors: val });
+    }
+    const kvTotal = await kv.get<number>('visitors:total') || 0;
+    const kvTodayKey = `visitors:${kst.getUTCFullYear()}-${String(kst.getUTCMonth() + 1).padStart(2, '0')}-${String(kst.getUTCDate()).padStart(2, '0')}`;
+    const kvToday = await kv.get<number>(kvTodayKey) || 0;
+
     return NextResponse.json({
       realtime, today, pages, devices, cities, weekly,
       deviceDetails, sessionDetails, referrals, buttonClicks,
       referralDetails, searchLandings,
+      kvStats: { total: kvTotal, today: kvToday, daily: kvDailyData.reverse() },
     });
   } catch (error) {
     console.error('Analytics API error:', error);
