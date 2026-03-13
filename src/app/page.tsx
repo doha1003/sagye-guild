@@ -216,7 +216,7 @@ export default function Home() {
             <p className="text-zinc-500 text-sm mt-1">컨텐츠 일정</p>
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <Link href="/tips/appearance" onClick={() => trackClick('외형 정보')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">👗</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">외형 정보</h3>
@@ -232,6 +232,10 @@ export default function Home() {
           <Link href="/craft" onClick={() => trackClick('제작 계산기')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
             <div className="text-2xl mb-1">⚒️</div>
             <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">제작 계산기</h3>
+          </Link>
+          <Link href="/meter" onClick={() => trackClick('딜미터기')} className="bg-zinc-800/50 rounded-xl p-4 border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 transition-all group text-center">
+            <div className="text-2xl mb-1">📊</div>
+            <h3 className="font-semibold text-white group-hover:text-amber-400 text-sm">딜미터기</h3>
           </Link>
         </div>
 
