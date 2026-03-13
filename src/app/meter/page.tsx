@@ -75,13 +75,26 @@ export default function MeterPage() {
                 />
               </div>
               <div className="bg-zinc-900 rounded-lg p-4 border border-zinc-800">
-                <p className="text-zinc-400 text-xs mb-2">주요 파일 설명:</p>
-                <ul className="space-y-1 text-xs text-zinc-400">
-                  <li><strong className="text-amber-400">4_meter+overlay.bat</strong> - 미터기 + 오버레이 동시 실행 (권장)</li>
-                  <li><strong className="text-amber-400">3_overlay.bat</strong> - 오버레이만 실행</li>
-                  <li><strong className="text-zinc-300">Aion2Meter-2.0.0-all.jar</strong> - 미터기 본체</li>
-                  <li><strong className="text-zinc-300">overlay/</strong> - 게임 위 오버레이 (Electron)</li>
-                </ul>
+                <p className="text-zinc-400 text-xs mb-3">실행 파일 설명:</p>
+                <div className="space-y-3 text-xs">
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                    <p className="text-amber-400 font-bold mb-1">4_meter+overlay.bat (권장)</p>
+                    <p className="text-zinc-400">미터기 + 오버레이를 한번에 실행합니다. 처음 사용하시는 분은 이걸 쓰세요.</p>
+                  </div>
+                  <div className="bg-zinc-800 rounded-lg p-3">
+                    <p className="text-zinc-200 font-bold mb-1">1_미터기_실행.bat</p>
+                    <p className="text-zinc-400">미터기만 실행합니다. 오버레이 없이 <strong className="text-white">브라우저(localhost:8888)</strong>로만 확인할 때 사용합니다.</p>
+                  </div>
+                  <div className="bg-zinc-800 rounded-lg p-3">
+                    <p className="text-zinc-200 font-bold mb-1">3_overlay.bat</p>
+                    <p className="text-zinc-400">오버레이만 따로 실행합니다. <strong className="text-white">반드시 1_미터기가 먼저 실행 중</strong>이어야 합니다. 미터기 없이 단독으로 사용할 수 없습니다.</p>
+                  </div>
+                </div>
+                <div className="mt-3 bg-blue-950/30 border border-blue-800/30 rounded p-2.5">
+                  <p className="text-blue-300 text-xs">
+                    <strong>조합 예시:</strong> 1번만 실행 → 브라우저로 확인 / 1번 + 3번 따로 실행 → 미터기 + 오버레이 / 4번 실행 → 한번에 둘 다
+                  </p>
+                </div>
               </div>
             </div>
           </section>
@@ -264,7 +277,7 @@ export default function MeterPage() {
               },
               {
                 q: '오버레이만 따로 쓸 수 있나요?',
-                a: '네, 3_overlay.bat을 실행하면 오버레이만 따로 실행됩니다. 단, 미터기(localhost:8888)가 별도로 실행 중이어야 합니다.',
+                a: '3_overlay.bat은 오버레이만 실행하는 파일입니다. 반드시 1_미터기_실행.bat을 먼저 실행해둔 상태에서 사용해야 합니다. 미터기 없이 오버레이만 단독으로 사용할 수 없습니다.',
               },
               {
                 q: '정지되면 어떡하나요?',
